@@ -1,0 +1,29 @@
+{
+  "name": "stylemix-base",
+  "version": "1.0.0",
+  "main": "dist/base.esm.js",
+  "private": true,
+  "dependencies": {
+    "@babel/polyfill": "^7.0.0",
+    "form-backend-validation": "^2.3.3",
+    "lodash-es": "^4.17.11"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.1.2",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/preset-es2015": "^7.0.0-beta.53",
+    "babel-preset-vue": "^2.0.2",
+    "rollup": "^0.66.6",
+    "rollup-plugin-babel": "^4.0.3",
+    "rollup-plugin-commonjs": "^9.2.0",
+    "rollup-plugin-node-resolve": "^3.4.0",
+    "rollup-plugin-uglify": "^6.0.0",
+    "rollup-plugin-vue": "^4.3.2"
+  },
+  "scripts": {
+    "init": "mkdir dist",
+    "clean": "rm -rf dist",
+    "prebuild": "npm run clean && npm run init",
+    "build": "rollup -c"
+  }
+}
