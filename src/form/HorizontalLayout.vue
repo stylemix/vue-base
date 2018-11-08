@@ -1,6 +1,6 @@
 <template>
 	<div class="form-group row">
-		<label :for="field.attribute" class="col-sm-4 col-form-label text-sm-right">
+		<label v-if="showLabel" :for="field.attribute" class="col-sm-4 col-form-label text-sm-right">
 			{{ field.label || fieldLabel }}
 		</label>
 		<div class="col-sm-8">

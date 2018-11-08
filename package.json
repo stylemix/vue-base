@@ -4,8 +4,6 @@
   "main": "dist/base.esm.js",
   "private": true,
   "dependencies": {
-    "@babel/polyfill": "^7.0.0",
-    "form-backend-validation": "^2.3.3",
     "lodash-es": "^4.17.11"
   },
   "devDependencies": {

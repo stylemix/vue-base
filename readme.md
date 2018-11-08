@@ -21,7 +21,7 @@ In Vue:
 // ContactForm.vue
 <template>
 	<form method="post" @submit.prevent="submit">
-		<fields :list="fields" :errors="errors"></fields>
+		<fields :fields="fields.all()" :errors="errors"></fields>
 		<button type="submit" class="btn btn-primary">Send</button>
 	</form>
 </template>
