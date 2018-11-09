@@ -6,7 +6,8 @@
 				v-model="field.value"
 				:multiple="field.multiple || false"
 				class="form-control"
-				:class="errorClasses">
+				:class="errorClasses"
+				:disabled="inputDisabled">
 				<option value="" selected disabled>
 					{{ field.placeholder || 'Choose an option' }}
 				</option>
@@ -31,5 +32,18 @@
 
 	export default {
 		mixins: [ FormField ],
+
+		props: {
+			disabled: {},
+		},
+
+		computed: {
+			/**
+			 * Get the input disabled state.
+			 */
+			inputDisabled() {
+				return this.disabled || this.field.disabled
+			},
+		}
 	}
 </script>

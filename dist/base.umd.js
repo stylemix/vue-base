@@ -43,6 +43,40 @@ function _createClass(Constructor, protoProps, staticProps) {
   return Constructor;
 }
 
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+function _objectSpread(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
+    var ownKeys = Object.keys(source);
+
+    if (typeof Object.getOwnPropertySymbols === 'function') {
+      ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {
+        return Object.getOwnPropertyDescriptor(source, sym).enumerable;
+      }));
+    }
+
+    ownKeys.forEach(function (key) {
+      _defineProperty(target, key, source[key]);
+    });
+  }
+
+  return target;
+}
+
 function _toConsumableArray(arr) {
   return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
 }
@@ -214,7 +248,7 @@ __vue_render__._withStripped = true;
     const component = (typeof script$$1 === 'function' ? script$$1.options : script$$1) || {};
 
     // For security concerns, we use only base name in production mode.
-    component.__file = "/Users/azamatx/projects/base-js/base-js/src/common/Field.vue";
+    component.__file = "/Users/azamatx/projects/base-js/package/src/common/Field.vue";
 
     if (!component.render) {
       component.render = template.render;
@@ -406,7 +440,7 @@ __vue_render__$1._withStripped = true;
     const component = (typeof script === 'function' ? script.options : script) || {};
 
     // For security concerns, we use only base name in production mode.
-    component.__file = "/Users/azamatx/projects/base-js/base-js/src/common/Fields.vue";
+    component.__file = "/Users/azamatx/projects/base-js/package/src/common/Fields.vue";
 
     if (!component.render) {
       component.render = template.render;
@@ -495,7 +529,7 @@ __vue_render__$2._withStripped = true;
     const component = (typeof script === 'function' ? script.options : script) || {};
 
     // For security concerns, we use only base name in production mode.
-    component.__file = "/Users/azamatx/projects/base-js/base-js/src/common/DefaultLayout.vue";
+    component.__file = "/Users/azamatx/projects/base-js/package/src/common/DefaultLayout.vue";
 
     if (!component.render) {
       component.render = template.render;
@@ -564,7 +598,7 @@ __vue_render__$3._withStripped = true;
     const component = (typeof script === 'function' ? script.options : script) || {};
 
     // For security concerns, we use only base name in production mode.
-    component.__file = "/Users/azamatx/projects/base-js/base-js/src/form/Undefined.vue";
+    component.__file = "/Users/azamatx/projects/base-js/package/src/form/Undefined.vue";
 
     if (!component.render) {
       component.render = template.render;
@@ -653,7 +687,7 @@ __vue_render__$4._withStripped = true;
     const component = (typeof script === 'function' ? script.options : script) || {};
 
     // For security concerns, we use only base name in production mode.
-    component.__file = "/Users/azamatx/projects/base-js/base-js/src/form/VericalLayout.vue";
+    component.__file = "/Users/azamatx/projects/base-js/package/src/form/VericalLayout.vue";
 
     if (!component.render) {
       component.render = template.render;
@@ -698,18 +732,24 @@ var __vue_render__$5 = function() {
   var _h = _vm.$createElement;
   var _c = _vm._self._c || _h;
   return _c("div", { staticClass: "form-group row" }, [
-    _c(
-      "label",
-      {
-        staticClass: "col-sm-4 col-form-label text-sm-right",
-        attrs: { for: _vm.field.attribute }
-      },
-      [_vm._v("\n\t\t" + _vm._s(_vm.field.label || _vm.fieldLabel) + "\n\t")]
-    ),
+    _vm.showLabel
+      ? _c(
+          "label",
+          {
+            staticClass: "col-sm-4 col-form-label text-sm-right",
+            attrs: { for: _vm.field.attribute }
+          },
+          [
+            _vm._v(
+              "\n\t\t" + _vm._s(_vm.field.label || _vm.fieldLabel) + "\n\t"
+            )
+          ]
+        )
+      : _vm._e(),
     _vm._v(" "),
     _c(
       "div",
-      { staticClass: "col-sm-8" },
+      { staticClass: "col-sm-8", class: { "offset-sm-4": !_vm.showLabel } },
       [
         _vm._t("field"),
         _vm._v(" "),
@@ -745,7 +785,7 @@ __vue_render__$5._withStripped = true;
     const component = (typeof script === 'function' ? script.options : script) || {};
 
     // For security concerns, we use only base name in production mode.
-    component.__file = "/Users/azamatx/projects/base-js/base-js/src/form/HorizontalLayout.vue";
+    component.__file = "/Users/azamatx/projects/base-js/package/src/form/HorizontalLayout.vue";
 
     if (!component.render) {
       component.render = template.render;
@@ -3790,6 +3830,43 @@ function mapValues(object, iteratee) {
   return result;
 }
 
+function setProp(obj, props, value) {
+  if (typeof props === "string") {
+    props = props.split('.');
+  }
+
+  var prop = props.shift();
+
+  if (!obj[prop]) {
+    Vue.set(obj, prop, {});
+  }
+
+  if (!props.length) {
+    if (_typeof(value) === 'object' && !(value instanceof Array)) {
+      obj[prop] = _objectSpread({}, obj[prop], value);
+    } else {
+      obj[prop] = value;
+    }
+
+    return;
+  }
+
+  setProp(obj[prop], props, value);
+}
+function getProp(obj, props) {
+  if (typeof props === "string") {
+    props = props.split('.');
+  }
+
+  var prop = props.shift();
+
+  if (!obj[prop] || !props.length) {
+    return obj[prop];
+  }
+
+  return getProp(obj[prop], props);
+}
+
 var FormField = {
   mixins: [HandlesValidationErrors],
   props: {
@@ -3818,9 +3895,7 @@ var FormField = {
   mounted: function mounted() {
     var _this = this;
 
-    this.setInitialValue(); // Add a default fill methods for the field
-
-    this.field.fillFormData = this.fillFormData; // Register a global event for setting the field's value
+    this.setInitialValue(); // Register a global event for setting the field's value
 
     Base.$on(this.field.attribute + '-value', this.handleChange);
 
@@ -3834,9 +3909,12 @@ var FormField = {
     }
   },
   watch: {
-    'field.value': function fieldValue(value) {
-      Base.$emit(this.field.attribute + '-change', value);
-      this.fillModel();
+    'field.value': {
+      deep: true,
+      handler: function handler(value) {
+        Base.$emit(this.field.attribute + '-change', value);
+        this.fillModel();
+      }
     }
   },
   destroyed: function destroyed() {
@@ -3855,14 +3933,6 @@ var FormField = {
     setInitialValue: function setInitialValue() {},
 
     /**
-     * Provide a function that fills a passed FormData object with the
-     * field's internal value attribute
-     */
-    fillFormData: function fillFormData(formData) {
-      formData.append(this.field.attribute, this.field.value || '');
-    },
-
-    /**
      * Provide a function that fills a passed model object with the
      * field's internal value attribute
      */
@@ -3871,7 +3941,7 @@ var FormField = {
         return;
       }
 
-      this.$set(this.model, this.field.attribute, this.field.value);
+      setProp(this.model, this.field.attribute, this.field.value);
     },
 
     /**
@@ -5237,6 +5307,398 @@ var omit = flatRest(function (object, paths) {
   return result;
 });
 
+/**
+ * The base implementation of `_.filter` without support for iteratee shorthands.
+ *
+ * @private
+ * @param {Array|Object} collection The collection to iterate over.
+ * @param {Function} predicate The function invoked per iteration.
+ * @returns {Array} Returns the new filtered array.
+ */
+
+function baseFilter(collection, predicate) {
+  var result = [];
+  baseEach(collection, function (value, index, collection) {
+    if (predicate(value, index, collection)) {
+      result.push(value);
+    }
+  });
+  return result;
+}
+
+/**
+ * Iterates over elements of `collection`, returning an array of all elements
+ * `predicate` returns truthy for. The predicate is invoked with three
+ * arguments: (value, index|key, collection).
+ *
+ * **Note:** Unlike `_.remove`, this method returns a new array.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Collection
+ * @param {Array|Object} collection The collection to iterate over.
+ * @param {Function} [predicate=_.identity] The function invoked per iteration.
+ * @returns {Array} Returns the new filtered array.
+ * @see _.reject
+ * @example
+ *
+ * var users = [
+ *   { 'user': 'barney', 'age': 36, 'active': true },
+ *   { 'user': 'fred',   'age': 40, 'active': false }
+ * ];
+ *
+ * _.filter(users, function(o) { return !o.active; });
+ * // => objects for ['fred']
+ *
+ * // The `_.matches` iteratee shorthand.
+ * _.filter(users, { 'age': 36, 'active': true });
+ * // => objects for ['barney']
+ *
+ * // The `_.matchesProperty` iteratee shorthand.
+ * _.filter(users, ['active', false]);
+ * // => objects for ['fred']
+ *
+ * // The `_.property` iteratee shorthand.
+ * _.filter(users, 'active');
+ * // => objects for ['barney']
+ */
+
+function filter(collection, predicate) {
+  var func = isArray(collection) ? arrayFilter : baseFilter;
+  return func(collection, baseIteratee(predicate, 3));
+}
+
+/**
+ * Creates a `_.find` or `_.findLast` function.
+ *
+ * @private
+ * @param {Function} findIndexFunc The function to find the collection index.
+ * @returns {Function} Returns the new find function.
+ */
+
+function createFind(findIndexFunc) {
+  return function (collection, predicate, fromIndex) {
+    var iterable = Object(collection);
+
+    if (!isArrayLike(collection)) {
+      var iteratee = baseIteratee(predicate, 3);
+      collection = keys(collection);
+
+      predicate = function predicate(key) {
+        return iteratee(iterable[key], key, iterable);
+      };
+    }
+
+    var index = findIndexFunc(collection, predicate, fromIndex);
+    return index > -1 ? iterable[iteratee ? collection[index] : index] : undefined;
+  };
+}
+
+/**
+ * The base implementation of `_.findIndex` and `_.findLastIndex` without
+ * support for iteratee shorthands.
+ *
+ * @private
+ * @param {Array} array The array to inspect.
+ * @param {Function} predicate The function invoked per iteration.
+ * @param {number} fromIndex The index to search from.
+ * @param {boolean} [fromRight] Specify iterating from right to left.
+ * @returns {number} Returns the index of the matched value, else `-1`.
+ */
+function baseFindIndex(array, predicate, fromIndex, fromRight) {
+  var length = array.length,
+      index = fromIndex + (fromRight ? 1 : -1);
+
+  while (fromRight ? index-- : ++index < length) {
+    if (predicate(array[index], index, array)) {
+      return index;
+    }
+  }
+
+  return -1;
+}
+
+/** Used as references for various `Number` constants. */
+
+var NAN = 0 / 0;
+/** Used to match leading and trailing whitespace. */
+
+var reTrim = /^\s+|\s+$/g;
+/** Used to detect bad signed hexadecimal string values. */
+
+var reIsBadHex = /^[-+]0x[0-9a-f]+$/i;
+/** Used to detect binary string values. */
+
+var reIsBinary = /^0b[01]+$/i;
+/** Used to detect octal string values. */
+
+var reIsOctal = /^0o[0-7]+$/i;
+/** Built-in method references without a dependency on `root`. */
+
+var freeParseInt = parseInt;
+/**
+ * Converts `value` to a number.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to process.
+ * @returns {number} Returns the number.
+ * @example
+ *
+ * _.toNumber(3.2);
+ * // => 3.2
+ *
+ * _.toNumber(Number.MIN_VALUE);
+ * // => 5e-324
+ *
+ * _.toNumber(Infinity);
+ * // => Infinity
+ *
+ * _.toNumber('3.2');
+ * // => 3.2
+ */
+
+function toNumber(value) {
+  if (typeof value == 'number') {
+    return value;
+  }
+
+  if (isSymbol(value)) {
+    return NAN;
+  }
+
+  if (isObject(value)) {
+    var other = typeof value.valueOf == 'function' ? value.valueOf() : value;
+    value = isObject(other) ? other + '' : other;
+  }
+
+  if (typeof value != 'string') {
+    return value === 0 ? value : +value;
+  }
+
+  value = value.replace(reTrim, '');
+  var isBinary = reIsBinary.test(value);
+  return isBinary || reIsOctal.test(value) ? freeParseInt(value.slice(2), isBinary ? 2 : 8) : reIsBadHex.test(value) ? NAN : +value;
+}
+
+/** Used as references for various `Number` constants. */
+
+var INFINITY$2 = 1 / 0,
+    MAX_INTEGER = 1.7976931348623157e+308;
+/**
+ * Converts `value` to a finite number.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.12.0
+ * @category Lang
+ * @param {*} value The value to convert.
+ * @returns {number} Returns the converted number.
+ * @example
+ *
+ * _.toFinite(3.2);
+ * // => 3.2
+ *
+ * _.toFinite(Number.MIN_VALUE);
+ * // => 5e-324
+ *
+ * _.toFinite(Infinity);
+ * // => 1.7976931348623157e+308
+ *
+ * _.toFinite('3.2');
+ * // => 3.2
+ */
+
+function toFinite(value) {
+  if (!value) {
+    return value === 0 ? value : 0;
+  }
+
+  value = toNumber(value);
+
+  if (value === INFINITY$2 || value === -INFINITY$2) {
+    var sign = value < 0 ? -1 : 1;
+    return sign * MAX_INTEGER;
+  }
+
+  return value === value ? value : 0;
+}
+
+/**
+ * Converts `value` to an integer.
+ *
+ * **Note:** This method is loosely based on
+ * [`ToInteger`](http://www.ecma-international.org/ecma-262/7.0/#sec-tointeger).
+ *
+ * @static
+ * @memberOf _
+ * @since 4.0.0
+ * @category Lang
+ * @param {*} value The value to convert.
+ * @returns {number} Returns the converted integer.
+ * @example
+ *
+ * _.toInteger(3.2);
+ * // => 3
+ *
+ * _.toInteger(Number.MIN_VALUE);
+ * // => 0
+ *
+ * _.toInteger(Infinity);
+ * // => 1.7976931348623157e+308
+ *
+ * _.toInteger('3.2');
+ * // => 3
+ */
+
+function toInteger(value) {
+  var result = toFinite(value),
+      remainder = result % 1;
+  return result === result ? remainder ? result - remainder : result : 0;
+}
+
+/* Built-in method references for those with the same name as other `lodash` methods. */
+
+var nativeMax$1 = Math.max;
+/**
+ * This method is like `_.find` except that it returns the index of the first
+ * element `predicate` returns truthy for instead of the element itself.
+ *
+ * @static
+ * @memberOf _
+ * @since 1.1.0
+ * @category Array
+ * @param {Array} array The array to inspect.
+ * @param {Function} [predicate=_.identity] The function invoked per iteration.
+ * @param {number} [fromIndex=0] The index to search from.
+ * @returns {number} Returns the index of the found element, else `-1`.
+ * @example
+ *
+ * var users = [
+ *   { 'user': 'barney',  'active': false },
+ *   { 'user': 'fred',    'active': false },
+ *   { 'user': 'pebbles', 'active': true }
+ * ];
+ *
+ * _.findIndex(users, function(o) { return o.user == 'barney'; });
+ * // => 0
+ *
+ * // The `_.matches` iteratee shorthand.
+ * _.findIndex(users, { 'user': 'fred', 'active': false });
+ * // => 1
+ *
+ * // The `_.matchesProperty` iteratee shorthand.
+ * _.findIndex(users, ['active', false]);
+ * // => 0
+ *
+ * // The `_.property` iteratee shorthand.
+ * _.findIndex(users, 'active');
+ * // => 2
+ */
+
+function findIndex(array, predicate, fromIndex) {
+  var length = array == null ? 0 : array.length;
+
+  if (!length) {
+    return -1;
+  }
+
+  var index = fromIndex == null ? 0 : toInteger(fromIndex);
+
+  if (index < 0) {
+    index = nativeMax$1(length + index, 0);
+  }
+
+  return baseFindIndex(array, baseIteratee(predicate, 3), index);
+}
+
+/**
+ * Iterates over elements of `collection`, returning the first element
+ * `predicate` returns truthy for. The predicate is invoked with three
+ * arguments: (value, index|key, collection).
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Collection
+ * @param {Array|Object} collection The collection to inspect.
+ * @param {Function} [predicate=_.identity] The function invoked per iteration.
+ * @param {number} [fromIndex=0] The index to search from.
+ * @returns {*} Returns the matched element, else `undefined`.
+ * @example
+ *
+ * var users = [
+ *   { 'user': 'barney',  'age': 36, 'active': true },
+ *   { 'user': 'fred',    'age': 40, 'active': false },
+ *   { 'user': 'pebbles', 'age': 1,  'active': true }
+ * ];
+ *
+ * _.find(users, function(o) { return o.age < 40; });
+ * // => object for 'barney'
+ *
+ * // The `_.matches` iteratee shorthand.
+ * _.find(users, { 'age': 1, 'active': true });
+ * // => object for 'pebbles'
+ *
+ * // The `_.matchesProperty` iteratee shorthand.
+ * _.find(users, ['active', false]);
+ * // => object for 'fred'
+ *
+ * // The `_.property` iteratee shorthand.
+ * _.find(users, 'active');
+ * // => object for 'barney'
+ */
+
+var find = createFind(findIndex);
+
+/**
+ * Casts `value` to `identity` if it's not a function.
+ *
+ * @private
+ * @param {*} value The value to inspect.
+ * @returns {Function} Returns cast function.
+ */
+
+function castFunction(value) {
+  return typeof value == 'function' ? value : identity;
+}
+
+/**
+ * Iterates over own enumerable string keyed properties of an object and
+ * invokes `iteratee` for each property. The iteratee is invoked with three
+ * arguments: (value, key, object). Iteratee functions may exit iteration
+ * early by explicitly returning `false`.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.3.0
+ * @category Object
+ * @param {Object} object The object to iterate over.
+ * @param {Function} [iteratee=_.identity] The function invoked per iteration.
+ * @returns {Object} Returns `object`.
+ * @see _.forOwnRight
+ * @example
+ *
+ * function Foo() {
+ *   this.a = 1;
+ *   this.b = 2;
+ * }
+ *
+ * Foo.prototype.c = 3;
+ *
+ * _.forOwn(new Foo, function(value, key) {
+ *   console.log(key);
+ * });
+ * // => Logs 'a' then 'b' (iteration order is not guaranteed).
+ */
+
+function forOwn(object, iteratee) {
+  return object && baseForOwn(object, castFunction(iteratee));
+}
+
 var FieldList =
 /*#__PURE__*/
 function () {
@@ -5249,14 +5711,44 @@ function () {
     this.byAttribute = keyBy(fields, 'attribute'); // Collect dependencies and assign
 
     fields.forEach(function (field) {
-      // Add default form data fill method
+      // Add default method to get form data attribute
+      field.formDataName = function () {
+        var name = field.attribute;
+
+        if (field.attribute.indexOf('.') !== -1) {
+          name = field.attribute.replace(/\./, '[').replace('.', '][') + ']';
+        }
+
+        return name;
+      }; // Add default form data fill method
+
+
       field.fillFormData = function (formData) {
-        formData.append(field.attribute, field.value || '');
+        function append(value, name) {
+          if (_typeof(value) === 'object' && !(value instanceof File)) {
+            forOwn(value, function (value, key) {
+              append(value, "".concat(name, "[").concat(key, "]"));
+            });
+            return;
+          }
+
+          if (value === null) {
+            value = '';
+          } else if (value === true) {
+            value = 1;
+          } else if (value === false) {
+            value = 0;
+          }
+
+          formData.append(name, value);
+        }
+
+        append(field.value, field.formDataName());
       }; // Add default model data fill method
 
 
       field.fillModel = function (model) {
-        model[field.attribute] = field.value;
+        setProp(model, field.attribute, field.value);
       };
 
       if (!field.depends) {
@@ -5278,6 +5770,11 @@ function () {
       return this.byAttribute[attribute];
     }
   }, {
+    key: "find",
+    value: function find$$1(predicate) {
+      return find(this.list, predicate);
+    }
+  }, {
     key: "only",
     value: function only() {
       for (var _len = arguments.length, attributes = new Array(_len), _key = 0; _key < _len; _key++) {
@@ -5294,6 +5791,11 @@ function () {
       }
 
       return values(omit(this.byAttribute, attributes));
+    }
+  }, {
+    key: "filter",
+    value: function filter$$1(predicate) {
+      return filter(this.list, predicate);
     }
   }]);
 
@@ -5330,6 +5832,8 @@ var script$6 = {
   name: 'FormTextField',
   mixins: [FormField],
   props: {
+    readonly: {},
+    disabled: {},
     placeholder: {},
     step: {},
     min: {},
@@ -5349,6 +5853,20 @@ var script$6 = {
      */
     inputPlaceholder: function inputPlaceholder() {
       return this.placeholder || this.field.placeholder;
+    },
+
+    /**
+     * Get the input readonly state.
+     */
+    inputReadonly: function inputReadonly() {
+      return this.readonly || this.field.readonly;
+    },
+
+    /**
+     * Get the input disabled state.
+     */
+    inputDisabled: function inputDisabled() {
+      return this.disabled || this.field.disabled;
     },
 
     /**
@@ -5414,6 +5932,8 @@ var __vue_render__$6 = function() {
                 step: _vm.inputStep,
                 pattern: _vm.inputPattern,
                 placeholder: _vm.inputPlaceholder,
+                readonly: _vm.inputReadonly,
+                disabled: _vm.inputDisabled,
                 type: "checkbox"
               },
               domProps: {
@@ -5465,6 +5985,8 @@ var __vue_render__$6 = function() {
                   step: _vm.inputStep,
                   pattern: _vm.inputPattern,
                   placeholder: _vm.inputPlaceholder,
+                  readonly: _vm.inputReadonly,
+                  disabled: _vm.inputDisabled,
                   type: "radio"
                 },
                 domProps: { checked: _vm._q(_vm.field.value, null) },
@@ -5493,6 +6015,8 @@ var __vue_render__$6 = function() {
                   step: _vm.inputStep,
                   pattern: _vm.inputPattern,
                   placeholder: _vm.inputPlaceholder,
+                  readonly: _vm.inputReadonly,
+                  disabled: _vm.inputDisabled,
                   type: _vm.inputType
                 },
                 domProps: { value: _vm.field.value },
@@ -5538,7 +6062,7 @@ __vue_render__$6._withStripped = true;
     const component = (typeof script === 'function' ? script.options : script) || {};
 
     // For security concerns, we use only base name in production mode.
-    component.__file = "/Users/azamatx/projects/base-js/base-js/src/form/TextField.vue";
+    component.__file = "/Users/azamatx/projects/base-js/package/src/form/TextField.vue";
 
     if (!component.render) {
       component.render = template.render;
@@ -5593,6 +6117,7 @@ var script$7 = {
       }
 
       this.field.value = this.field.multiple ? files : files[0];
+      this.$refs.inputElement.value = '';
     }
   }
 };
@@ -5611,6 +6136,7 @@ var __vue_render__$7 = function() {
     [
       _c("template", { slot: "field" }, [
         _c("input", {
+          ref: "inputElement",
           staticClass: "form-control",
           class: _vm.errorClasses,
           attrs: {
@@ -5618,7 +6144,8 @@ var __vue_render__$7 = function() {
             dusk: _vm.field.attribute,
             type: "file",
             multiple: _vm.field.multiple || false,
-            placeholder: _vm.inputPlaceholder
+            placeholder: _vm.inputPlaceholder,
+            accept: _vm.field.mimeTypes
           },
           on: {
             input: function($event) {
@@ -5659,7 +6186,7 @@ __vue_render__$7._withStripped = true;
     const component = (typeof script === 'function' ? script.options : script) || {};
 
     // For security concerns, we use only base name in production mode.
-    component.__file = "/Users/azamatx/projects/base-js/base-js/src/form/FileField.vue";
+    component.__file = "/Users/azamatx/projects/base-js/package/src/form/FileField.vue";
 
     if (!component.render) {
       component.render = template.render;
@@ -5692,7 +6219,18 @@ __vue_render__$7._withStripped = true;
 
 //
 var script$8 = {
-  mixins: [FormField]
+  mixins: [FormField],
+  props: {
+    disabled: {}
+  },
+  computed: {
+    /**
+     * Get the input disabled state.
+     */
+    inputDisabled: function inputDisabled() {
+      return this.disabled || this.field.disabled;
+    }
+  }
 };
 
 /* script */
@@ -5723,7 +6261,8 @@ var __vue_render__$8 = function() {
             class: _vm.errorClasses,
             attrs: {
               id: _vm.field.name,
-              multiple: _vm.field.multiple || false
+              multiple: _vm.field.multiple || false,
+              disabled: _vm.inputDisabled
             },
             on: {
               change: function($event) {
@@ -5800,7 +6339,7 @@ __vue_render__$8._withStripped = true;
     const component = (typeof script === 'function' ? script.options : script) || {};
 
     // For security concerns, we use only base name in production mode.
-    component.__file = "/Users/azamatx/projects/base-js/base-js/src/form/SelectField.vue";
+    component.__file = "/Users/azamatx/projects/base-js/package/src/form/SelectField.vue";
 
     if (!component.render) {
       component.render = template.render;
@@ -5838,7 +6377,8 @@ var script$9 = {
   props: {
     fieldLabel: {
       type: String
-    }
+    },
+    disabled: {}
   },
   computed: {
     /**
@@ -5846,6 +6386,13 @@ var script$9 = {
      */
     inputPlaceholder: function inputPlaceholder() {
       return this.placeholder || this.field.placeholder;
+    },
+
+    /**
+     * Get the input disabled state.
+     */
+    inputDisabled: function inputDisabled() {
+      return this.disabled || this.field.disabled;
     }
   },
   methods: {
@@ -5869,64 +6416,78 @@ var __vue_render__$9 = function() {
   var _vm = this;
   var _h = _vm.$createElement;
   var _c = _vm._self._c || _h;
-  return _c("div", { staticClass: "form-check" }, [
-    _c("input", {
-      directives: [
-        {
-          name: "model",
-          rawName: "v-model",
-          value: _vm.field.value,
-          expression: "field.value"
-        }
-      ],
-      staticClass: "form-check-input",
-      class: _vm.errorClasses,
-      attrs: {
-        id: _vm.field.attribute,
-        dusk: _vm.field.attribute,
-        type: "checkbox",
-        placeholder: _vm.inputPlaceholder
-      },
-      domProps: {
-        checked: Array.isArray(_vm.field.value)
-          ? _vm._i(_vm.field.value, null) > -1
-          : _vm.field.value
-      },
-      on: {
-        change: function($event) {
-          var $$a = _vm.field.value,
-            $$el = $event.target,
-            $$c = $$el.checked ? true : false;
-          if (Array.isArray($$a)) {
-            var $$v = null,
-              $$i = _vm._i($$a, $$v);
-            if ($$el.checked) {
-              $$i < 0 && _vm.$set(_vm.field, "value", $$a.concat([$$v]));
-            } else {
-              $$i > -1 &&
-                _vm.$set(
-                  _vm.field,
-                  "value",
-                  $$a.slice(0, $$i).concat($$a.slice($$i + 1))
-                );
+  return _c(
+    _vm.layoutComponent,
+    { tag: "component", attrs: { field: _vm.field, "show-label": false } },
+    [
+      _c("template", { slot: "field" }, [
+        _c("div", { staticClass: "form-check" }, [
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.field.value,
+                expression: "field.value"
+              }
+            ],
+            staticClass: "form-check-input",
+            class: _vm.errorClasses,
+            attrs: {
+              id: _vm.field.attribute,
+              dusk: _vm.field.attribute,
+              type: "checkbox",
+              placeholder: _vm.inputPlaceholder,
+              disabled: _vm.inputDisabled
+            },
+            domProps: {
+              checked: Array.isArray(_vm.field.value)
+                ? _vm._i(_vm.field.value, null) > -1
+                : _vm.field.value
+            },
+            on: {
+              change: function($event) {
+                var $$a = _vm.field.value,
+                  $$el = $event.target,
+                  $$c = $$el.checked ? true : false;
+                if (Array.isArray($$a)) {
+                  var $$v = null,
+                    $$i = _vm._i($$a, $$v);
+                  if ($$el.checked) {
+                    $$i < 0 && _vm.$set(_vm.field, "value", $$a.concat([$$v]));
+                  } else {
+                    $$i > -1 &&
+                      _vm.$set(
+                        _vm.field,
+                        "value",
+                        $$a.slice(0, $$i).concat($$a.slice($$i + 1))
+                      );
+                  }
+                } else {
+                  _vm.$set(_vm.field, "value", $$c);
+                }
+              }
             }
-          } else {
-            _vm.$set(_vm.field, "value", $$c);
-          }
-        }
-      }
-    }),
-    _vm._v(" "),
-    _c("label", { attrs: { for: "field.attribute" } }, [
-      _vm._v("\n\t\t" + _vm._s(_vm.field.label || _vm.fieldLabel) + "\n\t")
-    ]),
-    _vm._v(" "),
-    _vm.hasError
-      ? _c("div", { staticClass: "invalid-feedback" }, [
-          _vm._v("\n\t\t" + _vm._s(_vm.firstError) + "\n\t")
+          }),
+          _vm._v(" "),
+          _c("label", { attrs: { for: "field.attribute" } }, [
+            _vm._v(
+              "\n\t\t\t\t" +
+                _vm._s(_vm.field.label || _vm.fieldLabel) +
+                "\n\t\t\t"
+            )
+          ]),
+          _vm._v(" "),
+          _vm.hasError
+            ? _c("div", { staticClass: "invalid-feedback" }, [
+                _vm._v("\n\t\t\t\t" + _vm._s(_vm.firstError) + "\n\t\t\t")
+              ])
+            : _vm._e()
         ])
-      : _vm._e()
-  ])
+      ])
+    ],
+    2
+  )
 };
 var __vue_staticRenderFns__$9 = [];
 __vue_render__$9._withStripped = true;
@@ -5948,7 +6509,7 @@ __vue_render__$9._withStripped = true;
     const component = (typeof script === 'function' ? script.options : script) || {};
 
     // For security concerns, we use only base name in production mode.
-    component.__file = "/Users/azamatx/projects/base-js/base-js/src/form/CheckboxField.vue";
+    component.__file = "/Users/azamatx/projects/base-js/package/src/form/CheckboxField.vue";
 
     if (!component.render) {
       component.render = template.render;
@@ -5984,11 +6545,27 @@ var script$a = {
   name: 'FormTextareaField',
   mixins: [FormField],
   props: {
+    readonly: {},
+    disabled: {},
     placeholder: {},
     cols: {},
     rows: {}
   },
   computed: {
+    /**
+     * Get the input readonly state.
+     */
+    inputReadonly: function inputReadonly() {
+      return this.readonly || this.field.readonly;
+    },
+
+    /**
+     * Get the input disabled state.
+     */
+    inputDisabled: function inputDisabled() {
+      return this.disabled || this.field.disabled;
+    },
+
     /**
      * Get the input placeholder.
      */
@@ -6041,7 +6618,9 @@ var __vue_render__$a = function() {
             dusk: _vm.field.attribute,
             cols: _vm.inputCols,
             rows: _vm.inputRows,
-            placeholder: _vm.inputPlaceholder
+            placeholder: _vm.inputPlaceholder,
+            readonly: _vm.inputReadonly,
+            disabled: _vm.inputDisabled
           },
           domProps: { value: _vm.field.value },
           on: {
@@ -6086,7 +6665,7 @@ __vue_render__$a._withStripped = true;
     const component = (typeof script === 'function' ? script.options : script) || {};
 
     // For security concerns, we use only base name in production mode.
-    component.__file = "/Users/azamatx/projects/base-js/base-js/src/form/TextareaField.vue";
+    component.__file = "/Users/azamatx/projects/base-js/package/src/form/TextareaField.vue";
 
     if (!component.render) {
       component.render = template.render;
@@ -6159,6 +6738,8 @@ exports.FormFileField = FileField;
 exports.FormSelectField = SelectField;
 exports.FormCheckboxField = CheckboxField;
 exports.FormTextareaField = TextareaField;
+exports.setProp = setProp;
+exports.getProp = getProp;
 
 Object.defineProperty(exports, '__esModule', { value: true });
 

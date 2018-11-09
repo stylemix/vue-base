@@ -1,6 +1,7 @@
 import HandlesValidationErrors from './HandlesValidationErrors';
 import keyBy from "lodash-es/keyBy";
 import mapValues from "lodash-es/mapValues";
+import { setProp } from "../utils/props";
 
 export default {
 	mixins: [ HandlesValidationErrors ],
@@ -23,9 +24,6 @@ export default {
 	mounted() {
 		this.setInitialValue();
 
-		// Add a default fill methods for the field
-		this.field.fillFormData = this.fillFormData;
-
 		// Register a global event for setting the field's value
 		Base.$on(this.field.attribute + '-value', this.handleChange);
 
@@ -41,10 +39,13 @@ export default {
 	},
 
 	watch: {
-		'field.value': function (value) {
-			Base.$emit(this.field.attribute + '-change', value);
+		'field.value': {
+			deep: true,
+			handler: function (value) {
+				Base.$emit(this.field.attribute + '-change', value);
 
-			this.fillModel();
+				this.fillModel();
+			}
 		}
 	},
 
@@ -66,14 +67,6 @@ export default {
 		},
 
 		/**
-		 * Provide a function that fills a passed FormData object with the
-		 * field's internal value attribute
-		 */
-		fillFormData(formData) {
-			formData.append(this.field.attribute, this.field.value || '');
-		},
-
-		/**
 		 * Provide a function that fills a passed model object with the
 		 * field's internal value attribute
 		 */
@@ -82,7 +75,7 @@ export default {
 				return;
 			}
 
-			this.$set(this.model, this.field.attribute, this.field.value);
+			setProp(this.model, this.field.attribute, this.field.value);
 		},
 
 		/**

@@ -9,7 +9,9 @@
 				v-model="field.value"
 				class="form-control"
 				:class="errorClasses"
-				:placeholder="inputPlaceholder">
+				:placeholder="inputPlaceholder"
+				:readonly="inputReadonly"
+				:disabled="inputDisabled">
 			</textarea>
 		</template>
 		<template slot="errors">
@@ -29,12 +31,28 @@
 		mixins: [ FormField ],
 
 		props: {
+			readonly: {},
+			disabled: {},
 			placeholder: {},
 			cols: {},
 			rows: {},
 		},
 
 		computed: {
+
+			/**
+			 * Get the input readonly state.
+			 */
+			inputReadonly() {
+				return this.readonly || this.field.readonly
+			},
+
+			/**
+			 * Get the input disabled state.
+			 */
+			inputDisabled() {
+				return this.disabled || this.field.disabled
+			},
 
 			/**
 			 * Get the input placeholder.

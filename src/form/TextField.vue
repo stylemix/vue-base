@@ -13,7 +13,8 @@
 				class="form-control"
 				:class="errorClasses"
 				:placeholder="inputPlaceholder"
-			/>
+				:readonly="inputReadonly"
+				:disabled="inputDisabled"/>
 		</template>
 		<template slot="errors">
 			<div v-if="hasError" class="invalid-feedback">
@@ -32,6 +33,8 @@
 		mixins: [ FormField ],
 
 		props: {
+			readonly: {},
+			disabled: {},
 			placeholder: {},
 			step: {},
 			min: {},
@@ -46,11 +49,26 @@
 			inputType() {
 				return this.field.type || 'text'
 			},
+
 			/**
 			 * Get the input placeholder.
 			 */
 			inputPlaceholder() {
 				return this.placeholder || this.field.placeholder
+			},
+
+			/**
+			 * Get the input readonly state.
+			 */
+			inputReadonly() {
+				return this.readonly || this.field.readonly
+			},
+
+			/**
+			 * Get the input disabled state.
+			 */
+			inputDisabled() {
+				return this.disabled || this.field.disabled
 			},
 
 			/**

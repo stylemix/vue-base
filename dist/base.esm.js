@@ -5,6 +5,9 @@ import mapValues from 'lodash-es/mapValues';
 import pick from 'lodash-es/pick';
 import values from 'lodash-es/values';
 import omit from 'lodash-es/omit';
+import filter from 'lodash-es/filter';
+import find from 'lodash-es/find';
+import forOwn from 'lodash-es/forOwn';
 
 class Base$1 {
     constructor(config) {
@@ -131,7 +134,7 @@ __vue_render__._withStripped = true;
     const component = (typeof script$$1 === 'function' ? script$$1.options : script$$1) || {};
 
     // For security concerns, we use only base name in production mode.
-    component.__file = "/Users/azamatx/projects/base-js/base-js/src/common/Field.vue";
+    component.__file = "/Users/azamatx/projects/base-js/package/src/common/Field.vue";
 
     if (!component.render) {
       component.render = template.render;
@@ -302,7 +305,7 @@ __vue_render__$1._withStripped = true;
     const component = (typeof script === 'function' ? script.options : script) || {};
 
     // For security concerns, we use only base name in production mode.
-    component.__file = "/Users/azamatx/projects/base-js/base-js/src/common/Fields.vue";
+    component.__file = "/Users/azamatx/projects/base-js/package/src/common/Fields.vue";
 
     if (!component.render) {
       component.render = template.render;
@@ -379,7 +382,7 @@ __vue_render__$2._withStripped = true;
     const component = (typeof script === 'function' ? script.options : script) || {};
 
     // For security concerns, we use only base name in production mode.
-    component.__file = "/Users/azamatx/projects/base-js/base-js/src/common/DefaultLayout.vue";
+    component.__file = "/Users/azamatx/projects/base-js/package/src/common/DefaultLayout.vue";
 
     if (!component.render) {
       component.render = template.render;
@@ -449,7 +452,7 @@ __vue_render__$3._withStripped = true;
     const component = (typeof script === 'function' ? script.options : script) || {};
 
     // For security concerns, we use only base name in production mode.
-    component.__file = "/Users/azamatx/projects/base-js/base-js/src/form/Undefined.vue";
+    component.__file = "/Users/azamatx/projects/base-js/package/src/form/Undefined.vue";
 
     if (!component.render) {
       component.render = template.render;
@@ -539,7 +542,7 @@ __vue_render__$4._withStripped = true;
     const component = (typeof script === 'function' ? script.options : script) || {};
 
     // For security concerns, we use only base name in production mode.
-    component.__file = "/Users/azamatx/projects/base-js/base-js/src/form/VericalLayout.vue";
+    component.__file = "/Users/azamatx/projects/base-js/package/src/form/VericalLayout.vue";
 
     if (!component.render) {
       component.render = template.render;
@@ -585,18 +588,24 @@ var __vue_render__$5 = function() {
   var _h = _vm.$createElement;
   var _c = _vm._self._c || _h;
   return _c("div", { staticClass: "form-group row" }, [
-    _c(
-      "label",
-      {
-        staticClass: "col-sm-4 col-form-label text-sm-right",
-        attrs: { for: _vm.field.attribute }
-      },
-      [_vm._v("\n\t\t" + _vm._s(_vm.field.label || _vm.fieldLabel) + "\n\t")]
-    ),
+    _vm.showLabel
+      ? _c(
+          "label",
+          {
+            staticClass: "col-sm-4 col-form-label text-sm-right",
+            attrs: { for: _vm.field.attribute }
+          },
+          [
+            _vm._v(
+              "\n\t\t" + _vm._s(_vm.field.label || _vm.fieldLabel) + "\n\t"
+            )
+          ]
+        )
+      : _vm._e(),
     _vm._v(" "),
     _c(
       "div",
-      { staticClass: "col-sm-8" },
+      { staticClass: "col-sm-8", class: { "offset-sm-4": !_vm.showLabel } },
       [
         _vm._t("field"),
         _vm._v(" "),
@@ -632,7 +641,7 @@ __vue_render__$5._withStripped = true;
     const component = (typeof script === 'function' ? script.options : script) || {};
 
     // For security concerns, we use only base name in production mode.
-    component.__file = "/Users/azamatx/projects/base-js/base-js/src/form/HorizontalLayout.vue";
+    component.__file = "/Users/azamatx/projects/base-js/package/src/form/HorizontalLayout.vue";
 
     if (!component.render) {
       component.render = template.render;
@@ -691,6 +700,43 @@ var HandlesValidationErrors = {
 	},
 };
 
+function setProp(obj, props, value) {
+	if (typeof props === "string") {
+		props = props.split('.');
+	}
+
+	const prop = props.shift();
+
+	if (!obj[prop]) {
+		Vue.set(obj, prop, {});
+	}
+
+	if (!props.length) {
+		if (typeof value === 'object' && !(value instanceof Array)) {
+			obj[prop] = {...obj[prop], ...value};
+		} else {
+			obj[prop] = value;
+		}
+		return
+	}
+
+	setProp(obj[prop], props, value);
+}
+
+function getProp(obj, props) {
+	if (typeof props === "string") {
+		props = props.split('.');
+	}
+
+	const prop = props.shift();
+
+	if (!obj[prop] || !props.length) {
+		return obj[prop]
+	}
+
+	return getProp(obj[prop], props)
+}
+
 var FormField = {
 	mixins: [ HandlesValidationErrors ],
 
@@ -712,9 +758,6 @@ var FormField = {
 	mounted() {
 		this.setInitialValue();
 
-		// Add a default fill methods for the field
-		this.field.fillFormData = this.fillFormData;
-
 		// Register a global event for setting the field's value
 		Base.$on(this.field.attribute + '-value', this.handleChange);
 
@@ -730,10 +773,13 @@ var FormField = {
 	},
 
 	watch: {
-		'field.value': function (value) {
-			Base.$emit(this.field.attribute + '-change', value);
+		'field.value': {
+			deep: true,
+			handler: function (value) {
+				Base.$emit(this.field.attribute + '-change', value);
 
-			this.fillModel();
+				this.fillModel();
+			}
 		}
 	},
 
@@ -755,14 +801,6 @@ var FormField = {
 		},
 
 		/**
-		 * Provide a function that fills a passed FormData object with the
-		 * field's internal value attribute
-		 */
-		fillFormData(formData) {
-			formData.append(this.field.attribute, this.field.value || '');
-		},
-
-		/**
 		 * Provide a function that fills a passed model object with the
 		 * field's internal value attribute
 		 */
@@ -771,7 +809,7 @@ var FormField = {
 				return;
 			}
 
-			this.$set(this.model, this.field.attribute, this.field.value);
+			setProp(this.model, this.field.attribute, this.field.value);
 		},
 
 		/**
@@ -801,14 +839,49 @@ class FieldList {
 
 		// Collect dependencies and assign
 		fields.forEach(field => {
+			// Add default method to get form data attribute
+			field.formDataName = () => {
+				let name = field.attribute;
+
+				if (field.attribute.indexOf('.') !== -1) {
+					name = field
+						.attribute.replace(/\./, '[')
+						.replace('.', '][') + ']';
+				}
+
+				return name;
+			};
+
 			// Add default form data fill method
-			field.fillFormData = formData => {
-				formData.append(field.attribute, field.value || '');
+			field.fillFormData = (formData) => {
+				function append(value, name) {
+					if (typeof value === 'object' && !(value instanceof File)) {
+						forOwn(value, (value, key) => {
+							append(value, `${name}[${key}]`);
+						});
+
+						return;
+					}
+
+					if (value === null) {
+						value = '';
+					}
+					else if (value === true) {
+						value = 1;
+					}
+					else if (value === false) {
+						value = 0;
+					}
+
+					formData.append(name, value);
+				}
+
+				append(field.value, field.formDataName());
 			};
 
 			// Add default model data fill method
 			field.fillModel = model => {
-				model[field.attribute] = field.value;
+				setProp(model, field.attribute, field.value);
 			};
 
 			if (!field.depends) {
@@ -827,12 +900,20 @@ class FieldList {
 		return this.byAttribute[attribute];
 	}
 
+	find(predicate) {
+		return find(this.list, predicate);
+	}
+
 	only(...attributes) {
 		return values(pick(this.byAttribute, attributes))
 	}
 
 	except(...attributes) {
 		return values(omit(this.byAttribute, attributes))
+	}
+
+	filter(predicate) {
+		return filter(this.list, predicate)
 	}
 
 }
@@ -876,6 +957,8 @@ var script$6 = {
 	mixins: [ FormField ],
 
 	props: {
+		readonly: {},
+		disabled: {},
 		placeholder: {},
 		step: {},
 		min: {},
@@ -890,11 +973,26 @@ var script$6 = {
 		inputType() {
 			return this.field.type || 'text'
 		},
+
 		/**
 		 * Get the input placeholder.
 		 */
 		inputPlaceholder() {
 			return this.placeholder || this.field.placeholder
+		},
+
+		/**
+		 * Get the input readonly state.
+		 */
+		inputReadonly() {
+			return this.readonly || this.field.readonly
+		},
+
+		/**
+		 * Get the input disabled state.
+		 */
+		inputDisabled() {
+			return this.disabled || this.field.disabled
 		},
 
 		/**
@@ -960,6 +1058,8 @@ var __vue_render__$6 = function() {
                 step: _vm.inputStep,
                 pattern: _vm.inputPattern,
                 placeholder: _vm.inputPlaceholder,
+                readonly: _vm.inputReadonly,
+                disabled: _vm.inputDisabled,
                 type: "checkbox"
               },
               domProps: {
@@ -1011,6 +1111,8 @@ var __vue_render__$6 = function() {
                   step: _vm.inputStep,
                   pattern: _vm.inputPattern,
                   placeholder: _vm.inputPlaceholder,
+                  readonly: _vm.inputReadonly,
+                  disabled: _vm.inputDisabled,
                   type: "radio"
                 },
                 domProps: { checked: _vm._q(_vm.field.value, null) },
@@ -1039,6 +1141,8 @@ var __vue_render__$6 = function() {
                   step: _vm.inputStep,
                   pattern: _vm.inputPattern,
                   placeholder: _vm.inputPlaceholder,
+                  readonly: _vm.inputReadonly,
+                  disabled: _vm.inputDisabled,
                   type: _vm.inputType
                 },
                 domProps: { value: _vm.field.value },
@@ -1084,7 +1188,7 @@ __vue_render__$6._withStripped = true;
     const component = (typeof script === 'function' ? script.options : script) || {};
 
     // For security concerns, we use only base name in production mode.
-    component.__file = "/Users/azamatx/projects/base-js/base-js/src/form/TextField.vue";
+    component.__file = "/Users/azamatx/projects/base-js/package/src/form/TextField.vue";
 
     if (!component.render) {
       component.render = template.render;
@@ -1144,6 +1248,7 @@ var script$7 = {
 			}
 
 			this.field.value = this.field.multiple ? files : files[0];
+			this.$refs.inputElement.value = '';
 		}
 
 	}
@@ -1164,6 +1269,7 @@ var __vue_render__$7 = function() {
     [
       _c("template", { slot: "field" }, [
         _c("input", {
+          ref: "inputElement",
           staticClass: "form-control",
           class: _vm.errorClasses,
           attrs: {
@@ -1171,7 +1277,8 @@ var __vue_render__$7 = function() {
             dusk: _vm.field.attribute,
             type: "file",
             multiple: _vm.field.multiple || false,
-            placeholder: _vm.inputPlaceholder
+            placeholder: _vm.inputPlaceholder,
+            accept: _vm.field.mimeTypes
           },
           on: {
             input: function($event) {
@@ -1212,7 +1319,7 @@ __vue_render__$7._withStripped = true;
     const component = (typeof script === 'function' ? script.options : script) || {};
 
     // For security concerns, we use only base name in production mode.
-    component.__file = "/Users/azamatx/projects/base-js/base-js/src/form/FileField.vue";
+    component.__file = "/Users/azamatx/projects/base-js/package/src/form/FileField.vue";
 
     if (!component.render) {
       component.render = template.render;
@@ -1247,6 +1354,19 @@ __vue_render__$7._withStripped = true;
 
 var script$8 = {
 	mixins: [ FormField ],
+
+	props: {
+		disabled: {},
+	},
+
+	computed: {
+		/**
+		 * Get the input disabled state.
+		 */
+		inputDisabled() {
+			return this.disabled || this.field.disabled
+		},
+	}
 };
 
 /* script */
@@ -1277,7 +1397,8 @@ var __vue_render__$8 = function() {
             class: _vm.errorClasses,
             attrs: {
               id: _vm.field.name,
-              multiple: _vm.field.multiple || false
+              multiple: _vm.field.multiple || false,
+              disabled: _vm.inputDisabled
             },
             on: {
               change: function($event) {
@@ -1354,7 +1475,7 @@ __vue_render__$8._withStripped = true;
     const component = (typeof script === 'function' ? script.options : script) || {};
 
     // For security concerns, we use only base name in production mode.
-    component.__file = "/Users/azamatx/projects/base-js/base-js/src/form/SelectField.vue";
+    component.__file = "/Users/azamatx/projects/base-js/package/src/form/SelectField.vue";
 
     if (!component.render) {
       component.render = template.render;
@@ -1394,6 +1515,7 @@ var script$9 = {
 
 	props: {
 		fieldLabel: { type: String },
+		disabled: {},
 	},
 
 	computed: {
@@ -1402,7 +1524,14 @@ var script$9 = {
 		 */
 		inputPlaceholder() {
 			return this.placeholder || this.field.placeholder
-		}
+		},
+
+		/**
+		 * Get the input disabled state.
+		 */
+		inputDisabled() {
+			return this.disabled || this.field.disabled
+		},
 	},
 
 	methods: {
@@ -1428,64 +1557,78 @@ var __vue_render__$9 = function() {
   var _vm = this;
   var _h = _vm.$createElement;
   var _c = _vm._self._c || _h;
-  return _c("div", { staticClass: "form-check" }, [
-    _c("input", {
-      directives: [
-        {
-          name: "model",
-          rawName: "v-model",
-          value: _vm.field.value,
-          expression: "field.value"
-        }
-      ],
-      staticClass: "form-check-input",
-      class: _vm.errorClasses,
-      attrs: {
-        id: _vm.field.attribute,
-        dusk: _vm.field.attribute,
-        type: "checkbox",
-        placeholder: _vm.inputPlaceholder
-      },
-      domProps: {
-        checked: Array.isArray(_vm.field.value)
-          ? _vm._i(_vm.field.value, null) > -1
-          : _vm.field.value
-      },
-      on: {
-        change: function($event) {
-          var $$a = _vm.field.value,
-            $$el = $event.target,
-            $$c = $$el.checked ? true : false;
-          if (Array.isArray($$a)) {
-            var $$v = null,
-              $$i = _vm._i($$a, $$v);
-            if ($$el.checked) {
-              $$i < 0 && _vm.$set(_vm.field, "value", $$a.concat([$$v]));
-            } else {
-              $$i > -1 &&
-                _vm.$set(
-                  _vm.field,
-                  "value",
-                  $$a.slice(0, $$i).concat($$a.slice($$i + 1))
-                );
+  return _c(
+    _vm.layoutComponent,
+    { tag: "component", attrs: { field: _vm.field, "show-label": false } },
+    [
+      _c("template", { slot: "field" }, [
+        _c("div", { staticClass: "form-check" }, [
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.field.value,
+                expression: "field.value"
+              }
+            ],
+            staticClass: "form-check-input",
+            class: _vm.errorClasses,
+            attrs: {
+              id: _vm.field.attribute,
+              dusk: _vm.field.attribute,
+              type: "checkbox",
+              placeholder: _vm.inputPlaceholder,
+              disabled: _vm.inputDisabled
+            },
+            domProps: {
+              checked: Array.isArray(_vm.field.value)
+                ? _vm._i(_vm.field.value, null) > -1
+                : _vm.field.value
+            },
+            on: {
+              change: function($event) {
+                var $$a = _vm.field.value,
+                  $$el = $event.target,
+                  $$c = $$el.checked ? true : false;
+                if (Array.isArray($$a)) {
+                  var $$v = null,
+                    $$i = _vm._i($$a, $$v);
+                  if ($$el.checked) {
+                    $$i < 0 && _vm.$set(_vm.field, "value", $$a.concat([$$v]));
+                  } else {
+                    $$i > -1 &&
+                      _vm.$set(
+                        _vm.field,
+                        "value",
+                        $$a.slice(0, $$i).concat($$a.slice($$i + 1))
+                      );
+                  }
+                } else {
+                  _vm.$set(_vm.field, "value", $$c);
+                }
+              }
             }
-          } else {
-            _vm.$set(_vm.field, "value", $$c);
-          }
-        }
-      }
-    }),
-    _vm._v(" "),
-    _c("label", { attrs: { for: "field.attribute" } }, [
-      _vm._v("\n\t\t" + _vm._s(_vm.field.label || _vm.fieldLabel) + "\n\t")
-    ]),
-    _vm._v(" "),
-    _vm.hasError
-      ? _c("div", { staticClass: "invalid-feedback" }, [
-          _vm._v("\n\t\t" + _vm._s(_vm.firstError) + "\n\t")
+          }),
+          _vm._v(" "),
+          _c("label", { attrs: { for: "field.attribute" } }, [
+            _vm._v(
+              "\n\t\t\t\t" +
+                _vm._s(_vm.field.label || _vm.fieldLabel) +
+                "\n\t\t\t"
+            )
+          ]),
+          _vm._v(" "),
+          _vm.hasError
+            ? _c("div", { staticClass: "invalid-feedback" }, [
+                _vm._v("\n\t\t\t\t" + _vm._s(_vm.firstError) + "\n\t\t\t")
+              ])
+            : _vm._e()
         ])
-      : _vm._e()
-  ])
+      ])
+    ],
+    2
+  )
 };
 var __vue_staticRenderFns__$9 = [];
 __vue_render__$9._withStripped = true;
@@ -1507,7 +1650,7 @@ __vue_render__$9._withStripped = true;
     const component = (typeof script === 'function' ? script.options : script) || {};
 
     // For security concerns, we use only base name in production mode.
-    component.__file = "/Users/azamatx/projects/base-js/base-js/src/form/CheckboxField.vue";
+    component.__file = "/Users/azamatx/projects/base-js/package/src/form/CheckboxField.vue";
 
     if (!component.render) {
       component.render = template.render;
@@ -1546,12 +1689,28 @@ var script$a = {
 	mixins: [ FormField ],
 
 	props: {
+		readonly: {},
+		disabled: {},
 		placeholder: {},
 		cols: {},
 		rows: {},
 	},
 
 	computed: {
+
+		/**
+		 * Get the input readonly state.
+		 */
+		inputReadonly() {
+			return this.readonly || this.field.readonly
+		},
+
+		/**
+		 * Get the input disabled state.
+		 */
+		inputDisabled() {
+			return this.disabled || this.field.disabled
+		},
 
 		/**
 		 * Get the input placeholder.
@@ -1605,7 +1764,9 @@ var __vue_render__$a = function() {
             dusk: _vm.field.attribute,
             cols: _vm.inputCols,
             rows: _vm.inputRows,
-            placeholder: _vm.inputPlaceholder
+            placeholder: _vm.inputPlaceholder,
+            readonly: _vm.inputReadonly,
+            disabled: _vm.inputDisabled
           },
           domProps: { value: _vm.field.value },
           on: {
@@ -1650,7 +1811,7 @@ __vue_render__$a._withStripped = true;
     const component = (typeof script === 'function' ? script.options : script) || {};
 
     // For security concerns, we use only base name in production mode.
-    component.__file = "/Users/azamatx/projects/base-js/base-js/src/form/TextareaField.vue";
+    component.__file = "/Users/azamatx/projects/base-js/package/src/form/TextareaField.vue";
 
     if (!component.render) {
       component.render = template.render;
@@ -1706,5 +1867,5 @@ var plugin = {
 	}
 };
 
-export { Base$1 as Base, plugin as Plugin, HandlesValidationErrors, FieldLayoutMixin, FormField, FormComponent, Field, Fields, Undefined as FormUndefined, DefaultLayout, VericalLayout as VerticalLayout, HorizontalLayout, TextField as FormTextField, FileField as FormFileField, SelectField as FormSelectField, CheckboxField as FormCheckboxField, TextareaField as FormTextareaField };
+export { Base$1 as Base, plugin as Plugin, HandlesValidationErrors, FieldLayoutMixin, FormField, FormComponent, Field, Fields, Undefined as FormUndefined, DefaultLayout, VericalLayout as VerticalLayout, HorizontalLayout, TextField as FormTextField, FileField as FormFileField, SelectField as FormSelectField, CheckboxField as FormCheckboxField, TextareaField as FormTextareaField, setProp, getProp };
 //# sourceMappingURL=base.esm.js.map

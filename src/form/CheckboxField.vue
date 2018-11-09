@@ -1,21 +1,25 @@
 <template>
-	<div class="form-check">
-		<input
-			:id="field.attribute"
-			:dusk="field.attribute"
-			type="checkbox"
-			v-model="field.value"
-			class="form-check-input"
-			:class="errorClasses"
-			:placeholder="inputPlaceholder"
-		/>
-		<label for="field.attribute">
-			{{ field.label || fieldLabel }}
-		</label>
-		<div v-if="hasError" class="invalid-feedback">
-			{{ firstError }}
-		</div>
-	</div>
+	<component :is="layoutComponent" :field="field" :show-label="false">
+		<template slot="field">
+			<div class="form-check">
+				<input
+					:id="field.attribute"
+					:dusk="field.attribute"
+					type="checkbox"
+					v-model="field.value"
+					class="form-check-input"
+					:class="errorClasses"
+					:placeholder="inputPlaceholder"
+					:disabled="inputDisabled"/>
+				<label for="field.attribute">
+					{{ field.label || fieldLabel }}
+				</label>
+				<div v-if="hasError" class="invalid-feedback">
+					{{ firstError }}
+				</div>
+			</div>
+		</template>
+	</component>
 </template>
 
 <script>
@@ -28,6 +32,7 @@
 
 		props: {
 			fieldLabel: { type: String },
+			disabled: {},
 		},
 
 		computed: {
@@ -36,7 +41,14 @@
 			 */
 			inputPlaceholder() {
 				return this.placeholder || this.field.placeholder
-			}
+			},
+
+			/**
+			 * Get the input disabled state.
+			 */
+			inputDisabled() {
+				return this.disabled || this.field.disabled
+			},
 		},
 
 		methods: {

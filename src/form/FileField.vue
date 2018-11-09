@@ -5,11 +5,13 @@
 				:id="field.attribute"
 				:dusk="field.attribute"
 				type="file"
+				ref="inputElement"
 				v-on:input="input($event)"
 				:multiple="field.multiple || false"
 				class="form-control"
 				:class="errorClasses"
 				:placeholder="inputPlaceholder"
+				:accept="field.mimeTypes"
 			/>
 		</template>
 		<template slot="errors">
@@ -49,7 +51,8 @@
 					files.push($event.target.files[i]);
 				}
 
-				this.field.value = this.field.multiple ? files : files[0]
+				this.field.value = this.field.multiple ? files : files[0];
+				this.$refs.inputElement.value = '';
 			}
 
 		}
