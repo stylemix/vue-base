@@ -6549,7 +6549,8 @@ var script$a = {
     disabled: {},
     placeholder: {},
     cols: {},
-    rows: {}
+    rows: {},
+    maxlength: {}
   },
   computed: {
     /**
@@ -6585,6 +6586,13 @@ var script$a = {
      */
     inputRows: function inputRows() {
       return this.rows || this.field.rows;
+    },
+
+    /**
+     * Get the textarea maxlength.
+     */
+    inputMaxlength: function inputMaxlength() {
+      return this.maxlength || this.field.maxlength;
     }
   }
 };
@@ -6618,6 +6626,7 @@ var __vue_render__$a = function() {
             dusk: _vm.field.attribute,
             cols: _vm.inputCols,
             rows: _vm.inputRows,
+            maxlength: _vm.inputMaxlength,
             placeholder: _vm.inputPlaceholder,
             readonly: _vm.inputReadonly,
             disabled: _vm.inputDisabled

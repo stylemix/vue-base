@@ -6,6 +6,7 @@
 				:dusk="field.attribute"
 				:cols="inputCols"
 				:rows="inputRows"
+				:maxlength="inputMaxlength"
 				v-model="field.value"
 				class="form-control"
 				:class="errorClasses"
@@ -36,6 +37,7 @@
 			placeholder: {},
 			cols: {},
 			rows: {},
+			maxlength: {},
 		},
 
 		computed: {
@@ -73,6 +75,13 @@
 			 */
 			inputRows() {
 				return this.rows || this.field.rows
+			},
+
+			/**
+			 * Get the textarea maxlength.
+			 */
+			inputMaxlength() {
+				return this.maxlength || this.field.maxlength
 			},
 		},
 	}
