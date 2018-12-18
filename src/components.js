@@ -1,24 +1,26 @@
-import Field from './common/Field.vue'
-import Fields from './common/Fields.vue'
-import DefaultLayout from './common/DefaultLayout.vue'
-import FormUndefined from './form/Undefined.vue'
-import VerticalLayout from './form/VericalLayout.vue'
-import HorizontalLayout from './form/HorizontalLayout.vue'
-import FormTextField from './form/TextField.vue'
-import FormFileField from './form/FileField.vue'
-import FormSelectField from './form/SelectField.vue'
-import FormRadiosField from './form/RadiosField.vue'
-import FormCheckboxField from './form/CheckboxField.vue'
-import FormCheckboxesField from './form/CheckboxesField.vue'
-import FormTextareaField from './form/TextareaField.vue'
+import Field from './common/Field.vue';
+import Fields from './common/Fields.vue';
+import EmptyLayout from './common/EmptyLayout.vue';
+import VerticalLayout from './layouts/VericalLayout.vue';
+import HorizontalLayout from './layouts/HorizontalLayout.vue';
+import InlineLayout from './layouts/InlineLayout.vue';
+import FormUndefined from './fields/Undefined.vue';
+import FormTextField from './fields/TextField.vue';
+import FormFileField from './fields/FileField.vue';
+import FormSelectField from './fields/SelectField.vue';
+import FormRadiosField from './fields/RadiosField.vue';
+import FormCheckboxField from './fields/CheckboxField.vue';
+import FormCheckboxesField from './fields/CheckboxesField.vue';
+import FormTextareaField from './fields/TextareaField.vue';
 
 export {
 	Field,
 	Fields,
-	FormUndefined,
-	DefaultLayout,
+	EmptyLayout,
 	VerticalLayout,
 	HorizontalLayout,
+	InlineLayout,
+	FormUndefined,
 	FormTextField,
 	FormFileField,
 	FormSelectField,

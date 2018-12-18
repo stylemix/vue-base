@@ -1,5 +1,9 @@
 <template>
-	<component :is="layoutComponent" :field="field" :show-label="false">
+	<component
+		:is="layoutComponent"
+		:field="field"
+		:errors="errors"
+		:show-label="false">
 		<template slot="field">
 			<div class="form-check">
 				<input
@@ -14,7 +18,7 @@
 					{{ field.label || fieldLabel }}
 				</label>
 				<div v-if="hasError" class="invalid-feedback">
-					{{ firstError }}
+					{{ errorMessages }}
 				</div>
 			</div>
 		</template>

@@ -1,5 +1,8 @@
 <template>
-	<component :is="layoutComponent" :field="field">
+	<component
+		:is="layoutComponent"
+		:field="field"
+		:errors="errors">
 		<template slot="field">
 			<textarea
 				:id="field.attribute"
@@ -14,11 +17,6 @@
 				:readonly="inputReadonly"
 				:disabled="inputDisabled">
 			</textarea>
-		</template>
-		<template slot="errors">
-			<div v-if="hasError" class="invalid-feedback">
-				{{ firstError }}
-			</div>
 		</template>
 	</component>
 </template>

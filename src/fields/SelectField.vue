@@ -1,5 +1,8 @@
 <template>
-	<component :is="layoutComponent" :field="field">
+	<component
+		:is="layoutComponent"
+		:field="field"
+		:errors="errors">
 		<template slot="field">
 			<select
 				:id="field.name"
@@ -18,11 +21,6 @@
 					{{ option.label }}
 				</option>
 			</select>
-		</template>
-		<template slot="errors">
-			<div v-if="hasError" class="invalid-feedback">
-				{{ firstError }}
-			</div>
 		</template>
 	</component>
 </template>

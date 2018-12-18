@@ -1,5 +1,8 @@
 <template>
-	<component :is="layoutComponent" :field="field">
+	<component
+		:is="layoutComponent"
+		:field="field"
+		:errors="errors">
 		<template slot="field">
 			<input
 				:id="field.attribute"
@@ -15,11 +18,6 @@
 				:placeholder="inputPlaceholder"
 				:readonly="inputReadonly"
 				:disabled="inputDisabled"/>
-		</template>
-		<template slot="errors">
-			<div v-if="hasError" class="invalid-feedback">
-				{{ firstError }}
-			</div>
 		</template>
 	</component>
 </template>

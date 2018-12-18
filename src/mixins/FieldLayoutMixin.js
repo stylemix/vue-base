@@ -1,4 +1,8 @@
+import HandlesValidationErrors from './HandlesValidationErrors';
+
 export default {
+	mixins: [ HandlesValidationErrors ],
+
 	props: {
 		field: {type: Object, required: true},
 		fieldLabel: {type: String},

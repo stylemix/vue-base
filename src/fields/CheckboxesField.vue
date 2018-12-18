@@ -1,5 +1,9 @@
 <template>
-	<component :is="layoutComponent" :field="field" :show-label="false">
+	<component
+		:is="layoutComponent"
+		:field="field"
+		:errors="errors"
+		:show-label="false">
 		<template slot="field">
 			<div v-for="(option, index) in field.options"
 				 :key="option.value"
@@ -21,6 +25,7 @@
 </template>
 
 <script>
+	import isArray from 'lodash-es/isArray';
 	import { FormField } from '../mixins';
 
 	export default {
@@ -37,7 +42,17 @@
 				let layout = this.checkboxLayout || this.field.checkboxLayout;
 				return `form-check-${layout}`;
 			}
-		}
+		},
 
+		methods: {
+			/*
+			 * Set the initial value for the field
+			 */
+			setInitialValue() {
+				if (!isArray(this.field.value)) {
+					this.field.value = [];
+				}
+			},
+		}
 	}
 </script>

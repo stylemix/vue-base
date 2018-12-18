@@ -8,60 +8,10 @@ import omit from 'lodash-es/omit';
 import filter from 'lodash-es/filter';
 import find from 'lodash-es/find';
 import forOwn from 'lodash-es/forOwn';
+import isArray from 'lodash-es/isArray';
+import assign from 'lodash-es/assign';
 
-class Base$1 {
-    constructor(config) {
-        this.bus = new Vue();
-        this.bootingCallbacks = [];
-        this.config = config;
-    }
-
-    /**
-     * Register a callback to be called before Nova starts. This is used to bootstrap
-     * addons, tools, custom fields, or anything else Nova needs
-     */
-    booting(callback) {
-        this.bootingCallbacks.push(callback);
-    }
-
-    /**
-     * Execute all of the booting callbacks.
-     */
-    boot() {
-        //this.bootingCallbacks.forEach(callback => callback(Vue, router))
-
-        this.bootingCallbacks = [];
-    }
-
-    /**
-     * Register a listener on Nova's built-in event bus
-     */
-    $on(...args) {
-        this.bus.$on(...args);
-    }
-
-    /**
-     * Register a one-time listener on the event bus
-     */
-    $once(...args) {
-        this.bus.$once(...args);
-    }
-
-    /**
-     * De-register a listener on the event bus
-     */
-    $off(...args) {
-        this.bus.$off(...args);
-    }
-
-    /**
-     * Emit an event on the event bus
-     */
-    $emit(...args) {
-        this.bus.$emit(...args);
-    }
-}
-
+//
 //
 //
 //
@@ -76,6 +26,7 @@ class Base$1 {
 
 var script = {
 	name: "Field",
+
 	props: {
 		field: {
 			default: function () {
@@ -86,13 +37,21 @@ var script = {
 		},
 		model: Object,
 		errors: {},
+		eventBus: { type: Object },
 		layout: {}
 	},
+
+	computed: {
+		$events () {
+			return this.eventBus || this.$parent;
+		}
+	},
+
 	methods: {
 		input: function ($event) {
 			this.$emit('input', $event);
 		}
-	}
+	},
 };
 
 /* script */
@@ -109,6 +68,7 @@ var __vue_render__ = function() {
       field: _vm.field,
       model: _vm.model,
       errors: _vm.errors,
+      "event-bus": _vm.$events,
       layout: _vm.layout
     },
     on: { input: _vm.input }
@@ -258,8 +218,15 @@ var script$1 = {
 		errors: {
 			default: () => new Errors()
 		},
+		eventBus: { type: Object },
 		layout: String
-	}
+	},
+
+	computed: {
+		$events () {
+			return this.eventBus || this.$parent;
+		}
+	},
 };
 
 /* script */
@@ -279,6 +246,7 @@ var __vue_render__$1 = function() {
           field: field,
           model: _vm.model,
           errors: _vm.errors,
+          "event-bus": _vm.$events,
           layout: _vm.layout
         }
       })
@@ -336,7 +304,45 @@ __vue_render__$1._withStripped = true;
     undefined
   );
 
+let config = {
+	defaultLayout: 'vertical',
+	errorMessages: 'first',
+	errorMessagesGlue: '<br />',
+};
+
+var HandlesValidationErrors = {
+	props: {
+		errors: {
+			default: () => new Errors(),
+		},
+	},
+
+	data: () => ({
+		errorClass: '',
+	}),
+
+	computed: {
+		errorClasses() {
+			return this.hasError ? [this.errorClass] : []
+		},
+
+		hasError() {
+			return this.errors.has(this.field.attribute)
+		},
+
+		errorMessages() {
+			if (this.hasError && config.errorMessages) {
+				return config.errorMessages === 'first'
+					? this.errors.first(this.field.attribute)
+					: this.errors.get(this.field.attribute).join(config.errorMessagesGlue)
+			}
+		},
+	},
+};
+
 var FieldLayoutMixin = {
+	mixins: [ HandlesValidationErrors ],
+
 	props: {
 		field: {type: Object, required: true},
 		fieldLabel: {type: String},
@@ -382,7 +388,7 @@ __vue_render__$2._withStripped = true;
     const component = (typeof script === 'function' ? script.options : script) || {};
 
     // For security concerns, we use only base name in production mode.
-    component.__file = "/Users/azamatx/projects/base-js/package/src/common/DefaultLayout.vue";
+    component.__file = "/Users/azamatx/projects/base-js/package/src/common/EmptyLayout.vue";
 
     if (!component.render) {
       component.render = template.render;
@@ -402,7 +408,7 @@ __vue_render__$2._withStripped = true;
   
 
   
-  var DefaultLayout = __vue_normalize__$2(
+  var EmptyLayout = __vue_normalize__$2(
     { render: __vue_render__$2, staticRenderFns: __vue_staticRenderFns__$2 },
     __vue_inject_styles__$2,
     __vue_script__$2,
@@ -414,12 +420,9 @@ __vue_render__$2._withStripped = true;
   );
 
 //
-//
-//
-//
 
 var script$3 = {
-	name: 'FormUndefinedField'
+	mixins: [ FieldLayoutMixin ]
 };
 
 /* script */
@@ -430,15 +433,56 @@ var __vue_render__$3 = function() {
   var _vm = this;
   var _h = _vm.$createElement;
   var _c = _vm._self._c || _h;
-  return _c("div")
+  return _c(
+    "div",
+    { staticClass: "form-group", class: _vm.errorClasses },
+    [
+      _vm.showLabel
+        ? _c("label", { attrs: { for: _vm.field.attribute } }, [
+            _vm._v(
+              "\n\t\t" + _vm._s(_vm.fieldLabel || _vm.field.label) + "\n\t"
+            )
+          ])
+        : _c(
+            "label",
+            {
+              staticClass: "placeholder-label",
+              attrs: { for: _vm.field.attribute }
+            },
+            [_vm._v("\n\t\t \n\t")]
+          ),
+      _vm._v(" "),
+      _vm._t("field"),
+      _vm._v(" "),
+      _vm._t("errors", [
+        _vm.hasError
+          ? _c("div", {
+              staticClass: "invalid-feedback d-block",
+              domProps: { innerHTML: _vm._s(_vm.errorMessages) }
+            })
+          : _vm._e()
+      ]),
+      _vm._v(" "),
+      _vm.showHelpText && _vm.field.helpText
+        ? _c("small", { staticClass: "form-text text-muted" }, [
+            _vm._v("\n\t\t" + _vm._s(_vm.field.helpText) + "\n\t")
+          ])
+        : _vm._e()
+    ],
+    2
+  )
 };
 var __vue_staticRenderFns__$3 = [];
 __vue_render__$3._withStripped = true;
 
   /* style */
-  const __vue_inject_styles__$3 = undefined;
+  const __vue_inject_styles__$3 = function (inject) {
+    if (!inject) return
+    inject("data-v-5d054abf_0", { source: "\n.placeholder-label[data-v-5d054abf] {\n\tdisplay: none;\n}\n.col .placeholder-label[data-v-5d054abf] {\n\tdisplay: block;\n}\n[class*=\" col-\"] .placeholder-label[data-v-5d054abf] {\n\tdisplay: block;\n}\n", map: {"version":3,"sources":["/Users/azamatx/projects/base-js/package/src/layouts/VericalLayout.vue"],"names":[],"mappings":";AAiCA;CACA,cAAA;CACA;AAEA;CACA,eAAA;CACA;AACA;CACA,eAAA;CACA","file":"VericalLayout.vue","sourcesContent":["<template>\n\t<div class=\"form-group\" :class=\"errorClasses\">\n\t\t<label v-if=\"showLabel\"\n\t\t\t   :for=\"field.attribute\">\n\t\t\t{{ fieldLabel || field.label }}\n\t\t</label>\n\t\t<label v-else class=\"placeholder-label\"\n\t\t\t   :for=\"field.attribute\">\n\t\t\t&nbsp;\n\t\t</label>\n\t\t<slot name=\"field\"/>\n\t\t<slot name=\"errors\">\n\t\t\t<div v-if=\"hasError\"\n\t\t\t\t v-html=\"errorMessages\"\n\t\t\t\t class=\"invalid-feedback d-block\">\n\t\t\t</div>\n\t\t</slot>\n\t\t<small v-if=\"showHelpText && field.helpText\"\n\t\t\t   class=\"form-text text-muted\">\n\t\t\t{{ field.helpText }}\n\t\t</small>\n\t</div>\n</template>\n\n<script>\n\timport FieldLayoutMixin from \"../mixins/FieldLayoutMixin\";\n\n\texport default {\n\t\tmixins: [ FieldLayoutMixin ]\n\t}\n</script>\n\n<style type=\"text/scss\" scoped>\n\t.placeholder-label {\n\t\tdisplay: none;\n\t}\n\n\t.col .placeholder-label {\n\t\tdisplay: block;\n\t}\n\t[class*=\" col-\"] .placeholder-label {\n\t\tdisplay: block;\n\t}\n</style>\n"]}, media: undefined });
+
+  };
   /* scoped */
-  const __vue_scope_id__$3 = undefined;
+  const __vue_scope_id__$3 = "data-v-5d054abf";
   /* module identifier */
   const __vue_module_identifier__$3 = undefined;
   /* functional template */
@@ -452,7 +496,7 @@ __vue_render__$3._withStripped = true;
     const component = (typeof script === 'function' ? script.options : script) || {};
 
     // For security concerns, we use only base name in production mode.
-    component.__file = "/Users/azamatx/projects/base-js/package/src/form/Undefined.vue";
+    component.__file = "/Users/azamatx/projects/base-js/package/src/layouts/VericalLayout.vue";
 
     if (!component.render) {
       component.render = template.render;
@@ -464,22 +508,101 @@ __vue_render__$3._withStripped = true;
 
     component._scopeId = scope;
 
+    {
+      let hook;
+      if (style) {
+        hook = function(context) {
+          style.call(this, createInjector(context));
+        };
+      }
+
+      if (hook !== undefined) {
+        if (component.functional) {
+          // register for functional component in vue file
+          const originalRender = component.render;
+          component.render = function renderWithStyleInjection(h, context) {
+            hook.call(context);
+            return originalRender(h, context)
+          };
+        } else {
+          // inject component registration as beforeCreate hook
+          const existing = component.beforeCreate;
+          component.beforeCreate = existing ? [].concat(existing, hook) : [hook];
+        }
+      }
+    }
+
     return component
   }
   /* style inject */
-  
+  function __vue_create_injector__() {
+    const head = document.head || document.getElementsByTagName('head')[0];
+    const styles = __vue_create_injector__.styles || (__vue_create_injector__.styles = {});
+    const isOldIE =
+      typeof navigator !== 'undefined' &&
+      /msie [6-9]\\b/.test(navigator.userAgent.toLowerCase());
+
+    return function addStyle(id, css) {
+      if (document.querySelector('style[data-vue-ssr-id~="' + id + '"]')) return // SSR styles are present.
+
+      const group = isOldIE ? css.media || 'default' : id;
+      const style = styles[group] || (styles[group] = { ids: [], parts: [], element: undefined });
+
+      if (!style.ids.includes(id)) {
+        let code = css.source;
+        let index = style.ids.length;
+
+        style.ids.push(id);
+
+        if (isOldIE) {
+          style.element = style.element || document.querySelector('style[data-group=' + group + ']');
+        }
+
+        if (!style.element) {
+          const el = style.element = document.createElement('style');
+          el.type = 'text/css';
+
+          if (css.media) el.setAttribute('media', css.media);
+          if (isOldIE) {
+            el.setAttribute('data-group', group);
+            el.setAttribute('data-next-index', '0');
+          }
+
+          head.appendChild(el);
+        }
+
+        if (isOldIE) {
+          index = parseInt(style.element.getAttribute('data-next-index'));
+          style.element.setAttribute('data-next-index', index + 1);
+        }
+
+        if (style.element.styleSheet) {
+          style.parts.push(code);
+          style.element.styleSheet.cssText = style.parts
+            .filter(Boolean)
+            .join('\n');
+        } else {
+          const textNode = document.createTextNode(code);
+          const nodes = style.element.childNodes;
+          if (nodes[index]) style.element.removeChild(nodes[index]);
+          if (nodes.length) style.element.insertBefore(textNode, nodes[index]);
+          else style.element.appendChild(textNode);
+        }
+      }
+    }
+  }
   /* style inject SSR */
   
 
   
-  var Undefined = __vue_normalize__$3(
+  var VericalLayout = __vue_normalize__$3(
     { render: __vue_render__$3, staticRenderFns: __vue_staticRenderFns__$3 },
     __vue_inject_styles__$3,
     __vue_script__$3,
     __vue_scope_id__$3,
     __vue_is_functional_template__$3,
     __vue_module_identifier__$3,
-    undefined,
+    __vue_create_injector__,
     undefined
   );
 
@@ -497,30 +620,46 @@ var __vue_render__$4 = function() {
   var _vm = this;
   var _h = _vm.$createElement;
   var _c = _vm._self._c || _h;
-  return _c(
-    "div",
-    { staticClass: "form-group" },
-    [
-      _vm.showLabel
-        ? _c("label", { attrs: { for: _vm.field.attribute } }, [
+  return _c("div", { staticClass: "form-group row", class: _vm.errorClasses }, [
+    _vm.showLabel
+      ? _c(
+          "label",
+          {
+            staticClass: "col-sm-4 col-form-label text-sm-right",
+            attrs: { for: _vm.field.attribute }
+          },
+          [
             _vm._v(
-              "\n\t\t" + _vm._s(_vm.field.label || _vm.fieldLabel) + "\n\t"
+              "\n\t\t" + _vm._s(_vm.fieldLabel || _vm.field.label) + "\n\t"
             )
-          ])
-        : _vm._e(),
-      _vm._v(" "),
-      _vm._t("field"),
-      _vm._v(" "),
-      _vm._t("errors"),
-      _vm._v(" "),
-      _vm.showHelpText
-        ? _c("small", { staticClass: "form-text text-muted" }, [
-            _vm._v("\n\t\t" + _vm._s(_vm.field.helpText) + "\n\t")
-          ])
-        : _vm._e()
-    ],
-    2
-  )
+          ]
+        )
+      : _vm._e(),
+    _vm._v(" "),
+    _c(
+      "div",
+      { staticClass: "col-sm-8", class: { "offset-sm-4": !_vm.showLabel } },
+      [
+        _vm._t("field"),
+        _vm._v(" "),
+        _vm._t("errors", [
+          _vm.hasError
+            ? _c("div", {
+                staticClass: "invalid-feedback d-block",
+                domProps: { innerHTML: _vm._s(_vm.errorMessages) }
+              })
+            : _vm._e()
+        ]),
+        _vm._v(" "),
+        _vm.showHelpText && _vm.field.helpText
+          ? _c("small", { staticClass: "form-text text-muted" }, [
+              _vm._v("\n\t\t\t" + _vm._s(_vm.field.helpText) + "\n\t\t")
+            ])
+          : _vm._e()
+      ],
+      2
+    )
+  ])
 };
 var __vue_staticRenderFns__$4 = [];
 __vue_render__$4._withStripped = true;
@@ -542,7 +681,7 @@ __vue_render__$4._withStripped = true;
     const component = (typeof script === 'function' ? script.options : script) || {};
 
     // For security concerns, we use only base name in production mode.
-    component.__file = "/Users/azamatx/projects/base-js/package/src/form/VericalLayout.vue";
+    component.__file = "/Users/azamatx/projects/base-js/package/src/layouts/HorizontalLayout.vue";
 
     if (!component.render) {
       component.render = template.render;
@@ -562,7 +701,7 @@ __vue_render__$4._withStripped = true;
   
 
   
-  var VericalLayout = __vue_normalize__$4(
+  var HorizontalLayout = __vue_normalize__$4(
     { render: __vue_render__$4, staticRenderFns: __vue_staticRenderFns__$4 },
     __vue_inject_styles__$4,
     __vue_script__$4,
@@ -587,39 +726,35 @@ var __vue_render__$5 = function() {
   var _vm = this;
   var _h = _vm.$createElement;
   var _c = _vm._self._c || _h;
-  return _c("div", { staticClass: "form-group row" }, [
-    _vm.showLabel
-      ? _c(
-          "label",
-          {
-            staticClass: "col-sm-4 col-form-label text-sm-right",
-            attrs: { for: _vm.field.attribute }
-          },
-          [
-            _vm._v(
-              "\n\t\t" + _vm._s(_vm.field.label || _vm.fieldLabel) + "\n\t"
-            )
-          ]
-        )
-      : _vm._e(),
-    _vm._v(" "),
-    _c(
-      "div",
-      { staticClass: "col-sm-8", class: { "offset-sm-4": !_vm.showLabel } },
-      [
-        _vm._t("field"),
-        _vm._v(" "),
-        _vm._t("errors"),
-        _vm._v(" "),
-        _vm.showHelpText
-          ? _c("small", { staticClass: "form-text text-muted" }, [
-              _vm._v("\n\t\t\t" + _vm._s(_vm.field.helpText) + "\n\t\t")
-            ])
+  return _c(
+    "div",
+    { staticClass: "d-inline-block mb-2 mr-sm-2", class: _vm.errorClasses },
+    [
+      _c(
+        "label",
+        { staticClass: "sr-only", attrs: { for: _vm.field.attribute } },
+        [_vm._v("\n\t\t" + _vm._s(_vm.field.label || _vm.fieldLabel) + "\n\t")]
+      ),
+      _vm._v(" "),
+      _vm._t("field"),
+      _vm._v(" "),
+      _vm._t("errors", [
+        _vm.hasError
+          ? _c("div", {
+              staticClass: "invalid-tooltip d-block",
+              domProps: { innerHTML: _vm._s(_vm.errorMessages) }
+            })
           : _vm._e()
-      ],
-      2
-    )
-  ])
+      ]),
+      _vm._v(" "),
+      _vm.showHelpText && _vm.field.helpText
+        ? _c("small", { staticClass: "form-text text-muted" }, [
+            _vm._v("\n\t\t" + _vm._s(_vm.field.helpText) + "\n\t")
+          ])
+        : _vm._e()
+    ],
+    2
+  )
 };
 var __vue_staticRenderFns__$5 = [];
 __vue_render__$5._withStripped = true;
@@ -641,7 +776,7 @@ __vue_render__$5._withStripped = true;
     const component = (typeof script === 'function' ? script.options : script) || {};
 
     // For security concerns, we use only base name in production mode.
-    component.__file = "/Users/azamatx/projects/base-js/package/src/form/HorizontalLayout.vue";
+    component.__file = "/Users/azamatx/projects/base-js/package/src/layouts/InlineLayout.vue";
 
     if (!component.render) {
       component.render = template.render;
@@ -661,7 +796,7 @@ __vue_render__$5._withStripped = true;
   
 
   
-  var HorizontalLayout = __vue_normalize__$5(
+  var InlineLayout = __vue_normalize__$5(
     { render: __vue_render__$5, staticRenderFns: __vue_staticRenderFns__$5 },
     __vue_inject_styles__$5,
     __vue_script__$5,
@@ -672,33 +807,75 @@ __vue_render__$5._withStripped = true;
     undefined
   );
 
-var HandlesValidationErrors = {
-	props: {
-		errors: {
-			default: () => new Errors(),
-		},
-	},
+//
+//
+//
+//
 
-	data: () => ({
-		errorClass: 'is-invalid',
-	}),
-
-	computed: {
-		errorClasses() {
-			return this.hasError ? [this.errorClass] : []
-		},
-
-		hasError() {
-			return this.errors.has(this.field.attribute)
-		},
-
-		firstError() {
-			if (this.hasError) {
-				return this.errors.first(this.field.attribute)
-			}
-		},
-	},
+var script$6 = {
+	name: 'FormUndefinedField'
 };
+
+/* script */
+            const __vue_script__$6 = script$6;
+            
+/* template */
+var __vue_render__$6 = function() {
+  var _vm = this;
+  var _h = _vm.$createElement;
+  var _c = _vm._self._c || _h;
+  return _c("div")
+};
+var __vue_staticRenderFns__$6 = [];
+__vue_render__$6._withStripped = true;
+
+  /* style */
+  const __vue_inject_styles__$6 = undefined;
+  /* scoped */
+  const __vue_scope_id__$6 = undefined;
+  /* module identifier */
+  const __vue_module_identifier__$6 = undefined;
+  /* functional template */
+  const __vue_is_functional_template__$6 = false;
+  /* component normalizer */
+  function __vue_normalize__$6(
+    template, style, script,
+    scope, functional, moduleIdentifier,
+    createInjector, createInjectorSSR
+  ) {
+    const component = (typeof script === 'function' ? script.options : script) || {};
+
+    // For security concerns, we use only base name in production mode.
+    component.__file = "/Users/azamatx/projects/base-js/package/src/fields/Undefined.vue";
+
+    if (!component.render) {
+      component.render = template.render;
+      component.staticRenderFns = template.staticRenderFns;
+      component._compiled = true;
+
+      if (functional) component.functional = true;
+    }
+
+    component._scopeId = scope;
+
+    return component
+  }
+  /* style inject */
+  
+  /* style inject SSR */
+  
+
+  
+  var Undefined = __vue_normalize__$6(
+    { render: __vue_render__$6, staticRenderFns: __vue_staticRenderFns__$6 },
+    __vue_inject_styles__$6,
+    __vue_script__$6,
+    __vue_scope_id__$6,
+    __vue_is_functional_template__$6,
+    __vue_module_identifier__$6,
+    undefined,
+    undefined
+  );
 
 function setProp(obj, props, value) {
 	if (typeof props === "string") {
@@ -707,17 +884,13 @@ function setProp(obj, props, value) {
 
 	const prop = props.shift();
 
-	if (!obj[prop]) {
+	if (!obj[prop] && props.length) {
 		Vue.set(obj, prop, {});
 	}
 
 	if (!props.length) {
-		if (typeof value === 'object' && !(value instanceof Array)) {
-			obj[prop] = {...obj[prop], ...value};
-		} else {
-			obj[prop] = value;
-		}
-		return
+		Vue.set(obj, prop, value);
+		return;
 	}
 
 	setProp(obj[prop], props, value);
@@ -731,10 +904,10 @@ function getProp(obj, props) {
 	const prop = props.shift();
 
 	if (!obj[prop] || !props.length) {
-		return obj[prop]
+		return obj[prop];
 	}
 
-	return getProp(obj[prop], props)
+	return getProp(obj[prop], props);
 }
 
 var FormField = {
@@ -743,15 +916,21 @@ var FormField = {
 	props: {
 		field: { type: Object, required: true },
 		model: { type: Object },
-		layout: { default: 'default' },
+		eventBus: { type: Object },
+		layout: { type: String },
 		layoutClass: { type: String },
 	},
 
-	data: () => ({}),
+	data: () => ({
+		errorClass: 'is-invalid',
+	}),
 
 	computed: {
 		layoutComponent: function () {
-			return this.layout + '-layout';
+			return (this.layout || config.defaultLayout) + '-layout';
+		},
+		$events () {
+			return this.eventBus || this.$root;
 		}
 	},
 
@@ -759,11 +938,11 @@ var FormField = {
 		this.setInitialValue();
 
 		// Register a global event for setting the field's value
-		Base.$on(this.field.attribute + '-value', this.handleChange);
+		this.$events.$on('field-value-' + this.field.attribute, this.handleChange);
 
 		if (this.field.depends && this.field.depends.length) {
 			this.field.depends.forEach(attr => {
-				Base.$on(attr + '-change', value => {
+				this.$events.$on('field-change-' + attr, value => {
 					this.triggerDependentChange(attr, value);
 				});
 			});
@@ -776,7 +955,8 @@ var FormField = {
 		'field.value': {
 			deep: true,
 			handler: function (value) {
-				Base.$emit(this.field.attribute + '-change', value);
+				this.$events.$emit('field-change', value, this.field.attribute);
+				this.$events.$emit('field-change-' + this.field.attribute, value);
 
 				this.fillModel();
 			}
@@ -784,11 +964,11 @@ var FormField = {
 	},
 
 	destroyed() {
-		Base.$off(this.field.attribute + '-value');
+		this.$events.$off('field-value-' + this.field.attribute);
 
 		if (this.field.depends && this.field.depends.length) {
 			this.field.depends.forEach(attr => {
-				Base.$off(attr + '-change');
+				this.$events.$off('field-change-' + attr);
 			});
 		}
 	},
@@ -826,7 +1006,7 @@ var FormField = {
 		},
 
 		handleDependentChange(attribute, value, values$$1) {
-			//console.log(this.field.attribute + ':handleDependentChange', arguments)
+			console.log(this.field.attribute + ':handleDependentChange', arguments);
 		}
 	},
 };
@@ -951,7 +1131,7 @@ var FormComponent = {
 
 //
 
-var script$6 = {
+var script$7 = {
 	name: 'FormTextField',
 
 	mixins: [ FormField ],
@@ -1026,16 +1206,16 @@ var script$6 = {
 };
 
 /* script */
-            const __vue_script__$6 = script$6;
+            const __vue_script__$7 = script$7;
             
 /* template */
-var __vue_render__$6 = function() {
+var __vue_render__$7 = function() {
   var _vm = this;
   var _h = _vm.$createElement;
   var _c = _vm._self._c || _h;
   return _c(
     _vm.layoutComponent,
-    { tag: "component", attrs: { field: _vm.field } },
+    { tag: "component", attrs: { field: _vm.field, errors: _vm.errors } },
     [
       _c("template", { slot: "field" }, [
         _vm.inputType === "checkbox"
@@ -1155,32 +1335,24 @@ var __vue_render__$6 = function() {
                   }
                 }
               })
-      ]),
-      _vm._v(" "),
-      _c("template", { slot: "errors" }, [
-        _vm.hasError
-          ? _c("div", { staticClass: "invalid-feedback" }, [
-              _vm._v("\n\t\t\t" + _vm._s(_vm.firstError) + "\n\t\t")
-            ])
-          : _vm._e()
       ])
     ],
     2
   )
 };
-var __vue_staticRenderFns__$6 = [];
-__vue_render__$6._withStripped = true;
+var __vue_staticRenderFns__$7 = [];
+__vue_render__$7._withStripped = true;
 
   /* style */
-  const __vue_inject_styles__$6 = undefined;
+  const __vue_inject_styles__$7 = undefined;
   /* scoped */
-  const __vue_scope_id__$6 = undefined;
+  const __vue_scope_id__$7 = undefined;
   /* module identifier */
-  const __vue_module_identifier__$6 = undefined;
+  const __vue_module_identifier__$7 = undefined;
   /* functional template */
-  const __vue_is_functional_template__$6 = false;
+  const __vue_is_functional_template__$7 = false;
   /* component normalizer */
-  function __vue_normalize__$6(
+  function __vue_normalize__$7(
     template, style, script,
     scope, functional, moduleIdentifier,
     createInjector, createInjectorSSR
@@ -1188,7 +1360,7 @@ __vue_render__$6._withStripped = true;
     const component = (typeof script === 'function' ? script.options : script) || {};
 
     // For security concerns, we use only base name in production mode.
-    component.__file = "/Users/azamatx/projects/base-js/package/src/form/TextField.vue";
+    component.__file = "/Users/azamatx/projects/base-js/package/src/fields/TextField.vue";
 
     if (!component.render) {
       component.render = template.render;
@@ -1208,20 +1380,20 @@ __vue_render__$6._withStripped = true;
   
 
   
-  var TextField = __vue_normalize__$6(
-    { render: __vue_render__$6, staticRenderFns: __vue_staticRenderFns__$6 },
-    __vue_inject_styles__$6,
-    __vue_script__$6,
-    __vue_scope_id__$6,
-    __vue_is_functional_template__$6,
-    __vue_module_identifier__$6,
+  var TextField = __vue_normalize__$7(
+    { render: __vue_render__$7, staticRenderFns: __vue_staticRenderFns__$7 },
+    __vue_inject_styles__$7,
+    __vue_script__$7,
+    __vue_scope_id__$7,
+    __vue_is_functional_template__$7,
+    __vue_module_identifier__$7,
     undefined,
     undefined
   );
 
 //
 
-var script$7 = {
+var script$8 = {
 	name: 'FormTextField',
 
 	mixins: [ FormField ],
@@ -1256,16 +1428,16 @@ var script$7 = {
 };
 
 /* script */
-            const __vue_script__$7 = script$7;
+            const __vue_script__$8 = script$8;
             
 /* template */
-var __vue_render__$7 = function() {
+var __vue_render__$8 = function() {
   var _vm = this;
   var _h = _vm.$createElement;
   var _c = _vm._self._c || _h;
   return _c(
     _vm.layoutComponent,
-    { tag: "component", attrs: { field: _vm.field } },
+    { tag: "component", attrs: { field: _vm.field, errors: _vm.errors } },
     [
       _c("template", { slot: "field" }, [
         _c("input", {
@@ -1286,32 +1458,24 @@ var __vue_render__$7 = function() {
             }
           }
         })
-      ]),
-      _vm._v(" "),
-      _c("template", { slot: "errors" }, [
-        _vm.hasError
-          ? _c("div", { staticClass: "invalid-feedback" }, [
-              _vm._v("\n\t\t\t" + _vm._s(_vm.firstError) + "\n\t\t")
-            ])
-          : _vm._e()
       ])
     ],
     2
   )
 };
-var __vue_staticRenderFns__$7 = [];
-__vue_render__$7._withStripped = true;
+var __vue_staticRenderFns__$8 = [];
+__vue_render__$8._withStripped = true;
 
   /* style */
-  const __vue_inject_styles__$7 = undefined;
+  const __vue_inject_styles__$8 = undefined;
   /* scoped */
-  const __vue_scope_id__$7 = undefined;
+  const __vue_scope_id__$8 = undefined;
   /* module identifier */
-  const __vue_module_identifier__$7 = undefined;
+  const __vue_module_identifier__$8 = undefined;
   /* functional template */
-  const __vue_is_functional_template__$7 = false;
+  const __vue_is_functional_template__$8 = false;
   /* component normalizer */
-  function __vue_normalize__$7(
+  function __vue_normalize__$8(
     template, style, script,
     scope, functional, moduleIdentifier,
     createInjector, createInjectorSSR
@@ -1319,7 +1483,7 @@ __vue_render__$7._withStripped = true;
     const component = (typeof script === 'function' ? script.options : script) || {};
 
     // For security concerns, we use only base name in production mode.
-    component.__file = "/Users/azamatx/projects/base-js/package/src/form/FileField.vue";
+    component.__file = "/Users/azamatx/projects/base-js/package/src/fields/FileField.vue";
 
     if (!component.render) {
       component.render = template.render;
@@ -1339,20 +1503,20 @@ __vue_render__$7._withStripped = true;
   
 
   
-  var FileField = __vue_normalize__$7(
-    { render: __vue_render__$7, staticRenderFns: __vue_staticRenderFns__$7 },
-    __vue_inject_styles__$7,
-    __vue_script__$7,
-    __vue_scope_id__$7,
-    __vue_is_functional_template__$7,
-    __vue_module_identifier__$7,
+  var FileField = __vue_normalize__$8(
+    { render: __vue_render__$8, staticRenderFns: __vue_staticRenderFns__$8 },
+    __vue_inject_styles__$8,
+    __vue_script__$8,
+    __vue_scope_id__$8,
+    __vue_is_functional_template__$8,
+    __vue_module_identifier__$8,
     undefined,
     undefined
   );
 
 //
 
-var script$8 = {
+var script$9 = {
 	mixins: [ FormField ],
 
 	props: {
@@ -1370,16 +1534,16 @@ var script$8 = {
 };
 
 /* script */
-            const __vue_script__$8 = script$8;
+            const __vue_script__$9 = script$9;
             
 /* template */
-var __vue_render__$8 = function() {
+var __vue_render__$9 = function() {
   var _vm = this;
   var _h = _vm.$createElement;
   var _c = _vm._self._c || _h;
   return _c(
     _vm.layoutComponent,
-    { tag: "component", attrs: { field: _vm.field } },
+    { tag: "component", attrs: { field: _vm.field, errors: _vm.errors } },
     [
       _c("template", { slot: "field" }, [
         _c(
@@ -1442,32 +1606,24 @@ var __vue_render__$8 = function() {
           ],
           2
         )
-      ]),
-      _vm._v(" "),
-      _c("template", { slot: "errors" }, [
-        _vm.hasError
-          ? _c("div", { staticClass: "invalid-feedback" }, [
-              _vm._v("\n\t\t\t" + _vm._s(_vm.firstError) + "\n\t\t")
-            ])
-          : _vm._e()
       ])
     ],
     2
   )
 };
-var __vue_staticRenderFns__$8 = [];
-__vue_render__$8._withStripped = true;
+var __vue_staticRenderFns__$9 = [];
+__vue_render__$9._withStripped = true;
 
   /* style */
-  const __vue_inject_styles__$8 = undefined;
+  const __vue_inject_styles__$9 = undefined;
   /* scoped */
-  const __vue_scope_id__$8 = undefined;
+  const __vue_scope_id__$9 = undefined;
   /* module identifier */
-  const __vue_module_identifier__$8 = undefined;
+  const __vue_module_identifier__$9 = undefined;
   /* functional template */
-  const __vue_is_functional_template__$8 = false;
+  const __vue_is_functional_template__$9 = false;
   /* component normalizer */
-  function __vue_normalize__$8(
+  function __vue_normalize__$9(
     template, style, script,
     scope, functional, moduleIdentifier,
     createInjector, createInjectorSSR
@@ -1475,7 +1631,7 @@ __vue_render__$8._withStripped = true;
     const component = (typeof script === 'function' ? script.options : script) || {};
 
     // For security concerns, we use only base name in production mode.
-    component.__file = "/Users/azamatx/projects/base-js/package/src/form/SelectField.vue";
+    component.__file = "/Users/azamatx/projects/base-js/package/src/fields/SelectField.vue";
 
     if (!component.render) {
       component.render = template.render;
@@ -1495,21 +1651,157 @@ __vue_render__$8._withStripped = true;
   
 
   
-  var SelectField = __vue_normalize__$8(
-    { render: __vue_render__$8, staticRenderFns: __vue_staticRenderFns__$8 },
-    __vue_inject_styles__$8,
-    __vue_script__$8,
-    __vue_scope_id__$8,
-    __vue_is_functional_template__$8,
-    __vue_module_identifier__$8,
+  var SelectField = __vue_normalize__$9(
+    { render: __vue_render__$9, staticRenderFns: __vue_staticRenderFns__$9 },
+    __vue_inject_styles__$9,
+    __vue_script__$9,
+    __vue_scope_id__$9,
+    __vue_is_functional_template__$9,
+    __vue_module_identifier__$9,
     undefined,
     undefined
   );
 
 //
 
-var script$9 = {
-	name: 'FormTextField',
+var script$a = {
+	name: 'RadiosField',
+
+	mixins: [ FormField ],
+
+	props: {
+		radiosLayout: { type: String }
+	},
+
+	computed: {
+		radiosLayoutClass() {
+			let layout = this.radiosLayout || this.field.radiosLayout;
+			return `form-check-${layout}`;
+		}
+	}
+
+};
+
+/* script */
+            const __vue_script__$a = script$a;
+            
+/* template */
+var __vue_render__$a = function() {
+  var _vm = this;
+  var _h = _vm.$createElement;
+  var _c = _vm._self._c || _h;
+  return _c(
+    _vm.layoutComponent,
+    {
+      tag: "component",
+      attrs: { field: _vm.field, errors: _vm.errors, "show-label": false }
+    },
+    [
+      _c(
+        "template",
+        { slot: "field" },
+        _vm._l(_vm.field.options, function(option, index) {
+          return _c(
+            "div",
+            {
+              key: option.value,
+              staticClass: "form-check",
+              class: _vm.radiosLayoutClass
+            },
+            [
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.field.value,
+                    expression: "field.value"
+                  }
+                ],
+                staticClass: "form-check-input",
+                attrs: { id: _vm.field.attribute + index, type: "radio" },
+                domProps: {
+                  value: option.value,
+                  checked: _vm._q(_vm.field.value, option.value)
+                },
+                on: {
+                  change: function($event) {
+                    _vm.$set(_vm.field, "value", option.value);
+                  }
+                }
+              }),
+              _vm._v(" "),
+              _c(
+                "label",
+                {
+                  staticClass: "form-check-label",
+                  attrs: { for: _vm.field.attribute + index }
+                },
+                [_vm._v("\n\t\t\t\t" + _vm._s(option.label) + "\n\t\t\t")]
+              )
+            ]
+          )
+        })
+      )
+    ],
+    2
+  )
+};
+var __vue_staticRenderFns__$a = [];
+__vue_render__$a._withStripped = true;
+
+  /* style */
+  const __vue_inject_styles__$a = undefined;
+  /* scoped */
+  const __vue_scope_id__$a = undefined;
+  /* module identifier */
+  const __vue_module_identifier__$a = undefined;
+  /* functional template */
+  const __vue_is_functional_template__$a = false;
+  /* component normalizer */
+  function __vue_normalize__$a(
+    template, style, script,
+    scope, functional, moduleIdentifier,
+    createInjector, createInjectorSSR
+  ) {
+    const component = (typeof script === 'function' ? script.options : script) || {};
+
+    // For security concerns, we use only base name in production mode.
+    component.__file = "/Users/azamatx/projects/base-js/package/src/fields/RadiosField.vue";
+
+    if (!component.render) {
+      component.render = template.render;
+      component.staticRenderFns = template.staticRenderFns;
+      component._compiled = true;
+
+      if (functional) component.functional = true;
+    }
+
+    component._scopeId = scope;
+
+    return component
+  }
+  /* style inject */
+  
+  /* style inject SSR */
+  
+
+  
+  var RadiosField = __vue_normalize__$a(
+    { render: __vue_render__$a, staticRenderFns: __vue_staticRenderFns__$a },
+    __vue_inject_styles__$a,
+    __vue_script__$a,
+    __vue_scope_id__$a,
+    __vue_is_functional_template__$a,
+    __vue_module_identifier__$a,
+    undefined,
+    undefined
+  );
+
+//
+
+var script$b = {
+	name: 'CheckboxField',
 
 	mixins: [ FormField ],
 
@@ -1520,13 +1812,6 @@ var script$9 = {
 
 	computed: {
 		/**
-		 * Get the input placeholder.
-		 */
-		inputPlaceholder() {
-			return this.placeholder || this.field.placeholder
-		},
-
-		/**
 		 * Get the input disabled state.
 		 */
 		inputDisabled() {
@@ -1534,32 +1819,23 @@ var script$9 = {
 		},
 	},
 
-	methods: {
-
-		input ($event) {
-			let files = [];
-			for (let i = 0; i < $event.target.files.length; i++) {
-				files.push($event.target.files[i]);
-			}
-
-			this.field.value = this.field.multiple ? files : files[0];
-		}
-
-	}
 
 };
 
 /* script */
-            const __vue_script__$9 = script$9;
+            const __vue_script__$b = script$b;
             
 /* template */
-var __vue_render__$9 = function() {
+var __vue_render__$b = function() {
   var _vm = this;
   var _h = _vm.$createElement;
   var _c = _vm._self._c || _h;
   return _c(
     _vm.layoutComponent,
-    { tag: "component", attrs: { field: _vm.field, "show-label": false } },
+    {
+      tag: "component",
+      attrs: { field: _vm.field, errors: _vm.errors, "show-label": false }
+    },
     [
       _c("template", { slot: "field" }, [
         _c("div", { staticClass: "form-check" }, [
@@ -1578,7 +1854,6 @@ var __vue_render__$9 = function() {
               id: _vm.field.attribute,
               dusk: _vm.field.attribute,
               type: "checkbox",
-              placeholder: _vm.inputPlaceholder,
               disabled: _vm.inputDisabled
             },
             domProps: {
@@ -1611,7 +1886,7 @@ var __vue_render__$9 = function() {
             }
           }),
           _vm._v(" "),
-          _c("label", { attrs: { for: "field.attribute" } }, [
+          _c("label", { attrs: { for: _vm.field.attribute } }, [
             _vm._v(
               "\n\t\t\t\t" +
                 _vm._s(_vm.field.label || _vm.fieldLabel) +
@@ -1621,7 +1896,7 @@ var __vue_render__$9 = function() {
           _vm._v(" "),
           _vm.hasError
             ? _c("div", { staticClass: "invalid-feedback" }, [
-                _vm._v("\n\t\t\t\t" + _vm._s(_vm.firstError) + "\n\t\t\t")
+                _vm._v("\n\t\t\t\t" + _vm._s(_vm.errorMessages) + "\n\t\t\t")
               ])
             : _vm._e()
         ])
@@ -1630,19 +1905,19 @@ var __vue_render__$9 = function() {
     2
   )
 };
-var __vue_staticRenderFns__$9 = [];
-__vue_render__$9._withStripped = true;
+var __vue_staticRenderFns__$b = [];
+__vue_render__$b._withStripped = true;
 
   /* style */
-  const __vue_inject_styles__$9 = undefined;
+  const __vue_inject_styles__$b = undefined;
   /* scoped */
-  const __vue_scope_id__$9 = undefined;
+  const __vue_scope_id__$b = undefined;
   /* module identifier */
-  const __vue_module_identifier__$9 = undefined;
+  const __vue_module_identifier__$b = undefined;
   /* functional template */
-  const __vue_is_functional_template__$9 = false;
+  const __vue_is_functional_template__$b = false;
   /* component normalizer */
-  function __vue_normalize__$9(
+  function __vue_normalize__$b(
     template, style, script,
     scope, functional, moduleIdentifier,
     createInjector, createInjectorSSR
@@ -1650,7 +1925,7 @@ __vue_render__$9._withStripped = true;
     const component = (typeof script === 'function' ? script.options : script) || {};
 
     // For security concerns, we use only base name in production mode.
-    component.__file = "/Users/azamatx/projects/base-js/package/src/form/CheckboxField.vue";
+    component.__file = "/Users/azamatx/projects/base-js/package/src/fields/CheckboxField.vue";
 
     if (!component.render) {
       component.render = template.render;
@@ -1670,20 +1945,187 @@ __vue_render__$9._withStripped = true;
   
 
   
-  var CheckboxField = __vue_normalize__$9(
-    { render: __vue_render__$9, staticRenderFns: __vue_staticRenderFns__$9 },
-    __vue_inject_styles__$9,
-    __vue_script__$9,
-    __vue_scope_id__$9,
-    __vue_is_functional_template__$9,
-    __vue_module_identifier__$9,
+  var CheckboxField = __vue_normalize__$b(
+    { render: __vue_render__$b, staticRenderFns: __vue_staticRenderFns__$b },
+    __vue_inject_styles__$b,
+    __vue_script__$b,
+    __vue_scope_id__$b,
+    __vue_is_functional_template__$b,
+    __vue_module_identifier__$b,
     undefined,
     undefined
   );
 
 //
 
-var script$a = {
+var script$c = {
+	name: 'CheckboxesField',
+
+	mixins: [ FormField ],
+
+	props: {
+		checkboxLayout: { type: String }
+	},
+
+	computed: {
+		checkboxLayoutClass() {
+			let layout = this.checkboxLayout || this.field.checkboxLayout;
+			return `form-check-${layout}`;
+		}
+	},
+
+	methods: {
+		/*
+		 * Set the initial value for the field
+		 */
+		setInitialValue() {
+			if (!isArray(this.field.value)) {
+				this.field.value = [];
+			}
+		},
+	}
+};
+
+/* script */
+            const __vue_script__$c = script$c;
+            
+/* template */
+var __vue_render__$c = function() {
+  var _vm = this;
+  var _h = _vm.$createElement;
+  var _c = _vm._self._c || _h;
+  return _c(
+    _vm.layoutComponent,
+    {
+      tag: "component",
+      attrs: { field: _vm.field, errors: _vm.errors, "show-label": false }
+    },
+    [
+      _c(
+        "template",
+        { slot: "field" },
+        _vm._l(_vm.field.options, function(option, index) {
+          return _c(
+            "div",
+            {
+              key: option.value,
+              staticClass: "form-check",
+              class: _vm.checkboxLayoutClass
+            },
+            [
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.field.value,
+                    expression: "field.value"
+                  }
+                ],
+                staticClass: "form-check-input",
+                attrs: { id: _vm.field.attribute + index, type: "checkbox" },
+                domProps: {
+                  value: option.value,
+                  checked: Array.isArray(_vm.field.value)
+                    ? _vm._i(_vm.field.value, option.value) > -1
+                    : _vm.field.value
+                },
+                on: {
+                  change: function($event) {
+                    var $$a = _vm.field.value,
+                      $$el = $event.target,
+                      $$c = $$el.checked ? true : false;
+                    if (Array.isArray($$a)) {
+                      var $$v = option.value,
+                        $$i = _vm._i($$a, $$v);
+                      if ($$el.checked) {
+                        $$i < 0 &&
+                          _vm.$set(_vm.field, "value", $$a.concat([$$v]));
+                      } else {
+                        $$i > -1 &&
+                          _vm.$set(
+                            _vm.field,
+                            "value",
+                            $$a.slice(0, $$i).concat($$a.slice($$i + 1))
+                          );
+                      }
+                    } else {
+                      _vm.$set(_vm.field, "value", $$c);
+                    }
+                  }
+                }
+              }),
+              _vm._v(" "),
+              _c(
+                "label",
+                {
+                  staticClass: "form-check-label",
+                  attrs: { for: _vm.field.attribute + index }
+                },
+                [_vm._v("\n\t\t\t\t" + _vm._s(option.label) + "\n\t\t\t")]
+              )
+            ]
+          )
+        })
+      )
+    ],
+    2
+  )
+};
+var __vue_staticRenderFns__$c = [];
+__vue_render__$c._withStripped = true;
+
+  /* style */
+  const __vue_inject_styles__$c = undefined;
+  /* scoped */
+  const __vue_scope_id__$c = undefined;
+  /* module identifier */
+  const __vue_module_identifier__$c = undefined;
+  /* functional template */
+  const __vue_is_functional_template__$c = false;
+  /* component normalizer */
+  function __vue_normalize__$c(
+    template, style, script,
+    scope, functional, moduleIdentifier,
+    createInjector, createInjectorSSR
+  ) {
+    const component = (typeof script === 'function' ? script.options : script) || {};
+
+    // For security concerns, we use only base name in production mode.
+    component.__file = "/Users/azamatx/projects/base-js/package/src/fields/CheckboxesField.vue";
+
+    if (!component.render) {
+      component.render = template.render;
+      component.staticRenderFns = template.staticRenderFns;
+      component._compiled = true;
+
+      if (functional) component.functional = true;
+    }
+
+    component._scopeId = scope;
+
+    return component
+  }
+  /* style inject */
+  
+  /* style inject SSR */
+  
+
+  
+  var CheckboxesField = __vue_normalize__$c(
+    { render: __vue_render__$c, staticRenderFns: __vue_staticRenderFns__$c },
+    __vue_inject_styles__$c,
+    __vue_script__$c,
+    __vue_scope_id__$c,
+    __vue_is_functional_template__$c,
+    __vue_module_identifier__$c,
+    undefined,
+    undefined
+  );
+
+//
+
+var script$d = {
 	name: 'FormTextareaField',
 
 	mixins: [ FormField ],
@@ -1744,16 +2186,16 @@ var script$a = {
 };
 
 /* script */
-            const __vue_script__$a = script$a;
+            const __vue_script__$d = script$d;
             
 /* template */
-var __vue_render__$a = function() {
+var __vue_render__$d = function() {
   var _vm = this;
   var _h = _vm.$createElement;
   var _c = _vm._self._c || _h;
   return _c(
     _vm.layoutComponent,
-    { tag: "component", attrs: { field: _vm.field } },
+    { tag: "component", attrs: { field: _vm.field, errors: _vm.errors } },
     [
       _c("template", { slot: "field" }, [
         _c("textarea", {
@@ -1787,32 +2229,24 @@ var __vue_render__$a = function() {
             }
           }
         })
-      ]),
-      _vm._v(" "),
-      _c("template", { slot: "errors" }, [
-        _vm.hasError
-          ? _c("div", { staticClass: "invalid-feedback" }, [
-              _vm._v("\n\t\t\t" + _vm._s(_vm.firstError) + "\n\t\t")
-            ])
-          : _vm._e()
       ])
     ],
     2
   )
 };
-var __vue_staticRenderFns__$a = [];
-__vue_render__$a._withStripped = true;
+var __vue_staticRenderFns__$d = [];
+__vue_render__$d._withStripped = true;
 
   /* style */
-  const __vue_inject_styles__$a = undefined;
+  const __vue_inject_styles__$d = undefined;
   /* scoped */
-  const __vue_scope_id__$a = undefined;
+  const __vue_scope_id__$d = undefined;
   /* module identifier */
-  const __vue_module_identifier__$a = undefined;
+  const __vue_module_identifier__$d = undefined;
   /* functional template */
-  const __vue_is_functional_template__$a = false;
+  const __vue_is_functional_template__$d = false;
   /* component normalizer */
-  function __vue_normalize__$a(
+  function __vue_normalize__$d(
     template, style, script,
     scope, functional, moduleIdentifier,
     createInjector, createInjectorSSR
@@ -1820,7 +2254,7 @@ __vue_render__$a._withStripped = true;
     const component = (typeof script === 'function' ? script.options : script) || {};
 
     // For security concerns, we use only base name in production mode.
-    component.__file = "/Users/azamatx/projects/base-js/package/src/form/TextareaField.vue";
+    component.__file = "/Users/azamatx/projects/base-js/package/src/fields/TextareaField.vue";
 
     if (!component.render) {
       component.render = template.render;
@@ -1840,41 +2274,45 @@ __vue_render__$a._withStripped = true;
   
 
   
-  var TextareaField = __vue_normalize__$a(
-    { render: __vue_render__$a, staticRenderFns: __vue_staticRenderFns__$a },
-    __vue_inject_styles__$a,
-    __vue_script__$a,
-    __vue_scope_id__$a,
-    __vue_is_functional_template__$a,
-    __vue_module_identifier__$a,
+  var TextareaField = __vue_normalize__$d(
+    { render: __vue_render__$d, staticRenderFns: __vue_staticRenderFns__$d },
+    __vue_inject_styles__$d,
+    __vue_script__$d,
+    __vue_scope_id__$d,
+    __vue_is_functional_template__$d,
+    __vue_module_identifier__$d,
     undefined,
     undefined
   );
 
-// import Vue from 'vue'
+
 
 var components = /*#__PURE__*/Object.freeze({
 Field: Field,
 Fields: Fields,
-FormUndefined: Undefined,
-DefaultLayout: DefaultLayout,
+EmptyLayout: EmptyLayout,
 VerticalLayout: VericalLayout,
 HorizontalLayout: HorizontalLayout,
+InlineLayout: InlineLayout,
+FormUndefined: Undefined,
 FormTextField: TextField,
 FormFileField: FileField,
 FormSelectField: SelectField,
+FormRadiosField: RadiosField,
 FormCheckboxField: CheckboxField,
+FormCheckboxesField: CheckboxesField,
 FormTextareaField: TextareaField
 });
 
 var plugin = {
 	install (Vue$$1, options) {
-		window.Base = new Base$1();
+		assign(config, options);
+
 		Object.keys(components).forEach(function (name) {
 			Vue$$1.component(name, components[name]);
 		});
 	}
 };
 
-export { Base$1 as Base, plugin as Plugin, HandlesValidationErrors, FieldLayoutMixin, FormField, FormComponent, Field, Fields, Undefined as FormUndefined, DefaultLayout, VericalLayout as VerticalLayout, HorizontalLayout, TextField as FormTextField, FileField as FormFileField, SelectField as FormSelectField, CheckboxField as FormCheckboxField, TextareaField as FormTextareaField, setProp, getProp };
+export { plugin as BasePlugin, HandlesValidationErrors, FieldLayoutMixin, FormField, FormComponent, Field, Fields, EmptyLayout, VericalLayout as VerticalLayout, HorizontalLayout, InlineLayout, Undefined as FormUndefined, TextField as FormTextField, FileField as FormFileField, SelectField as FormSelectField, RadiosField as FormRadiosField, CheckboxField as FormCheckboxField, CheckboxesField as FormCheckboxesField, TextareaField as FormTextareaField, setProp, getProp };
 //# sourceMappingURL=base.esm.js.map
