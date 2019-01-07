@@ -39,7 +39,7 @@ export class FieldList {
 						return;
 					}
 
-					if (value === null) {
+					if (value === null || value === undefined) {
 						value = '';
 					}
 					else if (value === true) {

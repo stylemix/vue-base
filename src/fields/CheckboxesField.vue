@@ -12,7 +12,7 @@
 				<input
 					:id="field.attribute + index"
 					:value="option.value"
-					v-model="field.value"
+					v-model="fieldValue"
 					type="checkbox"
 					class="form-check-input" />
 				<label :for="field.attribute + index"
@@ -49,8 +49,8 @@
 			 * Set the initial value for the field
 			 */
 			setInitialValue() {
-				if (!isArray(this.field.value)) {
-					this.field.value = [];
+				if (!isArray(this.fieldValue)) {
+					this.fieldValue = [];
 				}
 			},
 		}

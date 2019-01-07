@@ -10,7 +10,7 @@
 					:id="field.attribute"
 					:dusk="field.attribute"
 					type="checkbox"
-					v-model="field.value"
+					v-model="fieldValue"
 					class="form-check-input"
 					:class="errorClasses"
 					:disabled="inputDisabled"/>

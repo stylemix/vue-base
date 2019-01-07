@@ -12,7 +12,7 @@
 				<input
 					:id="field.attribute + index"
 					:value="option.value"
-					v-model="field.value"
+					v-model="fieldValue"
 					type="radio"
 					class="form-check-input" />
 				<label :for="field.attribute + index"

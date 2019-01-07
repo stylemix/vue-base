@@ -1,4 +1,4 @@
-/* base-js v0.1.0 (c) undefined - undefined */
+/* stylemix-base v1.1.1 (c) Azamat X <azamat@stylemix.net> - UNLICENSED */
 (function (global, factory) {
 typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('vue')) :
 typeof define === 'function' && define.amd ? define(['exports', 'vue'], factory) :
@@ -3940,6 +3940,89 @@ function mapValues(object, iteratee) {
   return result;
 }
 
+/**
+ * Performs a deep comparison between two values to determine if they are
+ * equivalent.
+ *
+ * **Note:** This method supports comparing arrays, array buffers, booleans,
+ * date objects, error objects, maps, numbers, `Object` objects, regexes,
+ * sets, strings, symbols, and typed arrays. `Object` objects are compared
+ * by their own, not inherited, enumerable properties. Functions and DOM
+ * nodes are compared by strict equality, i.e. `===`.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Lang
+ * @param {*} value The value to compare.
+ * @param {*} other The other value to compare.
+ * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
+ * @example
+ *
+ * var object = { 'a': 1 };
+ * var other = { 'a': 1 };
+ *
+ * _.isEqual(object, other);
+ * // => true
+ *
+ * object === other;
+ * // => false
+ */
+
+function isEqual(value, other) {
+  return baseIsEqual(value, other);
+}
+
+/** Used for built-in method references. */
+var objectProto$c = Object.prototype;
+/** Used to check objects for own properties. */
+
+var hasOwnProperty$9 = objectProto$c.hasOwnProperty;
+/**
+ * The base implementation of `_.has` without support for deep paths.
+ *
+ * @private
+ * @param {Object} [object] The object to query.
+ * @param {Array|string} key The key to check.
+ * @returns {boolean} Returns `true` if `key` exists, else `false`.
+ */
+
+function baseHas(object, key) {
+  return object != null && hasOwnProperty$9.call(object, key);
+}
+
+/**
+ * Checks if `path` is a direct property of `object`.
+ *
+ * @static
+ * @since 0.1.0
+ * @memberOf _
+ * @category Object
+ * @param {Object} object The object to query.
+ * @param {Array|string} path The path to check.
+ * @returns {boolean} Returns `true` if `path` exists, else `false`.
+ * @example
+ *
+ * var object = { 'a': { 'b': 2 } };
+ * var other = _.create({ 'a': _.create({ 'b': 2 }) });
+ *
+ * _.has(object, 'a');
+ * // => true
+ *
+ * _.has(object, 'a.b');
+ * // => true
+ *
+ * _.has(object, ['a', 'b']);
+ * // => true
+ *
+ * _.has(other, 'a');
+ * // => false
+ */
+
+function has(object, path) {
+  return object != null && hasPath(object, path, baseHas);
+}
+
 function setProp(obj, props, value) {
   if (typeof props === "string") {
     props = props.split('.');
@@ -3998,6 +4081,17 @@ var FormField = {
     };
   },
   computed: {
+    /**
+     * Used for v-model binding on input element
+     */
+    fieldValue: {
+      get: function get() {
+        return this.value();
+      },
+      set: function set(value) {
+        this.fill(value);
+      }
+    },
     layoutComponent: function layoutComponent() {
       return (this.layout || config.defaultLayout) + '-layout';
     },
@@ -4005,12 +4099,29 @@ var FormField = {
       return this.eventBus || this.$root;
     }
   },
-  mounted: function mounted() {
+  created: function created() {
     var _this = this;
 
-    this.setInitialValue(); // Register a global event for setting the field's value
+    this.setInitialValue();
 
-    this.$events.$on('field-value-' + this.field.attribute, this.handleChange);
+    if (this.model) {
+      if (!has(this.model, this.field.attribute)) {
+        setProp(this.model, this.field.attribute, this.field.value);
+      }
+
+      this.$watch(function () {
+        return getProp(_this.model, _this.field.attribute);
+      }, function (value) {
+        _this.field.value = value;
+
+        _this.triggerChange();
+      }, {
+        deep: true
+      });
+    } // Register a global event for setting the field's value
+
+
+    this.$events.$on('field-value-' + this.field.attribute, this.fill);
 
     if (this.field.depends && this.field.depends.length) {
       this.field.depends.forEach(function (attr) {
@@ -4019,16 +4130,6 @@ var FormField = {
         });
       });
       this.triggerDependentChange();
-    }
-  },
-  watch: {
-    'field.value': {
-      deep: true,
-      handler: function handler(value) {
-        this.$events.$emit('field-change', value, this.field.attribute);
-        this.$events.$emit('field-change-' + this.field.attribute, value);
-        this.fillModel();
-      }
     }
   },
   destroyed: function destroyed() {
@@ -4049,40 +4150,62 @@ var FormField = {
     setInitialValue: function setInitialValue() {},
 
     /**
-     * Provide a function that fills a passed model object with the
-     * field's internal value attribute
+     * Perform some sanitize actions when filling the value
+     *
+     * @param value
+     * @returns {*}
      */
-    fillModel: function fillModel() {
-      if (!this.model) {
-        return;
-      }
-
-      setProp(this.model, this.field.attribute, this.field.value);
+    sanitizeValue: function sanitizeValue(value) {
+      return value;
     },
 
     /**
-     * Update the field's internal value
+     * Update the field's value
+     * @param value
      */
-    handleChange: function handleChange(value) {
-      this.field.value = value;
-      this.fillModel();
+    fill: function fill(value) {
+      if (isEqual(value, this.field.value)) {
+        return;
+      }
+
+      if (!this.model) {
+        this.field.value = this.sanitizeValue(value);
+        this.triggerChange();
+      } else {
+        setProp(this.model, this.field.attribute, this.sanitizeValue(value));
+      }
+    },
+
+    /**
+     * Get field's value
+     * @returns {*}
+     */
+    value: function value() {
+      if (!this.model) {
+        return this.field.value;
+      }
+
+      return getProp(this.model, this.field.attribute);
+    },
+    triggerChange: function triggerChange() {
+      this.$events.$emit('field-change', this.field.value, this.field.attribute);
+      this.$events.$emit('field-change-' + this.field.attribute, this.field.value);
     },
     triggerDependentChange: function triggerDependentChange(attribute, value) {
       var values = mapValues(keyBy(this.field.dependentFields, 'attribute'), 'value');
       this.handleDependentChange(attribute, value, values);
     },
-    handleDependentChange: function handleDependentChange(attribute, value, values) {
-      console.log(this.field.attribute + ':handleDependentChange', arguments);
+    handleDependentChange: function handleDependentChange(attribute, value, values) {//console.log(this.field.attribute + ':handleDependentChange', arguments)
     }
   }
 };
 
 /** Used for built-in method references. */
 
-var objectProto$c = Object.prototype;
+var objectProto$d = Object.prototype;
 /** Used to check objects for own properties. */
 
-var hasOwnProperty$9 = objectProto$c.hasOwnProperty;
+var hasOwnProperty$a = objectProto$d.hasOwnProperty;
 /**
  * Assigns `value` to `key` of `object` if the existing value is not equivalent
  * using [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
@@ -4097,7 +4220,7 @@ var hasOwnProperty$9 = objectProto$c.hasOwnProperty;
 function assignValue(object, key, value) {
   var objValue = object[key];
 
-  if (!(hasOwnProperty$9.call(object, key) && eq(objValue, value)) || value === undefined && !(key in object)) {
+  if (!(hasOwnProperty$a.call(object, key) && eq(objValue, value)) || value === undefined && !(key in object)) {
     baseAssignValue(object, key, value);
   }
 }
@@ -4589,10 +4712,10 @@ function nativeKeysIn(object) {
 
 /** Used for built-in method references. */
 
-var objectProto$d = Object.prototype;
+var objectProto$e = Object.prototype;
 /** Used to check objects for own properties. */
 
-var hasOwnProperty$a = objectProto$d.hasOwnProperty;
+var hasOwnProperty$b = objectProto$e.hasOwnProperty;
 /**
  * The base implementation of `_.keysIn` which doesn't treat sparse arrays as dense.
  *
@@ -4610,7 +4733,7 @@ function baseKeysIn(object) {
       result = [];
 
   for (var key in object) {
-    if (!(key == 'constructor' && (isProto || !hasOwnProperty$a.call(object, key)))) {
+    if (!(key == 'constructor' && (isProto || !hasOwnProperty$b.call(object, key)))) {
       result.push(key);
     }
   }
@@ -4779,10 +4902,10 @@ function getAllKeysIn(object) {
 }
 
 /** Used for built-in method references. */
-var objectProto$e = Object.prototype;
+var objectProto$f = Object.prototype;
 /** Used to check objects for own properties. */
 
-var hasOwnProperty$b = objectProto$e.hasOwnProperty;
+var hasOwnProperty$c = objectProto$f.hasOwnProperty;
 /**
  * Initializes an array clone.
  *
@@ -4795,7 +4918,7 @@ function initCloneArray(array) {
   var length = array.length,
       result = new array.constructor(length); // Add properties assigned by `RegExp#exec`.
 
-  if (length && typeof array[0] == 'string' && hasOwnProperty$b.call(array, 'index')) {
+  if (length && typeof array[0] == 'string' && hasOwnProperty$c.call(array, 'index')) {
     result.index = array.index;
     result.input = array.input;
   }
@@ -5302,13 +5425,13 @@ var objectTag$4 = '[object Object]';
 /** Used for built-in method references. */
 
 var funcProto$2 = Function.prototype,
-    objectProto$f = Object.prototype;
+    objectProto$g = Object.prototype;
 /** Used to resolve the decompiled source of functions. */
 
 var funcToString$2 = funcProto$2.toString;
 /** Used to check objects for own properties. */
 
-var hasOwnProperty$c = objectProto$f.hasOwnProperty;
+var hasOwnProperty$d = objectProto$g.hasOwnProperty;
 /** Used to infer the `Object` constructor. */
 
 var objectCtorString = funcToString$2.call(Object);
@@ -5352,7 +5475,7 @@ function isPlainObject(value) {
     return true;
   }
 
-  var Ctor = hasOwnProperty$c.call(proto, 'constructor') && proto.constructor;
+  var Ctor = hasOwnProperty$d.call(proto, 'constructor') && proto.constructor;
   return typeof Ctor == 'function' && Ctor instanceof Ctor && funcToString$2.call(Ctor) == objectCtorString;
 }
 
@@ -5849,7 +5972,7 @@ function () {
             return;
           }
 
-          if (value === null) {
+          if (value === null || value === undefined) {
             value = '';
           } else if (value === true) {
             value = 1;
@@ -6013,6 +6136,15 @@ var script$7 = {
     inputPattern: function inputPattern() {
       return this.pattern || this.field.pattern;
     }
+  },
+  methods: {
+    sanitizeValue: function sanitizeValue(value) {
+      if (this.field.type === 'number') {
+        return Number(value);
+      }
+
+      return value;
+    }
   }
 };
 
@@ -6035,8 +6167,8 @@ var __vue_render__$7 = function() {
                 {
                   name: "model",
                   rawName: "v-model",
-                  value: _vm.field.value,
-                  expression: "field.value"
+                  value: _vm.fieldValue,
+                  expression: "fieldValue"
                 }
               ],
               staticClass: "form-control",
@@ -6054,30 +6186,28 @@ var __vue_render__$7 = function() {
                 type: "checkbox"
               },
               domProps: {
-                checked: Array.isArray(_vm.field.value)
-                  ? _vm._i(_vm.field.value, null) > -1
-                  : _vm.field.value
+                checked: Array.isArray(_vm.fieldValue)
+                  ? _vm._i(_vm.fieldValue, null) > -1
+                  : _vm.fieldValue
               },
               on: {
                 change: function($event) {
-                  var $$a = _vm.field.value,
+                  var $$a = _vm.fieldValue,
                     $$el = $event.target,
                     $$c = $$el.checked ? true : false;
                   if (Array.isArray($$a)) {
                     var $$v = null,
                       $$i = _vm._i($$a, $$v);
                     if ($$el.checked) {
-                      $$i < 0 && _vm.$set(_vm.field, "value", $$a.concat([$$v]));
+                      $$i < 0 && (_vm.fieldValue = $$a.concat([$$v]));
                     } else {
                       $$i > -1 &&
-                        _vm.$set(
-                          _vm.field,
-                          "value",
-                          $$a.slice(0, $$i).concat($$a.slice($$i + 1))
-                        );
+                        (_vm.fieldValue = $$a
+                          .slice(0, $$i)
+                          .concat($$a.slice($$i + 1)));
                     }
                   } else {
-                    _vm.$set(_vm.field, "value", $$c);
+                    _vm.fieldValue = $$c;
                   }
                 }
               }
@@ -6088,8 +6218,8 @@ var __vue_render__$7 = function() {
                   {
                     name: "model",
                     rawName: "v-model",
-                    value: _vm.field.value,
-                    expression: "field.value"
+                    value: _vm.fieldValue,
+                    expression: "fieldValue"
                   }
                 ],
                 staticClass: "form-control",
@@ -6106,10 +6236,10 @@ var __vue_render__$7 = function() {
                   disabled: _vm.inputDisabled,
                   type: "radio"
                 },
-                domProps: { checked: _vm._q(_vm.field.value, null) },
+                domProps: { checked: _vm._q(_vm.fieldValue, null) },
                 on: {
                   change: function($event) {
-                    _vm.$set(_vm.field, "value", null);
+                    _vm.fieldValue = null;
                   }
                 }
               })
@@ -6118,8 +6248,8 @@ var __vue_render__$7 = function() {
                   {
                     name: "model",
                     rawName: "v-model",
-                    value: _vm.field.value,
-                    expression: "field.value"
+                    value: _vm.fieldValue,
+                    expression: "fieldValue"
                   }
                 ],
                 staticClass: "form-control",
@@ -6136,13 +6266,13 @@ var __vue_render__$7 = function() {
                   disabled: _vm.inputDisabled,
                   type: _vm.inputType
                 },
-                domProps: { value: _vm.field.value },
+                domProps: { value: _vm.fieldValue },
                 on: {
                   input: function($event) {
                     if ($event.target.composing) {
                       return
                     }
-                    _vm.$set(_vm.field, "value", $event.target.value);
+                    _vm.fieldValue = $event.target.value;
                   }
                 }
               })
@@ -6225,7 +6355,7 @@ var script$8 = {
         files.push($event.target.files[i]);
       }
 
-      this.field.value = this.field.multiple ? files : files[0];
+      this.fieldValue = this.field.multiple ? files : files[0];
       this.$refs.inputElement.value = '';
     }
   }
@@ -6354,8 +6484,8 @@ var __vue_render__$9 = function() {
               {
                 name: "model",
                 rawName: "v-model",
-                value: _vm.field.value,
-                expression: "field.value"
+                value: _vm.fieldValue,
+                expression: "fieldValue"
               }
             ],
             staticClass: "form-control",
@@ -6375,11 +6505,9 @@ var __vue_render__$9 = function() {
                     var val = "_value" in o ? o._value : o.value;
                     return val
                   });
-                _vm.$set(
-                  _vm.field,
-                  "value",
-                  $event.target.multiple ? $$selectedVal : $$selectedVal[0]
-                );
+                _vm.fieldValue = $event.target.multiple
+                  ? $$selectedVal
+                  : $$selectedVal[0];
               }
             }
           },
@@ -6398,7 +6526,7 @@ var __vue_render__$9 = function() {
                 {
                   domProps: {
                     value: option.value,
-                    selected: option.value == _vm.field.value
+                    selected: option.value == _vm.fieldValue
                   }
                 },
                 [_vm._v("\n\t\t\t\t" + _vm._s(option.label) + "\n\t\t\t")]
@@ -6512,19 +6640,19 @@ var __vue_render__$a = function() {
                   {
                     name: "model",
                     rawName: "v-model",
-                    value: _vm.field.value,
-                    expression: "field.value"
+                    value: _vm.fieldValue,
+                    expression: "fieldValue"
                   }
                 ],
                 staticClass: "form-check-input",
                 attrs: { id: _vm.field.attribute + index, type: "radio" },
                 domProps: {
                   value: option.value,
-                  checked: _vm._q(_vm.field.value, option.value)
+                  checked: _vm._q(_vm.fieldValue, option.value)
                 },
                 on: {
                   change: function($event) {
-                    _vm.$set(_vm.field, "value", option.value);
+                    _vm.fieldValue = option.value;
                   }
                 }
               }),
@@ -6638,8 +6766,8 @@ var __vue_render__$b = function() {
               {
                 name: "model",
                 rawName: "v-model",
-                value: _vm.field.value,
-                expression: "field.value"
+                value: _vm.fieldValue,
+                expression: "fieldValue"
               }
             ],
             staticClass: "form-check-input",
@@ -6651,30 +6779,28 @@ var __vue_render__$b = function() {
               disabled: _vm.inputDisabled
             },
             domProps: {
-              checked: Array.isArray(_vm.field.value)
-                ? _vm._i(_vm.field.value, null) > -1
-                : _vm.field.value
+              checked: Array.isArray(_vm.fieldValue)
+                ? _vm._i(_vm.fieldValue, null) > -1
+                : _vm.fieldValue
             },
             on: {
               change: function($event) {
-                var $$a = _vm.field.value,
+                var $$a = _vm.fieldValue,
                   $$el = $event.target,
                   $$c = $$el.checked ? true : false;
                 if (Array.isArray($$a)) {
                   var $$v = null,
                     $$i = _vm._i($$a, $$v);
                   if ($$el.checked) {
-                    $$i < 0 && _vm.$set(_vm.field, "value", $$a.concat([$$v]));
+                    $$i < 0 && (_vm.fieldValue = $$a.concat([$$v]));
                   } else {
                     $$i > -1 &&
-                      _vm.$set(
-                        _vm.field,
-                        "value",
-                        $$a.slice(0, $$i).concat($$a.slice($$i + 1))
-                      );
+                      (_vm.fieldValue = $$a
+                        .slice(0, $$i)
+                        .concat($$a.slice($$i + 1)));
                   }
                 } else {
-                  _vm.$set(_vm.field, "value", $$c);
+                  _vm.fieldValue = $$c;
                 }
               }
             }
@@ -6770,8 +6896,8 @@ var script$c = {
      * Set the initial value for the field
      */
     setInitialValue: function setInitialValue() {
-      if (!isArray(this.field.value)) {
-        this.field.value = [];
+      if (!isArray(this.fieldValue)) {
+        this.fieldValue = [];
       }
     }
   }
@@ -6809,39 +6935,36 @@ var __vue_render__$c = function() {
                   {
                     name: "model",
                     rawName: "v-model",
-                    value: _vm.field.value,
-                    expression: "field.value"
+                    value: _vm.fieldValue,
+                    expression: "fieldValue"
                   }
                 ],
                 staticClass: "form-check-input",
                 attrs: { id: _vm.field.attribute + index, type: "checkbox" },
                 domProps: {
                   value: option.value,
-                  checked: Array.isArray(_vm.field.value)
-                    ? _vm._i(_vm.field.value, option.value) > -1
-                    : _vm.field.value
+                  checked: Array.isArray(_vm.fieldValue)
+                    ? _vm._i(_vm.fieldValue, option.value) > -1
+                    : _vm.fieldValue
                 },
                 on: {
                   change: function($event) {
-                    var $$a = _vm.field.value,
+                    var $$a = _vm.fieldValue,
                       $$el = $event.target,
                       $$c = $$el.checked ? true : false;
                     if (Array.isArray($$a)) {
                       var $$v = option.value,
                         $$i = _vm._i($$a, $$v);
                       if ($$el.checked) {
-                        $$i < 0 &&
-                          _vm.$set(_vm.field, "value", $$a.concat([$$v]));
+                        $$i < 0 && (_vm.fieldValue = $$a.concat([$$v]));
                       } else {
                         $$i > -1 &&
-                          _vm.$set(
-                            _vm.field,
-                            "value",
-                            $$a.slice(0, $$i).concat($$a.slice($$i + 1))
-                          );
+                          (_vm.fieldValue = $$a
+                            .slice(0, $$i)
+                            .concat($$a.slice($$i + 1)));
                       }
                     } else {
-                      _vm.$set(_vm.field, "value", $$c);
+                      _vm.fieldValue = $$c;
                     }
                   }
                 }
@@ -6989,8 +7112,8 @@ var __vue_render__$d = function() {
             {
               name: "model",
               rawName: "v-model",
-              value: _vm.field.value,
-              expression: "field.value"
+              value: _vm.fieldValue,
+              expression: "fieldValue"
             }
           ],
           staticClass: "form-control",
@@ -7005,13 +7128,13 @@ var __vue_render__$d = function() {
             readonly: _vm.inputReadonly,
             disabled: _vm.inputDisabled
           },
-          domProps: { value: _vm.field.value },
+          domProps: { value: _vm.fieldValue },
           on: {
             input: function($event) {
               if ($event.target.composing) {
                 return
               }
-              _vm.$set(_vm.field, "value", $event.target.value);
+              _vm.fieldValue = $event.target.value;
             }
           }
         })
@@ -7165,10 +7288,10 @@ function createAssigner(assigner) {
 
 /** Used for built-in method references. */
 
-var objectProto$g = Object.prototype;
+var objectProto$h = Object.prototype;
 /** Used to check objects for own properties. */
 
-var hasOwnProperty$d = objectProto$g.hasOwnProperty;
+var hasOwnProperty$e = objectProto$h.hasOwnProperty;
 /**
  * Assigns own enumerable string keyed properties of source objects to the
  * destination object. Source objects are applied from left to right.
@@ -7209,7 +7332,7 @@ var assign = createAssigner(function (object, source) {
   }
 
   for (var key in source) {
-    if (hasOwnProperty$d.call(source, key)) {
+    if (hasOwnProperty$e.call(source, key)) {
       assignValue(object, key, source[key]);
     }
   }

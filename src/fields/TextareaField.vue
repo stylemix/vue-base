@@ -10,7 +10,7 @@
 				:cols="inputCols"
 				:rows="inputRows"
 				:maxlength="inputMaxlength"
-				v-model="field.value"
+				v-model="fieldValue"
 				class="form-control"
 				:class="errorClasses"
 				:placeholder="inputPlaceholder"

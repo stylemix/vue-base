@@ -1,7 +1,9 @@
-/* base-js v0.1.0 (c) undefined - undefined */
+/* stylemix-base v1.1.1 (c) Azamat X <azamat@stylemix.net> - UNLICENSED */
 import Vue from 'vue';
 import keyBy from 'lodash-es/keyBy';
 import mapValues from 'lodash-es/mapValues';
+import isEqual from 'lodash-es/isEqual';
+import has from 'lodash-es/has';
 import pick from 'lodash-es/pick';
 import values from 'lodash-es/values';
 import omit from 'lodash-es/omit';
@@ -926,6 +928,17 @@ var FormField = {
 	}),
 
 	computed: {
+		/**
+		 * Used for v-model binding on input element
+		 */
+		fieldValue: {
+			get() {
+				return this.value();
+			},
+			set(value) {
+				this.fill(value);
+			},
+		},
 		layoutComponent: function () {
 			return (this.layout || config.defaultLayout) + '-layout';
 		},
@@ -934,11 +947,26 @@ var FormField = {
 		}
 	},
 
-	mounted() {
+	created() {
 		this.setInitialValue();
 
+		if (this.model) {
+			if (!has(this.model, this.field.attribute)) {
+				setProp(this.model, this.field.attribute, this.field.value);
+			}
+
+			this.$watch(
+				() => getProp(this.model, this.field.attribute),
+				(value) => {
+					this.field.value = value;
+					this.triggerChange();
+				},
+				{ deep: true }
+			);
+		}
+
 		// Register a global event for setting the field's value
-		this.$events.$on('field-value-' + this.field.attribute, this.handleChange);
+		this.$events.$on('field-value-' + this.field.attribute, this.fill);
 
 		if (this.field.depends && this.field.depends.length) {
 			this.field.depends.forEach(attr => {
@@ -948,18 +976,6 @@ var FormField = {
 			});
 
 			this.triggerDependentChange();
-		}
-	},
-
-	watch: {
-		'field.value': {
-			deep: true,
-			handler: function (value) {
-				this.$events.$emit('field-change', value, this.field.attribute);
-				this.$events.$emit('field-change-' + this.field.attribute, value);
-
-				this.fillModel();
-			}
 		}
 	},
 
@@ -981,23 +997,47 @@ var FormField = {
 		},
 
 		/**
-		 * Provide a function that fills a passed model object with the
-		 * field's internal value attribute
+		 * Perform some sanitize actions when filling the value
+		 *
+		 * @param value
+		 * @returns {*}
 		 */
-		fillModel() {
-			if (!this.model) {
-				return;
-			}
-
-			setProp(this.model, this.field.attribute, this.field.value);
+		sanitizeValue(value) {
+			return value;
 		},
 
 		/**
-		 * Update the field's internal value
+		 * Update the field's value
+		 * @param value
 		 */
-		handleChange(value) {
-			this.field.value = value;
-			this.fillModel();
+		fill(value) {
+			if (isEqual(value, this.field.value)) {
+				return;
+			}
+
+			if (!this.model) {
+				this.field.value = this.sanitizeValue(value);
+				this.triggerChange();
+			} else {
+				setProp(this.model, this.field.attribute, this.sanitizeValue(value));
+			}
+		},
+
+		/**
+		 * Get field's value
+		 * @returns {*}
+		 */
+		value() {
+			if (!this.model) {
+				return this.field.value;
+			}
+
+			return getProp(this.model, this.field.attribute);
+		},
+
+		triggerChange() {
+			this.$events.$emit('field-change', this.field.value, this.field.attribute);
+			this.$events.$emit('field-change-' + this.field.attribute, this.field.value);
 		},
 
 		triggerDependentChange(attribute, value) {
@@ -1006,7 +1046,7 @@ var FormField = {
 		},
 
 		handleDependentChange(attribute, value, values$$1) {
-			console.log(this.field.attribute + ':handleDependentChange', arguments);
+			//console.log(this.field.attribute + ':handleDependentChange', arguments)
 		}
 	},
 };
@@ -1043,7 +1083,7 @@ class FieldList {
 						return;
 					}
 
-					if (value === null) {
+					if (value === null || value === undefined) {
 						value = '';
 					}
 					else if (value === true) {
@@ -1203,6 +1243,16 @@ var script$7 = {
 			return this.pattern || this.field.pattern
 		},
 	},
+
+	methods: {
+		sanitizeValue(value) {
+			if (this.field.type === 'number') {
+				return Number(value);
+			}
+
+			return value;
+		},
+	},
 };
 
 /* script */
@@ -1224,8 +1274,8 @@ var __vue_render__$7 = function() {
                 {
                   name: "model",
                   rawName: "v-model",
-                  value: _vm.field.value,
-                  expression: "field.value"
+                  value: _vm.fieldValue,
+                  expression: "fieldValue"
                 }
               ],
               staticClass: "form-control",
@@ -1243,30 +1293,28 @@ var __vue_render__$7 = function() {
                 type: "checkbox"
               },
               domProps: {
-                checked: Array.isArray(_vm.field.value)
-                  ? _vm._i(_vm.field.value, null) > -1
-                  : _vm.field.value
+                checked: Array.isArray(_vm.fieldValue)
+                  ? _vm._i(_vm.fieldValue, null) > -1
+                  : _vm.fieldValue
               },
               on: {
                 change: function($event) {
-                  var $$a = _vm.field.value,
+                  var $$a = _vm.fieldValue,
                     $$el = $event.target,
                     $$c = $$el.checked ? true : false;
                   if (Array.isArray($$a)) {
                     var $$v = null,
                       $$i = _vm._i($$a, $$v);
                     if ($$el.checked) {
-                      $$i < 0 && _vm.$set(_vm.field, "value", $$a.concat([$$v]));
+                      $$i < 0 && (_vm.fieldValue = $$a.concat([$$v]));
                     } else {
                       $$i > -1 &&
-                        _vm.$set(
-                          _vm.field,
-                          "value",
-                          $$a.slice(0, $$i).concat($$a.slice($$i + 1))
-                        );
+                        (_vm.fieldValue = $$a
+                          .slice(0, $$i)
+                          .concat($$a.slice($$i + 1)));
                     }
                   } else {
-                    _vm.$set(_vm.field, "value", $$c);
+                    _vm.fieldValue = $$c;
                   }
                 }
               }
@@ -1277,8 +1325,8 @@ var __vue_render__$7 = function() {
                   {
                     name: "model",
                     rawName: "v-model",
-                    value: _vm.field.value,
-                    expression: "field.value"
+                    value: _vm.fieldValue,
+                    expression: "fieldValue"
                   }
                 ],
                 staticClass: "form-control",
@@ -1295,10 +1343,10 @@ var __vue_render__$7 = function() {
                   disabled: _vm.inputDisabled,
                   type: "radio"
                 },
-                domProps: { checked: _vm._q(_vm.field.value, null) },
+                domProps: { checked: _vm._q(_vm.fieldValue, null) },
                 on: {
                   change: function($event) {
-                    _vm.$set(_vm.field, "value", null);
+                    _vm.fieldValue = null;
                   }
                 }
               })
@@ -1307,8 +1355,8 @@ var __vue_render__$7 = function() {
                   {
                     name: "model",
                     rawName: "v-model",
-                    value: _vm.field.value,
-                    expression: "field.value"
+                    value: _vm.fieldValue,
+                    expression: "fieldValue"
                   }
                 ],
                 staticClass: "form-control",
@@ -1325,13 +1373,13 @@ var __vue_render__$7 = function() {
                   disabled: _vm.inputDisabled,
                   type: _vm.inputType
                 },
-                domProps: { value: _vm.field.value },
+                domProps: { value: _vm.fieldValue },
                 on: {
                   input: function($event) {
                     if ($event.target.composing) {
                       return
                     }
-                    _vm.$set(_vm.field, "value", $event.target.value);
+                    _vm.fieldValue = $event.target.value;
                   }
                 }
               })
@@ -1419,7 +1467,7 @@ var script$8 = {
 				files.push($event.target.files[i]);
 			}
 
-			this.field.value = this.field.multiple ? files : files[0];
+			this.fieldValue = this.field.multiple ? files : files[0];
 			this.$refs.inputElement.value = '';
 		}
 
@@ -1553,8 +1601,8 @@ var __vue_render__$9 = function() {
               {
                 name: "model",
                 rawName: "v-model",
-                value: _vm.field.value,
-                expression: "field.value"
+                value: _vm.fieldValue,
+                expression: "fieldValue"
               }
             ],
             staticClass: "form-control",
@@ -1574,11 +1622,9 @@ var __vue_render__$9 = function() {
                     var val = "_value" in o ? o._value : o.value;
                     return val
                   });
-                _vm.$set(
-                  _vm.field,
-                  "value",
-                  $event.target.multiple ? $$selectedVal : $$selectedVal[0]
-                );
+                _vm.fieldValue = $event.target.multiple
+                  ? $$selectedVal
+                  : $$selectedVal[0];
               }
             }
           },
@@ -1597,7 +1643,7 @@ var __vue_render__$9 = function() {
                 {
                   domProps: {
                     value: option.value,
-                    selected: option.value == _vm.field.value
+                    selected: option.value == _vm.fieldValue
                   }
                 },
                 [_vm._v("\n\t\t\t\t" + _vm._s(option.label) + "\n\t\t\t")]
@@ -1714,19 +1760,19 @@ var __vue_render__$a = function() {
                   {
                     name: "model",
                     rawName: "v-model",
-                    value: _vm.field.value,
-                    expression: "field.value"
+                    value: _vm.fieldValue,
+                    expression: "fieldValue"
                   }
                 ],
                 staticClass: "form-check-input",
                 attrs: { id: _vm.field.attribute + index, type: "radio" },
                 domProps: {
                   value: option.value,
-                  checked: _vm._q(_vm.field.value, option.value)
+                  checked: _vm._q(_vm.fieldValue, option.value)
                 },
                 on: {
                   change: function($event) {
-                    _vm.$set(_vm.field, "value", option.value);
+                    _vm.fieldValue = option.value;
                   }
                 }
               }),
@@ -1844,8 +1890,8 @@ var __vue_render__$b = function() {
               {
                 name: "model",
                 rawName: "v-model",
-                value: _vm.field.value,
-                expression: "field.value"
+                value: _vm.fieldValue,
+                expression: "fieldValue"
               }
             ],
             staticClass: "form-check-input",
@@ -1857,30 +1903,28 @@ var __vue_render__$b = function() {
               disabled: _vm.inputDisabled
             },
             domProps: {
-              checked: Array.isArray(_vm.field.value)
-                ? _vm._i(_vm.field.value, null) > -1
-                : _vm.field.value
+              checked: Array.isArray(_vm.fieldValue)
+                ? _vm._i(_vm.fieldValue, null) > -1
+                : _vm.fieldValue
             },
             on: {
               change: function($event) {
-                var $$a = _vm.field.value,
+                var $$a = _vm.fieldValue,
                   $$el = $event.target,
                   $$c = $$el.checked ? true : false;
                 if (Array.isArray($$a)) {
                   var $$v = null,
                     $$i = _vm._i($$a, $$v);
                   if ($$el.checked) {
-                    $$i < 0 && _vm.$set(_vm.field, "value", $$a.concat([$$v]));
+                    $$i < 0 && (_vm.fieldValue = $$a.concat([$$v]));
                   } else {
                     $$i > -1 &&
-                      _vm.$set(
-                        _vm.field,
-                        "value",
-                        $$a.slice(0, $$i).concat($$a.slice($$i + 1))
-                      );
+                      (_vm.fieldValue = $$a
+                        .slice(0, $$i)
+                        .concat($$a.slice($$i + 1)));
                   }
                 } else {
-                  _vm.$set(_vm.field, "value", $$c);
+                  _vm.fieldValue = $$c;
                 }
               }
             }
@@ -1979,8 +2023,8 @@ var script$c = {
 		 * Set the initial value for the field
 		 */
 		setInitialValue() {
-			if (!isArray(this.field.value)) {
-				this.field.value = [];
+			if (!isArray(this.fieldValue)) {
+				this.fieldValue = [];
 			}
 		},
 	}
@@ -2018,39 +2062,36 @@ var __vue_render__$c = function() {
                   {
                     name: "model",
                     rawName: "v-model",
-                    value: _vm.field.value,
-                    expression: "field.value"
+                    value: _vm.fieldValue,
+                    expression: "fieldValue"
                   }
                 ],
                 staticClass: "form-check-input",
                 attrs: { id: _vm.field.attribute + index, type: "checkbox" },
                 domProps: {
                   value: option.value,
-                  checked: Array.isArray(_vm.field.value)
-                    ? _vm._i(_vm.field.value, option.value) > -1
-                    : _vm.field.value
+                  checked: Array.isArray(_vm.fieldValue)
+                    ? _vm._i(_vm.fieldValue, option.value) > -1
+                    : _vm.fieldValue
                 },
                 on: {
                   change: function($event) {
-                    var $$a = _vm.field.value,
+                    var $$a = _vm.fieldValue,
                       $$el = $event.target,
                       $$c = $$el.checked ? true : false;
                     if (Array.isArray($$a)) {
                       var $$v = option.value,
                         $$i = _vm._i($$a, $$v);
                       if ($$el.checked) {
-                        $$i < 0 &&
-                          _vm.$set(_vm.field, "value", $$a.concat([$$v]));
+                        $$i < 0 && (_vm.fieldValue = $$a.concat([$$v]));
                       } else {
                         $$i > -1 &&
-                          _vm.$set(
-                            _vm.field,
-                            "value",
-                            $$a.slice(0, $$i).concat($$a.slice($$i + 1))
-                          );
+                          (_vm.fieldValue = $$a
+                            .slice(0, $$i)
+                            .concat($$a.slice($$i + 1)));
                       }
                     } else {
-                      _vm.$set(_vm.field, "value", $$c);
+                      _vm.fieldValue = $$c;
                     }
                   }
                 }
@@ -2203,8 +2244,8 @@ var __vue_render__$d = function() {
             {
               name: "model",
               rawName: "v-model",
-              value: _vm.field.value,
-              expression: "field.value"
+              value: _vm.fieldValue,
+              expression: "fieldValue"
             }
           ],
           staticClass: "form-control",
@@ -2219,13 +2260,13 @@ var __vue_render__$d = function() {
             readonly: _vm.inputReadonly,
             disabled: _vm.inputDisabled
           },
-          domProps: { value: _vm.field.value },
+          domProps: { value: _vm.fieldValue },
           on: {
             input: function($event) {
               if ($event.target.composing) {
                 return
               }
-              _vm.$set(_vm.field, "value", $event.target.value);
+              _vm.fieldValue = $event.target.value;
             }
           }
         })

@@ -1,7 +1,9 @@
-import HandlesValidationErrors from './HandlesValidationErrors';
 import keyBy from "lodash-es/keyBy";
 import mapValues from "lodash-es/mapValues";
-import { setProp } from "../utils/props";
+import isEqual from 'lodash-es/isEqual';
+import has from 'lodash-es/has';
+import HandlesValidationErrors from './HandlesValidationErrors';
+import { getProp, setProp } from "../utils/props";
 import config from "../config";
 
 export default {
@@ -20,6 +22,17 @@ export default {
 	}),
 
 	computed: {
+		/**
+		 * Used for v-model binding on input element
+		 */
+		fieldValue: {
+			get() {
+				return this.value();
+			},
+			set(value) {
+				this.fill(value);
+			},
+		},
 		layoutComponent: function () {
 			return (this.layout || config.defaultLayout) + '-layout';
 		},
@@ -28,11 +41,26 @@ export default {
 		}
 	},
 
-	mounted() {
+	created() {
 		this.setInitialValue();
 
+		if (this.model) {
+			if (!has(this.model, this.field.attribute)) {
+				setProp(this.model, this.field.attribute, this.field.value);
+			}
+
+			this.$watch(
+				() => getProp(this.model, this.field.attribute),
+				(value) => {
+					this.field.value = value;
+					this.triggerChange();
+				},
+				{ deep: true }
+			);
+		}
+
 		// Register a global event for setting the field's value
-		this.$events.$on('field-value-' + this.field.attribute, this.handleChange);
+		this.$events.$on('field-value-' + this.field.attribute, this.fill);
 
 		if (this.field.depends && this.field.depends.length) {
 			this.field.depends.forEach(attr => {
@@ -45,25 +73,13 @@ export default {
 		}
 	},
 
-	watch: {
-		'field.value': {
-			deep: true,
-			handler: function (value) {
-				this.$events.$emit('field-change', value, this.field.attribute);
-				this.$events.$emit('field-change-' + this.field.attribute, value);
-
-				this.fillModel();
-			}
-		}
-	},
-
 	destroyed() {
 		this.$events.$off('field-value-' + this.field.attribute);
 
 		if (this.field.depends && this.field.depends.length) {
 			this.field.depends.forEach(attr => {
 				this.$events.$off('field-change-' + attr);
-			})
+			});
 		}
 	},
 
@@ -75,23 +91,47 @@ export default {
 		},
 
 		/**
-		 * Provide a function that fills a passed model object with the
-		 * field's internal value attribute
+		 * Perform some sanitize actions when filling the value
+		 *
+		 * @param value
+		 * @returns {*}
 		 */
-		fillModel() {
-			if (!this.model) {
-				return;
-			}
-
-			setProp(this.model, this.field.attribute, this.field.value);
+		sanitizeValue(value) {
+			return value;
 		},
 
 		/**
-		 * Update the field's internal value
+		 * Update the field's value
+		 * @param value
 		 */
-		handleChange(value) {
-			this.field.value = value;
-			this.fillModel();
+		fill(value) {
+			if (isEqual(value, this.field.value)) {
+				return;
+			}
+
+			if (!this.model) {
+				this.field.value = this.sanitizeValue(value);
+				this.triggerChange();
+			} else {
+				setProp(this.model, this.field.attribute, this.sanitizeValue(value));
+			}
+		},
+
+		/**
+		 * Get field's value
+		 * @returns {*}
+		 */
+		value() {
+			if (!this.model) {
+				return this.field.value;
+			}
+
+			return getProp(this.model, this.field.attribute);
+		},
+
+		triggerChange() {
+			this.$events.$emit('field-change', this.field.value, this.field.attribute);
+			this.$events.$emit('field-change-' + this.field.attribute, this.field.value);
 		},
 
 		triggerDependentChange(attribute, value) {
@@ -100,7 +140,7 @@ export default {
 		},
 
 		handleDependentChange(attribute, value, values) {
-			console.log(this.field.attribute + ':handleDependentChange', arguments)
+			//console.log(this.field.attribute + ':handleDependentChange', arguments)
 		}
 	},
 }

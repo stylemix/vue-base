@@ -6,7 +6,7 @@
 		<template slot="field">
 			<select
 				:id="field.name"
-				v-model="field.value"
+				v-model="fieldValue"
 				:multiple="field.multiple || false"
 				class="form-control"
 				:class="errorClasses"
@@ -17,7 +17,7 @@
 				<option
 					v-for="option in field.options"
 					:value="option.value"
-					:selected="option.value == field.value">
+					:selected="option.value == fieldValue">
 					{{ option.label }}
 				</option>
 			</select>

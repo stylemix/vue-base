@@ -49,7 +49,7 @@
 					files.push($event.target.files[i]);
 				}
 
-				this.field.value = this.field.multiple ? files : files[0];
+				this.fieldValue = this.field.multiple ? files : files[0];
 				this.$refs.inputElement.value = '';
 			}
 

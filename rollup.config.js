@@ -1,7 +1,7 @@
 import {uglify} from 'rollup-plugin-uglify'
 import babel from 'rollup-plugin-babel'
 import vue from 'rollup-plugin-vue'
-import pkg from '../package.json'
+import pkg from './package.json'
 
 import resolve from 'rollup-plugin-node-resolve'
 import commonjs from 'rollup-plugin-commonjs'

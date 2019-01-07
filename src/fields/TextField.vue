@@ -12,7 +12,7 @@
 				:max="inputMax"
 				:step="inputStep"
 				:pattern="inputPattern"
-				v-model="field.value"
+				v-model="fieldValue"
 				class="form-control"
 				:class="errorClasses"
 				:placeholder="inputPlaceholder"
@@ -95,6 +95,16 @@
 			 */
 			inputPattern() {
 				return this.pattern || this.field.pattern
+			},
+		},
+
+		methods: {
+			sanitizeValue(value) {
+				if (this.field.type === 'number') {
+					return Number(value);
+				}
+
+				return value;
 			},
 		},
 	}
