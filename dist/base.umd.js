@@ -1,4 +1,4 @@
-/* stylemix-base v1.1.1 (c) Azamat X <azamat@stylemix.net> - UNLICENSED */
+/* stylemix-base v1.1.2 (c) Azamat X <azamat@stylemix.net> - UNLICENSED */
 (function (global, factory) {
 typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('vue')) :
 typeof define === 'function' && define.amd ? define(['exports', 'vue'], factory) :
@@ -5965,19 +5965,17 @@ function () {
 
       field.fillFormData = function (formData) {
         function append(value, name) {
-          if (_typeof(value) === 'object' && !(value instanceof File)) {
-            forOwn(value, function (value, key) {
-              append(value, "".concat(name, "[").concat(key, "]"));
-            });
-            return;
-          }
-
           if (value === null || value === undefined) {
             value = '';
           } else if (value === true) {
             value = 1;
           } else if (value === false) {
             value = 0;
+          } else if (_typeof(value) === 'object' && !(value instanceof File)) {
+            forOwn(value, function (value, key) {
+              append(value, "".concat(name, "[").concat(key, "]"));
+            });
+            return;
           }
 
           formData.append(name, value);

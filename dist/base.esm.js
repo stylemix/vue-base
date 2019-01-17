@@ -1,4 +1,4 @@
-/* stylemix-base v1.1.1 (c) Azamat X <azamat@stylemix.net> - UNLICENSED */
+/* stylemix-base v1.1.2 (c) Azamat X <azamat@stylemix.net> - UNLICENSED */
 import Vue from 'vue';
 import keyBy from 'lodash-es/keyBy';
 import mapValues from 'lodash-es/mapValues';
@@ -1075,14 +1075,6 @@ class FieldList {
 			// Add default form data fill method
 			field.fillFormData = (formData) => {
 				function append(value, name) {
-					if (typeof value === 'object' && !(value instanceof File)) {
-						forOwn(value, (value, key) => {
-							append(value, `${name}[${key}]`);
-						});
-
-						return;
-					}
-
 					if (value === null || value === undefined) {
 						value = '';
 					}
@@ -1091,6 +1083,13 @@ class FieldList {
 					}
 					else if (value === false) {
 						value = 0;
+					}
+					else if (typeof value === 'object' && !(value instanceof File)) {
+						forOwn(value, (value, key) => {
+							append(value, `${name}[${key}]`);
+						});
+
+						return;
 					}
 
 					formData.append(name, value);

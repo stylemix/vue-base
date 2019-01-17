@@ -1,6 +1,6 @@
 {
   "name": "stylemix-base",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "author": "Azamat X <azamat@stylemix.net>",
   "license": "UNLICENSED",
   "main": "dist/base.esm.js",

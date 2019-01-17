@@ -31,14 +31,6 @@ export class FieldList {
 			// Add default form data fill method
 			field.fillFormData = (formData) => {
 				function append(value, name) {
-					if (typeof value === 'object' && !(value instanceof File)) {
-						forOwn(value, (value, key) => {
-							append(value, `${name}[${key}]`)
-						});
-
-						return;
-					}
-
 					if (value === null || value === undefined) {
 						value = '';
 					}
@@ -47,6 +39,13 @@ export class FieldList {
 					}
 					else if (value === false) {
 						value = 0;
+					}
+					else if (typeof value === 'object' && !(value instanceof File)) {
+						forOwn(value, (value, key) => {
+							append(value, `${name}[${key}]`)
+						});
+
+						return;
 					}
 
 					formData.append(name, value);
