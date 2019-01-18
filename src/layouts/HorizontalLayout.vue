@@ -4,6 +4,7 @@
 			   :for="field.attribute"
 			   class="col-sm-4 col-form-label text-sm-right">
 			{{ fieldLabel || field.label }}
+			<form-asterisk v-if="field.required" />
 		</label>
 		<div class="col-sm-8" :class="{ 'offset-sm-4': !showLabel }">
 			<slot name="field"/>

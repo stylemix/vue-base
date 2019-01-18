@@ -3,6 +3,7 @@
 		<label v-if="showLabel"
 			   :for="field.attribute">
 			{{ fieldLabel || field.label }}
+			<form-asterisk v-if="field.required" />
 		</label>
 		<label v-else class="placeholder-label"
 			   :for="field.attribute">

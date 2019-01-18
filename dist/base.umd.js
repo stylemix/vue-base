@@ -1,4 +1,4 @@
-/* stylemix-base v1.1.2 (c) Azamat X <azamat@stylemix.net> - UNLICENSED */
+/* stylemix-base v1.2.0 (c) Azamat X <azamat@stylemix.net> - UNLICENSED */
 (function (global, factory) {
 typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('vue')) :
 typeof define === 'function' && define.amd ? define(['exports', 'vue'], factory) :
@@ -501,8 +501,11 @@ __vue_render__$2._withStripped = true;
   );
 
 //
+//
+//
+//
 var script$3 = {
-  mixins: [FieldLayoutMixin]
+  name: 'FormAsterisk'
 };
 
 /* script */
@@ -513,44 +516,7 @@ var __vue_render__$3 = function() {
   var _vm = this;
   var _h = _vm.$createElement;
   var _c = _vm._self._c || _h;
-  return _c(
-    "div",
-    { staticClass: "form-group", class: _vm.errorClasses },
-    [
-      _vm.showLabel
-        ? _c("label", { attrs: { for: _vm.field.attribute } }, [
-            _vm._v(
-              "\n\t\t" + _vm._s(_vm.fieldLabel || _vm.field.label) + "\n\t"
-            )
-          ])
-        : _c(
-            "label",
-            {
-              staticClass: "placeholder-label",
-              attrs: { for: _vm.field.attribute }
-            },
-            [_vm._v("\n\t\t \n\t")]
-          ),
-      _vm._v(" "),
-      _vm._t("field"),
-      _vm._v(" "),
-      _vm._t("errors", [
-        _vm.hasError
-          ? _c("div", {
-              staticClass: "invalid-feedback d-block",
-              domProps: { innerHTML: _vm._s(_vm.errorMessages) }
-            })
-          : _vm._e()
-      ]),
-      _vm._v(" "),
-      _vm.showHelpText && _vm.field.helpText
-        ? _c("small", { staticClass: "form-text text-muted" }, [
-            _vm._v("\n\t\t" + _vm._s(_vm.field.helpText) + "\n\t")
-          ])
-        : _vm._e()
-    ],
-    2
-  )
+  return _c("sup", { staticClass: "label-asterisk text-danger" }, [_vm._v("*")])
 };
 var __vue_staticRenderFns__$3 = [];
 __vue_render__$3._withStripped = true;
@@ -558,11 +524,11 @@ __vue_render__$3._withStripped = true;
   /* style */
   const __vue_inject_styles__$3 = function (inject) {
     if (!inject) return
-    inject("data-v-5d054abf_0", { source: "\n.placeholder-label[data-v-5d054abf] {\n\tdisplay: none;\n}\n.col .placeholder-label[data-v-5d054abf] {\n\tdisplay: block;\n}\n[class*=\" col-\"] .placeholder-label[data-v-5d054abf] {\n\tdisplay: block;\n}\n", map: {"version":3,"sources":["/Users/azamatx/projects/base-js/package/src/layouts/VericalLayout.vue"],"names":[],"mappings":";AAiCA;CACA,cAAA;CACA;AAEA;CACA,eAAA;CACA;AACA;CACA,eAAA;CACA","file":"VericalLayout.vue","sourcesContent":["<template>\n\t<div class=\"form-group\" :class=\"errorClasses\">\n\t\t<label v-if=\"showLabel\"\n\t\t\t   :for=\"field.attribute\">\n\t\t\t{{ fieldLabel || field.label }}\n\t\t</label>\n\t\t<label v-else class=\"placeholder-label\"\n\t\t\t   :for=\"field.attribute\">\n\t\t\t&nbsp;\n\t\t</label>\n\t\t<slot name=\"field\"/>\n\t\t<slot name=\"errors\">\n\t\t\t<div v-if=\"hasError\"\n\t\t\t\t v-html=\"errorMessages\"\n\t\t\t\t class=\"invalid-feedback d-block\">\n\t\t\t</div>\n\t\t</slot>\n\t\t<small v-if=\"showHelpText && field.helpText\"\n\t\t\t   class=\"form-text text-muted\">\n\t\t\t{{ field.helpText }}\n\t\t</small>\n\t</div>\n</template>\n\n<script>\n\timport FieldLayoutMixin from \"../mixins/FieldLayoutMixin\";\n\n\texport default {\n\t\tmixins: [ FieldLayoutMixin ]\n\t}\n</script>\n\n<style type=\"text/scss\" scoped>\n\t.placeholder-label {\n\t\tdisplay: none;\n\t}\n\n\t.col .placeholder-label {\n\t\tdisplay: block;\n\t}\n\t[class*=\" col-\"] .placeholder-label {\n\t\tdisplay: block;\n\t}\n</style>\n"]}, media: undefined });
+    inject("data-v-628c137e_0", { source: "\n.label-asterisk[data-v-628c137e] {\n\ttop: -.1em;\n\tfont-size: 1em;\n}\n", map: {"version":3,"sources":["/Users/azamatx/projects/base-js/package/src/common/Asterisk.vue"],"names":[],"mappings":";AAWA;CACA,WAAA;CACA,eAAA;CACA","file":"Asterisk.vue","sourcesContent":["<template>\n\t<sup class=\"label-asterisk text-danger\">*</sup>\n</template>\n\n<script>\n\texport default {\n\t\tname: 'FormAsterisk'\n\t}\n</script>\n\n<style type=\"text/scss\" scoped>\n\t.label-asterisk {\n\t\ttop: -.1em;\n\t\tfont-size: 1em;\n\t}\n</style>\n"]}, media: undefined });
 
   };
   /* scoped */
-  const __vue_scope_id__$3 = "data-v-5d054abf";
+  const __vue_scope_id__$3 = "data-v-628c137e";
   /* module identifier */
   const __vue_module_identifier__$3 = undefined;
   /* functional template */
@@ -576,7 +542,7 @@ __vue_render__$3._withStripped = true;
     const component = (typeof script === 'function' ? script.options : script) || {};
 
     // For security concerns, we use only base name in production mode.
-    component.__file = "/Users/azamatx/projects/base-js/package/src/layouts/VericalLayout.vue";
+    component.__file = "/Users/azamatx/projects/base-js/package/src/common/Asterisk.vue";
 
     if (!component.render) {
       component.render = template.render;
@@ -675,7 +641,7 @@ __vue_render__$3._withStripped = true;
   
 
   
-  var VericalLayout = __vue_normalize__$3(
+  var Asterisk = __vue_normalize__$3(
     { render: __vue_render__$3, staticRenderFns: __vue_staticRenderFns__$3 },
     __vue_inject_styles__$3,
     __vue_script__$3,
@@ -699,6 +665,198 @@ var __vue_render__$4 = function() {
   var _vm = this;
   var _h = _vm.$createElement;
   var _c = _vm._self._c || _h;
+  return _c(
+    "div",
+    { staticClass: "form-group", class: _vm.errorClasses },
+    [
+      _vm.showLabel
+        ? _c(
+            "label",
+            { attrs: { for: _vm.field.attribute } },
+            [
+              _vm._v(
+                "\n\t\t" + _vm._s(_vm.fieldLabel || _vm.field.label) + "\n\t\t"
+              ),
+              _vm.field.required ? _c("form-asterisk") : _vm._e()
+            ],
+            1
+          )
+        : _c(
+            "label",
+            {
+              staticClass: "placeholder-label",
+              attrs: { for: _vm.field.attribute }
+            },
+            [_vm._v("\n\t\t \n\t")]
+          ),
+      _vm._v(" "),
+      _vm._t("field"),
+      _vm._v(" "),
+      _vm._t("errors", [
+        _vm.hasError
+          ? _c("div", {
+              staticClass: "invalid-feedback d-block",
+              domProps: { innerHTML: _vm._s(_vm.errorMessages) }
+            })
+          : _vm._e()
+      ]),
+      _vm._v(" "),
+      _vm.showHelpText && _vm.field.helpText
+        ? _c("small", { staticClass: "form-text text-muted" }, [
+            _vm._v("\n\t\t" + _vm._s(_vm.field.helpText) + "\n\t")
+          ])
+        : _vm._e()
+    ],
+    2
+  )
+};
+var __vue_staticRenderFns__$4 = [];
+__vue_render__$4._withStripped = true;
+
+  /* style */
+  const __vue_inject_styles__$4 = function (inject) {
+    if (!inject) return
+    inject("data-v-4e3a873a_0", { source: "\n.placeholder-label[data-v-4e3a873a] {\n\tdisplay: none;\n}\n.col .placeholder-label[data-v-4e3a873a] {\n\tdisplay: block;\n}\n[class*=\" col-\"] .placeholder-label[data-v-4e3a873a] {\n\tdisplay: block;\n}\n", map: {"version":3,"sources":["/Users/azamatx/projects/base-js/package/src/layouts/VericalLayout.vue"],"names":[],"mappings":";AAkCA;CACA,cAAA;CACA;AAEA;CACA,eAAA;CACA;AACA;CACA,eAAA;CACA","file":"VericalLayout.vue","sourcesContent":["<template>\n\t<div class=\"form-group\" :class=\"errorClasses\">\n\t\t<label v-if=\"showLabel\"\n\t\t\t   :for=\"field.attribute\">\n\t\t\t{{ fieldLabel || field.label }}\n\t\t\t<form-asterisk v-if=\"field.required\" />\n\t\t</label>\n\t\t<label v-else class=\"placeholder-label\"\n\t\t\t   :for=\"field.attribute\">\n\t\t\t&nbsp;\n\t\t</label>\n\t\t<slot name=\"field\"/>\n\t\t<slot name=\"errors\">\n\t\t\t<div v-if=\"hasError\"\n\t\t\t\t v-html=\"errorMessages\"\n\t\t\t\t class=\"invalid-feedback d-block\">\n\t\t\t</div>\n\t\t</slot>\n\t\t<small v-if=\"showHelpText && field.helpText\"\n\t\t\t   class=\"form-text text-muted\">\n\t\t\t{{ field.helpText }}\n\t\t</small>\n\t</div>\n</template>\n\n<script>\n\timport FieldLayoutMixin from \"../mixins/FieldLayoutMixin\";\n\n\texport default {\n\t\tmixins: [ FieldLayoutMixin ]\n\t}\n</script>\n\n<style type=\"text/scss\" scoped>\n\t.placeholder-label {\n\t\tdisplay: none;\n\t}\n\n\t.col .placeholder-label {\n\t\tdisplay: block;\n\t}\n\t[class*=\" col-\"] .placeholder-label {\n\t\tdisplay: block;\n\t}\n</style>\n"]}, media: undefined });
+
+  };
+  /* scoped */
+  const __vue_scope_id__$4 = "data-v-4e3a873a";
+  /* module identifier */
+  const __vue_module_identifier__$4 = undefined;
+  /* functional template */
+  const __vue_is_functional_template__$4 = false;
+  /* component normalizer */
+  function __vue_normalize__$4(
+    template, style, script,
+    scope, functional, moduleIdentifier,
+    createInjector, createInjectorSSR
+  ) {
+    const component = (typeof script === 'function' ? script.options : script) || {};
+
+    // For security concerns, we use only base name in production mode.
+    component.__file = "/Users/azamatx/projects/base-js/package/src/layouts/VericalLayout.vue";
+
+    if (!component.render) {
+      component.render = template.render;
+      component.staticRenderFns = template.staticRenderFns;
+      component._compiled = true;
+
+      if (functional) component.functional = true;
+    }
+
+    component._scopeId = scope;
+
+    {
+      let hook;
+      if (style) {
+        hook = function(context) {
+          style.call(this, createInjector(context));
+        };
+      }
+
+      if (hook !== undefined) {
+        if (component.functional) {
+          // register for functional component in vue file
+          const originalRender = component.render;
+          component.render = function renderWithStyleInjection(h, context) {
+            hook.call(context);
+            return originalRender(h, context)
+          };
+        } else {
+          // inject component registration as beforeCreate hook
+          const existing = component.beforeCreate;
+          component.beforeCreate = existing ? [].concat(existing, hook) : [hook];
+        }
+      }
+    }
+
+    return component
+  }
+  /* style inject */
+  function __vue_create_injector__$1() {
+    const head = document.head || document.getElementsByTagName('head')[0];
+    const styles = __vue_create_injector__$1.styles || (__vue_create_injector__$1.styles = {});
+    const isOldIE =
+      typeof navigator !== 'undefined' &&
+      /msie [6-9]\\b/.test(navigator.userAgent.toLowerCase());
+
+    return function addStyle(id, css) {
+      if (document.querySelector('style[data-vue-ssr-id~="' + id + '"]')) return // SSR styles are present.
+
+      const group = isOldIE ? css.media || 'default' : id;
+      const style = styles[group] || (styles[group] = { ids: [], parts: [], element: undefined });
+
+      if (!style.ids.includes(id)) {
+        let code = css.source;
+        let index = style.ids.length;
+
+        style.ids.push(id);
+
+        if (isOldIE) {
+          style.element = style.element || document.querySelector('style[data-group=' + group + ']');
+        }
+
+        if (!style.element) {
+          const el = style.element = document.createElement('style');
+          el.type = 'text/css';
+
+          if (css.media) el.setAttribute('media', css.media);
+          if (isOldIE) {
+            el.setAttribute('data-group', group);
+            el.setAttribute('data-next-index', '0');
+          }
+
+          head.appendChild(el);
+        }
+
+        if (isOldIE) {
+          index = parseInt(style.element.getAttribute('data-next-index'));
+          style.element.setAttribute('data-next-index', index + 1);
+        }
+
+        if (style.element.styleSheet) {
+          style.parts.push(code);
+          style.element.styleSheet.cssText = style.parts
+            .filter(Boolean)
+            .join('\n');
+        } else {
+          const textNode = document.createTextNode(code);
+          const nodes = style.element.childNodes;
+          if (nodes[index]) style.element.removeChild(nodes[index]);
+          if (nodes.length) style.element.insertBefore(textNode, nodes[index]);
+          else style.element.appendChild(textNode);
+        }
+      }
+    }
+  }
+  /* style inject SSR */
+  
+
+  
+  var VericalLayout = __vue_normalize__$4(
+    { render: __vue_render__$4, staticRenderFns: __vue_staticRenderFns__$4 },
+    __vue_inject_styles__$4,
+    __vue_script__$4,
+    __vue_scope_id__$4,
+    __vue_is_functional_template__$4,
+    __vue_module_identifier__$4,
+    __vue_create_injector__$1,
+    undefined
+  );
+
+//
+var script$5 = {
+  mixins: [FieldLayoutMixin]
+};
+
+/* script */
+            const __vue_script__$5 = script$5;
+            
+/* template */
+var __vue_render__$5 = function() {
+  var _vm = this;
+  var _h = _vm.$createElement;
+  var _c = _vm._self._c || _h;
   return _c("div", { staticClass: "form-group row", class: _vm.errorClasses }, [
     _vm.showLabel
       ? _c(
@@ -709,9 +867,11 @@ var __vue_render__$4 = function() {
           },
           [
             _vm._v(
-              "\n\t\t" + _vm._s(_vm.fieldLabel || _vm.field.label) + "\n\t"
-            )
-          ]
+              "\n\t\t" + _vm._s(_vm.fieldLabel || _vm.field.label) + "\n\t\t"
+            ),
+            _vm.field.required ? _c("form-asterisk") : _vm._e()
+          ],
+          1
         )
       : _vm._e(),
     _vm._v(" "),
@@ -740,19 +900,19 @@ var __vue_render__$4 = function() {
     )
   ])
 };
-var __vue_staticRenderFns__$4 = [];
-__vue_render__$4._withStripped = true;
+var __vue_staticRenderFns__$5 = [];
+__vue_render__$5._withStripped = true;
 
   /* style */
-  const __vue_inject_styles__$4 = undefined;
+  const __vue_inject_styles__$5 = undefined;
   /* scoped */
-  const __vue_scope_id__$4 = undefined;
+  const __vue_scope_id__$5 = undefined;
   /* module identifier */
-  const __vue_module_identifier__$4 = undefined;
+  const __vue_module_identifier__$5 = undefined;
   /* functional template */
-  const __vue_is_functional_template__$4 = false;
+  const __vue_is_functional_template__$5 = false;
   /* component normalizer */
-  function __vue_normalize__$4(
+  function __vue_normalize__$5(
     template, style, script,
     scope, functional, moduleIdentifier,
     createInjector, createInjectorSSR
@@ -780,27 +940,27 @@ __vue_render__$4._withStripped = true;
   
 
   
-  var HorizontalLayout = __vue_normalize__$4(
-    { render: __vue_render__$4, staticRenderFns: __vue_staticRenderFns__$4 },
-    __vue_inject_styles__$4,
-    __vue_script__$4,
-    __vue_scope_id__$4,
-    __vue_is_functional_template__$4,
-    __vue_module_identifier__$4,
+  var HorizontalLayout = __vue_normalize__$5(
+    { render: __vue_render__$5, staticRenderFns: __vue_staticRenderFns__$5 },
+    __vue_inject_styles__$5,
+    __vue_script__$5,
+    __vue_scope_id__$5,
+    __vue_is_functional_template__$5,
+    __vue_module_identifier__$5,
     undefined,
     undefined
   );
 
 //
-var script$5 = {
+var script$6 = {
   mixins: [FieldLayoutMixin]
 };
 
 /* script */
-            const __vue_script__$5 = script$5;
+            const __vue_script__$6 = script$6;
             
 /* template */
-var __vue_render__$5 = function() {
+var __vue_render__$6 = function() {
   var _vm = this;
   var _h = _vm.$createElement;
   var _c = _vm._self._c || _h;
@@ -811,7 +971,13 @@ var __vue_render__$5 = function() {
       _c(
         "label",
         { staticClass: "sr-only", attrs: { for: _vm.field.attribute } },
-        [_vm._v("\n\t\t" + _vm._s(_vm.field.label || _vm.fieldLabel) + "\n\t")]
+        [
+          _vm._v(
+            "\n\t\t" + _vm._s(_vm.field.label || _vm.fieldLabel) + "\n\t\t"
+          ),
+          _vm.field.required ? _c("form-asterisk") : _vm._e()
+        ],
+        1
       ),
       _vm._v(" "),
       _vm._t("field"),
@@ -834,19 +1000,19 @@ var __vue_render__$5 = function() {
     2
   )
 };
-var __vue_staticRenderFns__$5 = [];
-__vue_render__$5._withStripped = true;
+var __vue_staticRenderFns__$6 = [];
+__vue_render__$6._withStripped = true;
 
   /* style */
-  const __vue_inject_styles__$5 = undefined;
+  const __vue_inject_styles__$6 = undefined;
   /* scoped */
-  const __vue_scope_id__$5 = undefined;
+  const __vue_scope_id__$6 = undefined;
   /* module identifier */
-  const __vue_module_identifier__$5 = undefined;
+  const __vue_module_identifier__$6 = undefined;
   /* functional template */
-  const __vue_is_functional_template__$5 = false;
+  const __vue_is_functional_template__$6 = false;
   /* component normalizer */
-  function __vue_normalize__$5(
+  function __vue_normalize__$6(
     template, style, script,
     scope, functional, moduleIdentifier,
     createInjector, createInjectorSSR
@@ -874,13 +1040,13 @@ __vue_render__$5._withStripped = true;
   
 
   
-  var InlineLayout = __vue_normalize__$5(
-    { render: __vue_render__$5, staticRenderFns: __vue_staticRenderFns__$5 },
-    __vue_inject_styles__$5,
-    __vue_script__$5,
-    __vue_scope_id__$5,
-    __vue_is_functional_template__$5,
-    __vue_module_identifier__$5,
+  var InlineLayout = __vue_normalize__$6(
+    { render: __vue_render__$6, staticRenderFns: __vue_staticRenderFns__$6 },
+    __vue_inject_styles__$6,
+    __vue_script__$6,
+    __vue_scope_id__$6,
+    __vue_is_functional_template__$6,
+    __vue_module_identifier__$6,
     undefined,
     undefined
   );
@@ -889,33 +1055,33 @@ __vue_render__$5._withStripped = true;
 //
 //
 //
-var script$6 = {
+var script$7 = {
   name: 'FormUndefinedField'
 };
 
 /* script */
-            const __vue_script__$6 = script$6;
+            const __vue_script__$7 = script$7;
             
 /* template */
-var __vue_render__$6 = function() {
+var __vue_render__$7 = function() {
   var _vm = this;
   var _h = _vm.$createElement;
   var _c = _vm._self._c || _h;
   return _c("div")
 };
-var __vue_staticRenderFns__$6 = [];
-__vue_render__$6._withStripped = true;
+var __vue_staticRenderFns__$7 = [];
+__vue_render__$7._withStripped = true;
 
   /* style */
-  const __vue_inject_styles__$6 = undefined;
+  const __vue_inject_styles__$7 = undefined;
   /* scoped */
-  const __vue_scope_id__$6 = undefined;
+  const __vue_scope_id__$7 = undefined;
   /* module identifier */
-  const __vue_module_identifier__$6 = undefined;
+  const __vue_module_identifier__$7 = undefined;
   /* functional template */
-  const __vue_is_functional_template__$6 = false;
+  const __vue_is_functional_template__$7 = false;
   /* component normalizer */
-  function __vue_normalize__$6(
+  function __vue_normalize__$7(
     template, style, script,
     scope, functional, moduleIdentifier,
     createInjector, createInjectorSSR
@@ -943,13 +1109,13 @@ __vue_render__$6._withStripped = true;
   
 
   
-  var Undefined = __vue_normalize__$6(
-    { render: __vue_render__$6, staticRenderFns: __vue_staticRenderFns__$6 },
-    __vue_inject_styles__$6,
-    __vue_script__$6,
-    __vue_scope_id__$6,
-    __vue_is_functional_template__$6,
-    __vue_module_identifier__$6,
+  var Undefined = __vue_normalize__$7(
+    { render: __vue_render__$7, staticRenderFns: __vue_staticRenderFns__$7 },
+    __vue_inject_styles__$7,
+    __vue_script__$7,
+    __vue_scope_id__$7,
+    __vue_is_functional_template__$7,
+    __vue_module_identifier__$7,
     undefined,
     undefined
   );
@@ -6066,7 +6232,7 @@ var FormComponent = {
 };
 
 //
-var script$7 = {
+var script$8 = {
   name: 'FormTextField',
   mixins: [FormField],
   props: {
@@ -6147,10 +6313,10 @@ var script$7 = {
 };
 
 /* script */
-            const __vue_script__$7 = script$7;
+            const __vue_script__$8 = script$8;
             
 /* template */
-var __vue_render__$7 = function() {
+var __vue_render__$8 = function() {
   var _vm = this;
   var _h = _vm.$createElement;
   var _c = _vm._self._c || _h;
@@ -6279,19 +6445,19 @@ var __vue_render__$7 = function() {
     2
   )
 };
-var __vue_staticRenderFns__$7 = [];
-__vue_render__$7._withStripped = true;
+var __vue_staticRenderFns__$8 = [];
+__vue_render__$8._withStripped = true;
 
   /* style */
-  const __vue_inject_styles__$7 = undefined;
+  const __vue_inject_styles__$8 = undefined;
   /* scoped */
-  const __vue_scope_id__$7 = undefined;
+  const __vue_scope_id__$8 = undefined;
   /* module identifier */
-  const __vue_module_identifier__$7 = undefined;
+  const __vue_module_identifier__$8 = undefined;
   /* functional template */
-  const __vue_is_functional_template__$7 = false;
+  const __vue_is_functional_template__$8 = false;
   /* component normalizer */
-  function __vue_normalize__$7(
+  function __vue_normalize__$8(
     template, style, script,
     scope, functional, moduleIdentifier,
     createInjector, createInjectorSSR
@@ -6319,19 +6485,19 @@ __vue_render__$7._withStripped = true;
   
 
   
-  var TextField = __vue_normalize__$7(
-    { render: __vue_render__$7, staticRenderFns: __vue_staticRenderFns__$7 },
-    __vue_inject_styles__$7,
-    __vue_script__$7,
-    __vue_scope_id__$7,
-    __vue_is_functional_template__$7,
-    __vue_module_identifier__$7,
+  var TextField = __vue_normalize__$8(
+    { render: __vue_render__$8, staticRenderFns: __vue_staticRenderFns__$8 },
+    __vue_inject_styles__$8,
+    __vue_script__$8,
+    __vue_scope_id__$8,
+    __vue_is_functional_template__$8,
+    __vue_module_identifier__$8,
     undefined,
     undefined
   );
 
 //
-var script$8 = {
+var script$9 = {
   name: 'FormTextField',
   mixins: [FormField],
   props: {
@@ -6360,10 +6526,10 @@ var script$8 = {
 };
 
 /* script */
-            const __vue_script__$8 = script$8;
+            const __vue_script__$9 = script$9;
             
 /* template */
-var __vue_render__$8 = function() {
+var __vue_render__$9 = function() {
   var _vm = this;
   var _h = _vm.$createElement;
   var _c = _vm._self._c || _h;
@@ -6395,19 +6561,19 @@ var __vue_render__$8 = function() {
     2
   )
 };
-var __vue_staticRenderFns__$8 = [];
-__vue_render__$8._withStripped = true;
+var __vue_staticRenderFns__$9 = [];
+__vue_render__$9._withStripped = true;
 
   /* style */
-  const __vue_inject_styles__$8 = undefined;
+  const __vue_inject_styles__$9 = undefined;
   /* scoped */
-  const __vue_scope_id__$8 = undefined;
+  const __vue_scope_id__$9 = undefined;
   /* module identifier */
-  const __vue_module_identifier__$8 = undefined;
+  const __vue_module_identifier__$9 = undefined;
   /* functional template */
-  const __vue_is_functional_template__$8 = false;
+  const __vue_is_functional_template__$9 = false;
   /* component normalizer */
-  function __vue_normalize__$8(
+  function __vue_normalize__$9(
     template, style, script,
     scope, functional, moduleIdentifier,
     createInjector, createInjectorSSR
@@ -6435,19 +6601,19 @@ __vue_render__$8._withStripped = true;
   
 
   
-  var FileField = __vue_normalize__$8(
-    { render: __vue_render__$8, staticRenderFns: __vue_staticRenderFns__$8 },
-    __vue_inject_styles__$8,
-    __vue_script__$8,
-    __vue_scope_id__$8,
-    __vue_is_functional_template__$8,
-    __vue_module_identifier__$8,
+  var FileField = __vue_normalize__$9(
+    { render: __vue_render__$9, staticRenderFns: __vue_staticRenderFns__$9 },
+    __vue_inject_styles__$9,
+    __vue_script__$9,
+    __vue_scope_id__$9,
+    __vue_is_functional_template__$9,
+    __vue_module_identifier__$9,
     undefined,
     undefined
   );
 
 //
-var script$9 = {
+var script$a = {
   mixins: [FormField],
   props: {
     disabled: {}
@@ -6463,10 +6629,10 @@ var script$9 = {
 };
 
 /* script */
-            const __vue_script__$9 = script$9;
+            const __vue_script__$a = script$a;
             
 /* template */
-var __vue_render__$9 = function() {
+var __vue_render__$a = function() {
   var _vm = this;
   var _h = _vm.$createElement;
   var _c = _vm._self._c || _h;
@@ -6538,19 +6704,19 @@ var __vue_render__$9 = function() {
     2
   )
 };
-var __vue_staticRenderFns__$9 = [];
-__vue_render__$9._withStripped = true;
+var __vue_staticRenderFns__$a = [];
+__vue_render__$a._withStripped = true;
 
   /* style */
-  const __vue_inject_styles__$9 = undefined;
+  const __vue_inject_styles__$a = undefined;
   /* scoped */
-  const __vue_scope_id__$9 = undefined;
+  const __vue_scope_id__$a = undefined;
   /* module identifier */
-  const __vue_module_identifier__$9 = undefined;
+  const __vue_module_identifier__$a = undefined;
   /* functional template */
-  const __vue_is_functional_template__$9 = false;
+  const __vue_is_functional_template__$a = false;
   /* component normalizer */
-  function __vue_normalize__$9(
+  function __vue_normalize__$a(
     template, style, script,
     scope, functional, moduleIdentifier,
     createInjector, createInjectorSSR
@@ -6578,19 +6744,19 @@ __vue_render__$9._withStripped = true;
   
 
   
-  var SelectField = __vue_normalize__$9(
-    { render: __vue_render__$9, staticRenderFns: __vue_staticRenderFns__$9 },
-    __vue_inject_styles__$9,
-    __vue_script__$9,
-    __vue_scope_id__$9,
-    __vue_is_functional_template__$9,
-    __vue_module_identifier__$9,
+  var SelectField = __vue_normalize__$a(
+    { render: __vue_render__$a, staticRenderFns: __vue_staticRenderFns__$a },
+    __vue_inject_styles__$a,
+    __vue_script__$a,
+    __vue_scope_id__$a,
+    __vue_is_functional_template__$a,
+    __vue_module_identifier__$a,
     undefined,
     undefined
   );
 
 //
-var script$a = {
+var script$b = {
   name: 'RadiosField',
   mixins: [FormField],
   props: {
@@ -6607,10 +6773,10 @@ var script$a = {
 };
 
 /* script */
-            const __vue_script__$a = script$a;
+            const __vue_script__$b = script$b;
             
 /* template */
-var __vue_render__$a = function() {
+var __vue_render__$b = function() {
   var _vm = this;
   var _h = _vm.$createElement;
   var _c = _vm._self._c || _h;
@@ -6671,19 +6837,19 @@ var __vue_render__$a = function() {
     2
   )
 };
-var __vue_staticRenderFns__$a = [];
-__vue_render__$a._withStripped = true;
+var __vue_staticRenderFns__$b = [];
+__vue_render__$b._withStripped = true;
 
   /* style */
-  const __vue_inject_styles__$a = undefined;
+  const __vue_inject_styles__$b = undefined;
   /* scoped */
-  const __vue_scope_id__$a = undefined;
+  const __vue_scope_id__$b = undefined;
   /* module identifier */
-  const __vue_module_identifier__$a = undefined;
+  const __vue_module_identifier__$b = undefined;
   /* functional template */
-  const __vue_is_functional_template__$a = false;
+  const __vue_is_functional_template__$b = false;
   /* component normalizer */
-  function __vue_normalize__$a(
+  function __vue_normalize__$b(
     template, style, script,
     scope, functional, moduleIdentifier,
     createInjector, createInjectorSSR
@@ -6711,19 +6877,19 @@ __vue_render__$a._withStripped = true;
   
 
   
-  var RadiosField = __vue_normalize__$a(
-    { render: __vue_render__$a, staticRenderFns: __vue_staticRenderFns__$a },
-    __vue_inject_styles__$a,
-    __vue_script__$a,
-    __vue_scope_id__$a,
-    __vue_is_functional_template__$a,
-    __vue_module_identifier__$a,
+  var RadiosField = __vue_normalize__$b(
+    { render: __vue_render__$b, staticRenderFns: __vue_staticRenderFns__$b },
+    __vue_inject_styles__$b,
+    __vue_script__$b,
+    __vue_scope_id__$b,
+    __vue_is_functional_template__$b,
+    __vue_module_identifier__$b,
     undefined,
     undefined
   );
 
 //
-var script$b = {
+var script$c = {
   name: 'CheckboxField',
   mixins: [FormField],
   props: {
@@ -6743,10 +6909,10 @@ var script$b = {
 };
 
 /* script */
-            const __vue_script__$b = script$b;
+            const __vue_script__$c = script$c;
             
 /* template */
-var __vue_render__$b = function() {
+var __vue_render__$c = function() {
   var _vm = this;
   var _h = _vm.$createElement;
   var _c = _vm._self._c || _h;
@@ -6823,19 +6989,19 @@ var __vue_render__$b = function() {
     2
   )
 };
-var __vue_staticRenderFns__$b = [];
-__vue_render__$b._withStripped = true;
+var __vue_staticRenderFns__$c = [];
+__vue_render__$c._withStripped = true;
 
   /* style */
-  const __vue_inject_styles__$b = undefined;
+  const __vue_inject_styles__$c = undefined;
   /* scoped */
-  const __vue_scope_id__$b = undefined;
+  const __vue_scope_id__$c = undefined;
   /* module identifier */
-  const __vue_module_identifier__$b = undefined;
+  const __vue_module_identifier__$c = undefined;
   /* functional template */
-  const __vue_is_functional_template__$b = false;
+  const __vue_is_functional_template__$c = false;
   /* component normalizer */
-  function __vue_normalize__$b(
+  function __vue_normalize__$c(
     template, style, script,
     scope, functional, moduleIdentifier,
     createInjector, createInjectorSSR
@@ -6863,19 +7029,19 @@ __vue_render__$b._withStripped = true;
   
 
   
-  var CheckboxField = __vue_normalize__$b(
-    { render: __vue_render__$b, staticRenderFns: __vue_staticRenderFns__$b },
-    __vue_inject_styles__$b,
-    __vue_script__$b,
-    __vue_scope_id__$b,
-    __vue_is_functional_template__$b,
-    __vue_module_identifier__$b,
+  var CheckboxField = __vue_normalize__$c(
+    { render: __vue_render__$c, staticRenderFns: __vue_staticRenderFns__$c },
+    __vue_inject_styles__$c,
+    __vue_script__$c,
+    __vue_scope_id__$c,
+    __vue_is_functional_template__$c,
+    __vue_module_identifier__$c,
     undefined,
     undefined
   );
 
 //
-var script$c = {
+var script$d = {
   name: 'CheckboxesField',
   mixins: [FormField],
   props: {
@@ -6902,10 +7068,10 @@ var script$c = {
 };
 
 /* script */
-            const __vue_script__$c = script$c;
+            const __vue_script__$d = script$d;
             
 /* template */
-var __vue_render__$c = function() {
+var __vue_render__$d = function() {
   var _vm = this;
   var _h = _vm.$createElement;
   var _c = _vm._self._c || _h;
@@ -6984,19 +7150,19 @@ var __vue_render__$c = function() {
     2
   )
 };
-var __vue_staticRenderFns__$c = [];
-__vue_render__$c._withStripped = true;
+var __vue_staticRenderFns__$d = [];
+__vue_render__$d._withStripped = true;
 
   /* style */
-  const __vue_inject_styles__$c = undefined;
+  const __vue_inject_styles__$d = undefined;
   /* scoped */
-  const __vue_scope_id__$c = undefined;
+  const __vue_scope_id__$d = undefined;
   /* module identifier */
-  const __vue_module_identifier__$c = undefined;
+  const __vue_module_identifier__$d = undefined;
   /* functional template */
-  const __vue_is_functional_template__$c = false;
+  const __vue_is_functional_template__$d = false;
   /* component normalizer */
-  function __vue_normalize__$c(
+  function __vue_normalize__$d(
     template, style, script,
     scope, functional, moduleIdentifier,
     createInjector, createInjectorSSR
@@ -7024,19 +7190,19 @@ __vue_render__$c._withStripped = true;
   
 
   
-  var CheckboxesField = __vue_normalize__$c(
-    { render: __vue_render__$c, staticRenderFns: __vue_staticRenderFns__$c },
-    __vue_inject_styles__$c,
-    __vue_script__$c,
-    __vue_scope_id__$c,
-    __vue_is_functional_template__$c,
-    __vue_module_identifier__$c,
+  var CheckboxesField = __vue_normalize__$d(
+    { render: __vue_render__$d, staticRenderFns: __vue_staticRenderFns__$d },
+    __vue_inject_styles__$d,
+    __vue_script__$d,
+    __vue_scope_id__$d,
+    __vue_is_functional_template__$d,
+    __vue_module_identifier__$d,
     undefined,
     undefined
   );
 
 //
-var script$d = {
+var script$e = {
   name: 'FormTextareaField',
   mixins: [FormField],
   props: {
@@ -7093,10 +7259,10 @@ var script$d = {
 };
 
 /* script */
-            const __vue_script__$d = script$d;
+            const __vue_script__$e = script$e;
             
 /* template */
-var __vue_render__$d = function() {
+var __vue_render__$e = function() {
   var _vm = this;
   var _h = _vm.$createElement;
   var _c = _vm._self._c || _h;
@@ -7141,19 +7307,19 @@ var __vue_render__$d = function() {
     2
   )
 };
-var __vue_staticRenderFns__$d = [];
-__vue_render__$d._withStripped = true;
+var __vue_staticRenderFns__$e = [];
+__vue_render__$e._withStripped = true;
 
   /* style */
-  const __vue_inject_styles__$d = undefined;
+  const __vue_inject_styles__$e = undefined;
   /* scoped */
-  const __vue_scope_id__$d = undefined;
+  const __vue_scope_id__$e = undefined;
   /* module identifier */
-  const __vue_module_identifier__$d = undefined;
+  const __vue_module_identifier__$e = undefined;
   /* functional template */
-  const __vue_is_functional_template__$d = false;
+  const __vue_is_functional_template__$e = false;
   /* component normalizer */
-  function __vue_normalize__$d(
+  function __vue_normalize__$e(
     template, style, script,
     scope, functional, moduleIdentifier,
     createInjector, createInjectorSSR
@@ -7181,13 +7347,13 @@ __vue_render__$d._withStripped = true;
   
 
   
-  var TextareaField = __vue_normalize__$d(
-    { render: __vue_render__$d, staticRenderFns: __vue_staticRenderFns__$d },
-    __vue_inject_styles__$d,
-    __vue_script__$d,
-    __vue_scope_id__$d,
-    __vue_is_functional_template__$d,
-    __vue_module_identifier__$d,
+  var TextareaField = __vue_normalize__$e(
+    { render: __vue_render__$e, staticRenderFns: __vue_staticRenderFns__$e },
+    __vue_inject_styles__$e,
+    __vue_script__$e,
+    __vue_scope_id__$e,
+    __vue_is_functional_template__$e,
+    __vue_module_identifier__$e,
     undefined,
     undefined
   );
@@ -7198,6 +7364,7 @@ var components = /*#__PURE__*/Object.freeze({
 Field: Field,
 Fields: Fields,
 EmptyLayout: EmptyLayout,
+FormAsterisk: Asterisk,
 VerticalLayout: VericalLayout,
 HorizontalLayout: HorizontalLayout,
 InlineLayout: InlineLayout,
@@ -7353,6 +7520,7 @@ exports.FormComponent = FormComponent;
 exports.Field = Field;
 exports.Fields = Fields;
 exports.EmptyLayout = EmptyLayout;
+exports.FormAsterisk = Asterisk;
 exports.VerticalLayout = VericalLayout;
 exports.HorizontalLayout = HorizontalLayout;
 exports.InlineLayout = InlineLayout;

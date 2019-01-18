@@ -1,6 +1,7 @@
 import Field from './common/Field.vue';
 import Fields from './common/Fields.vue';
 import EmptyLayout from './common/EmptyLayout.vue';
+import FormAsterisk from './common/Asterisk.vue';
 import VerticalLayout from './layouts/VericalLayout.vue';
 import HorizontalLayout from './layouts/HorizontalLayout.vue';
 import InlineLayout from './layouts/InlineLayout.vue';
@@ -17,6 +18,7 @@ export {
 	Field,
 	Fields,
 	EmptyLayout,
+	FormAsterisk,
 	VerticalLayout,
 	HorizontalLayout,
 	InlineLayout,
