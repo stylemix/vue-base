@@ -1,11 +1,15 @@
-/* stylemix-base v1.2.0 (c) Azamat X <azamat@stylemix.net> - UNLICENSED */
+/* stylemix-base v1.3.0 (c) Azamat X <azamat@stylemix.net> - UNLICENSED */
 (function (global, factory) {
-typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('vue')) :
-typeof define === 'function' && define.amd ? define(['exports', 'vue'], factory) :
-(factory((global.VueBase = {}),global.Vue));
-}(this, (function (exports,Vue) { 'use strict';
+typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('vue'), require('vue-quill-editor'), require('blueimp-load-image'), require('vuedraggable'), require('vue-google-autocomplete'), require('vue-select')) :
+typeof define === 'function' && define.amd ? define(['exports', 'vue', 'vue-quill-editor', 'blueimp-load-image', 'vuedraggable', 'vue-google-autocomplete', 'vue-select'], factory) :
+(factory((global.VueBase = {}),global.Vue,global.vueQuillEditor,global.loadImage,global.draggable,global.VueGoogleAutocomplete,global.vSelect));
+}(this, (function (exports,Vue,vueQuillEditor,loadImage,draggable,VueGoogleAutocomplete,vSelect) { 'use strict';
 
 Vue = Vue && Vue.hasOwnProperty('default') ? Vue['default'] : Vue;
+loadImage = loadImage && loadImage.hasOwnProperty('default') ? loadImage['default'] : loadImage;
+draggable = draggable && draggable.hasOwnProperty('default') ? draggable['default'] : draggable;
+VueGoogleAutocomplete = VueGoogleAutocomplete && VueGoogleAutocomplete.hasOwnProperty('default') ? VueGoogleAutocomplete['default'] : VueGoogleAutocomplete;
+vSelect = vSelect && vSelect.hasOwnProperty('default') ? vSelect['default'] : vSelect;
 
 //
 //
@@ -155,6 +159,10 @@ function _createClass(Constructor, protoProps, staticProps) {
   return Constructor;
 }
 
+function _slicedToArray(arr, i) {
+  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
+}
+
 function _toConsumableArray(arr) {
   return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
 }
@@ -167,12 +175,46 @@ function _arrayWithoutHoles(arr) {
   }
 }
 
+function _arrayWithHoles(arr) {
+  if (Array.isArray(arr)) return arr;
+}
+
 function _iterableToArray(iter) {
   if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
 }
 
+function _iterableToArrayLimit(arr, i) {
+  var _arr = [];
+  var _n = true;
+  var _d = false;
+  var _e = undefined;
+
+  try {
+    for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
+      _arr.push(_s.value);
+
+      if (i && _arr.length === i) break;
+    }
+  } catch (err) {
+    _d = true;
+    _e = err;
+  } finally {
+    try {
+      if (!_n && _i["return"] != null) _i["return"]();
+    } finally {
+      if (_d) throw _e;
+    }
+  }
+
+  return _arr;
+}
+
 function _nonIterableSpread() {
   throw new TypeError("Invalid attempt to spread non-iterable instance");
+}
+
+function _nonIterableRest() {
+  throw new TypeError("Invalid attempt to destructure non-iterable instance");
 }
 
 var Errors =
@@ -7077,10 +7119,7 @@ var __vue_render__$d = function() {
   var _c = _vm._self._c || _h;
   return _c(
     _vm.layoutComponent,
-    {
-      tag: "component",
-      attrs: { field: _vm.field, errors: _vm.errors, "show-label": false }
-    },
+    { tag: "component", attrs: { field: _vm.field, errors: _vm.errors } },
     [
       _c(
         "template",
@@ -7358,26 +7397,6 @@ __vue_render__$e._withStripped = true;
     undefined
   );
 
-
-
-var components = /*#__PURE__*/Object.freeze({
-Field: Field,
-Fields: Fields,
-EmptyLayout: EmptyLayout,
-FormAsterisk: Asterisk,
-VerticalLayout: VericalLayout,
-HorizontalLayout: HorizontalLayout,
-InlineLayout: InlineLayout,
-FormUndefined: Undefined,
-FormTextField: TextField,
-FormFileField: FileField,
-FormSelectField: SelectField,
-FormRadiosField: RadiosField,
-FormCheckboxField: CheckboxField,
-FormCheckboxesField: CheckboxesField,
-FormTextareaField: TextareaField
-});
-
 /**
  * The base implementation of `_.rest` which doesn't validate or coerce arguments.
  *
@@ -7503,6 +7522,233 @@ var assign = createAssigner(function (object, source) {
   }
 });
 
+//
+var script$f = {
+  name: 'FormEditorField',
+  components: {
+    Editor: vueQuillEditor.VueQuillEditor
+  },
+  mixins: [FormField],
+  data: function data() {
+    return {};
+  },
+  computed: {
+    options: function options() {
+      var options = {
+        modules: {
+          toolbar: [['bold', 'italic', 'underline', 'strike'], // toggled buttons
+          ['blockquote', 'code-block'], [{
+            list: 'ordered'
+          }, {
+            list: 'bullet'
+          }], ['link', 'image'], [{
+            size: ['small', false, 'large', 'huge']
+          }], // custom dropdown
+          [{
+            header: [1, 2, 3, 4, 5, 6, false]
+          }], [{
+            font: []
+          }], [{
+            align: []
+          }], ['clean']]
+        }
+      };
+      assign(options, this.field.options);
+      assign(options.modules, this.field.modules);
+      return options;
+    }
+  }
+};
+
+/* script */
+            const __vue_script__$f = script$f;
+            
+/* template */
+var __vue_render__$f = function() {
+  var _vm = this;
+  var _h = _vm.$createElement;
+  var _c = _vm._self._c || _h;
+  return _c(
+    _vm.layoutComponent,
+    { tag: "component", attrs: { field: _vm.field, errors: _vm.errors } },
+    [
+      _c(
+        "template",
+        { slot: "field" },
+        [
+          _c("editor", {
+            staticClass: "editor-field",
+            attrs: { options: _vm.options },
+            model: {
+              value: _vm.field.value,
+              callback: function($$v) {
+                _vm.$set(_vm.field, "value", $$v);
+              },
+              expression: "field.value"
+            }
+          })
+        ],
+        1
+      )
+    ],
+    2
+  )
+};
+var __vue_staticRenderFns__$f = [];
+__vue_render__$f._withStripped = true;
+
+  /* style */
+  const __vue_inject_styles__$f = function (inject) {
+    if (!inject) return
+    inject("data-v-902cfbdc_0", { source: "\n.editor-field[data-v-902cfbdc] .ql-editor {\n  height: 140px;\n}\n", map: {"version":3,"sources":["/Users/azamatx/projects/base-js/package/src/fields/EditorField.vue"],"names":[],"mappings":";AA6DA;EACA,cAAA;CACA","file":"EditorField.vue","sourcesContent":["<template>\n  <component\n    :is=\"layoutComponent\"\n    :field=\"field\"\n    :errors=\"errors\">\n    <template slot=\"field\">\n      <editor\n        v-model=\"field.value\"\n        :options=\"options\"\n        class=\"editor-field\" />\n    </template>\n  </component>\n</template>\n\n<script>\nimport { VueQuillEditor } from 'vue-quill-editor';\nimport assign from 'lodash-es/assign';\nimport FormField from '../mixins/FormField';\n\nexport default {\n  name: 'FormEditorField',\n\n  components: {\n    Editor: VueQuillEditor,\n  },\n\n  mixins: [FormField],\n\n  data() {\n    return {\n    };\n  },\n\n  computed: {\n    options() {\n      let options = {\n        modules: {\n          toolbar: [\n            ['bold', 'italic', 'underline', 'strike'], // toggled buttons\n            ['blockquote', 'code-block'],\n            [{ list: 'ordered' }, { list: 'bullet' }],\n            ['link', 'image'],\n            [{ size: ['small', false, 'large', 'huge'] }], // custom dropdown\n            [{ header: [1, 2, 3, 4, 5, 6, false] }],\n            [{ font: [] }],\n            [{ align: [] }],\n            ['clean'],\n          ],\n        },\n      };\n\n      assign(options, this.field.options);\n      assign(options.modules, this.field.modules);\n\n      return options;\n    }\n  }\n};\n</script>\n\n<style scoped>\n  .editor-field >>> .ql-editor {\n    height: 140px;\n  }\n</style>\n"]}, media: undefined });
+
+  };
+  /* scoped */
+  const __vue_scope_id__$f = "data-v-902cfbdc";
+  /* module identifier */
+  const __vue_module_identifier__$f = undefined;
+  /* functional template */
+  const __vue_is_functional_template__$f = false;
+  /* component normalizer */
+  function __vue_normalize__$f(
+    template, style, script,
+    scope, functional, moduleIdentifier,
+    createInjector, createInjectorSSR
+  ) {
+    const component = (typeof script === 'function' ? script.options : script) || {};
+
+    // For security concerns, we use only base name in production mode.
+    component.__file = "/Users/azamatx/projects/base-js/package/src/fields/EditorField.vue";
+
+    if (!component.render) {
+      component.render = template.render;
+      component.staticRenderFns = template.staticRenderFns;
+      component._compiled = true;
+
+      if (functional) component.functional = true;
+    }
+
+    component._scopeId = scope;
+
+    {
+      let hook;
+      if (style) {
+        hook = function(context) {
+          style.call(this, createInjector(context));
+        };
+      }
+
+      if (hook !== undefined) {
+        if (component.functional) {
+          // register for functional component in vue file
+          const originalRender = component.render;
+          component.render = function renderWithStyleInjection(h, context) {
+            hook.call(context);
+            return originalRender(h, context)
+          };
+        } else {
+          // inject component registration as beforeCreate hook
+          const existing = component.beforeCreate;
+          component.beforeCreate = existing ? [].concat(existing, hook) : [hook];
+        }
+      }
+    }
+
+    return component
+  }
+  /* style inject */
+  function __vue_create_injector__$2() {
+    const head = document.head || document.getElementsByTagName('head')[0];
+    const styles = __vue_create_injector__$2.styles || (__vue_create_injector__$2.styles = {});
+    const isOldIE =
+      typeof navigator !== 'undefined' &&
+      /msie [6-9]\\b/.test(navigator.userAgent.toLowerCase());
+
+    return function addStyle(id, css) {
+      if (document.querySelector('style[data-vue-ssr-id~="' + id + '"]')) return // SSR styles are present.
+
+      const group = isOldIE ? css.media || 'default' : id;
+      const style = styles[group] || (styles[group] = { ids: [], parts: [], element: undefined });
+
+      if (!style.ids.includes(id)) {
+        let code = css.source;
+        let index = style.ids.length;
+
+        style.ids.push(id);
+
+        if (isOldIE) {
+          style.element = style.element || document.querySelector('style[data-group=' + group + ']');
+        }
+
+        if (!style.element) {
+          const el = style.element = document.createElement('style');
+          el.type = 'text/css';
+
+          if (css.media) el.setAttribute('media', css.media);
+          if (isOldIE) {
+            el.setAttribute('data-group', group);
+            el.setAttribute('data-next-index', '0');
+          }
+
+          head.appendChild(el);
+        }
+
+        if (isOldIE) {
+          index = parseInt(style.element.getAttribute('data-next-index'));
+          style.element.setAttribute('data-next-index', index + 1);
+        }
+
+        if (style.element.styleSheet) {
+          style.parts.push(code);
+          style.element.styleSheet.cssText = style.parts
+            .filter(Boolean)
+            .join('\n');
+        } else {
+          const textNode = document.createTextNode(code);
+          const nodes = style.element.childNodes;
+          if (nodes[index]) style.element.removeChild(nodes[index]);
+          if (nodes.length) style.element.insertBefore(textNode, nodes[index]);
+          else style.element.appendChild(textNode);
+        }
+      }
+    }
+  }
+  /* style inject SSR */
+  
+
+  
+  var EditorField = __vue_normalize__$f(
+    { render: __vue_render__$f, staticRenderFns: __vue_staticRenderFns__$f },
+    __vue_inject_styles__$f,
+    __vue_script__$f,
+    __vue_scope_id__$f,
+    __vue_is_functional_template__$f,
+    __vue_module_identifier__$f,
+    __vue_create_injector__$2,
+    undefined
+  );
+
+
+
+var components = /*#__PURE__*/Object.freeze({
+Field: Field,
+Fields: Fields,
+EmptyLayout: EmptyLayout,
+FormAsterisk: Asterisk,
+VerticalLayout: VericalLayout,
+HorizontalLayout: HorizontalLayout,
+InlineLayout: InlineLayout,
+FormUndefined: Undefined,
+FormTextField: TextField,
+FormFileField: FileField,
+FormSelectField: SelectField,
+FormRadiosField: RadiosField,
+FormCheckboxField: CheckboxField,
+FormCheckboxesField: CheckboxesField,
+FormTextareaField: TextareaField,
+FormEditorField: EditorField
+});
+
 var plugin = {
   install: function install(Vue$$1, options) {
     assign(config, options);
@@ -7512,7 +7758,1508 @@ var plugin = {
   }
 };
 
+var config$1 = {
+  previewMaxWidth: 200,
+  previewMaxHeight: 200,
+  previewMinWidth: null,
+  previewMinHeight: null,
+  previewCrop: false,
+  googleKey: null
+};
+
+//
+var script$g = {
+  name: 'AttachmentPreview',
+  props: {
+    attachment: {
+      type: Object,
+      required: true
+    },
+    options: {
+      type: Object
+    }
+  },
+  data: function data() {
+    return {
+      imagePreview: null
+    };
+  },
+  mounted: function mounted() {
+    this.setImagePreview();
+  },
+  computed: {
+    isImage: function isImage() {
+      return this.attachment.mime_type && this.attachment.mime_type.match(/image/);
+    },
+    previewOptions: function previewOptions() {
+      return assign(pick(config$1, ['previewMaxWidth', 'previewMaxHeight', 'previewMinWidth', 'previewMinHeight', 'previewCrop']), this.options);
+    }
+  },
+  methods: {
+    setImagePreview: function setImagePreview() {
+      var _this = this;
+
+      if (!this.isImage) {
+        return;
+      }
+
+      if (this.attachment.file instanceof File) {
+        loadImage(this.attachment.file, function (canvas) {
+          _this.imagePreview = canvas.toDataURL();
+        }, {
+          canvas: true,
+          maxWidth: this.previewOptions.previewMaxWidth,
+          maxHeight: this.previewOptions.previewMaxHeight,
+          minWidth: this.previewOptions.previewMinWidth,
+          minHeight: this.previewOptions.previewMinHeight,
+          crop: this.previewOptions.previewCrop
+        });
+      } else {
+        this.imagePreview = this.attachment.url;
+      }
+    }
+  },
+  watch: {
+    'attachment': function attachment() {
+      this.setImagePreview();
+    }
+  }
+};
+
+/* script */
+            const __vue_script__$g = script$g;
+            
+/* template */
+var __vue_render__$g = function() {
+  var _vm = this;
+  var _h = _vm.$createElement;
+  var _c = _vm._self._c || _h;
+  return _c(
+    "div",
+    {
+      staticClass: "field-attachment-preview",
+      class: { "field-attachment-preview-image": _vm.isImage },
+      style: { "max-width": _vm.previewOptions.previewMaxWidth + "px" }
+    },
+    [
+      _vm.isImage
+        ? _c("img", {
+            staticClass: "img-fluid mb-1",
+            attrs: { src: _vm.imagePreview }
+          })
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.attachment.url
+        ? _c(
+            "a",
+            {
+              staticClass: "d-block",
+              attrs: { href: _vm.attachment.url, target: "_blank" }
+            },
+            [_vm._v("\n    " + _vm._s(_vm.attachment.filename) + "\n  ")]
+          )
+        : _c("div", [
+            _vm._v("\n    " + _vm._s(_vm.attachment.filename) + "\n  ")
+          ])
+    ]
+  )
+};
+var __vue_staticRenderFns__$g = [];
+__vue_render__$g._withStripped = true;
+
+  /* style */
+  const __vue_inject_styles__$g = undefined;
+  /* scoped */
+  const __vue_scope_id__$g = undefined;
+  /* module identifier */
+  const __vue_module_identifier__$g = undefined;
+  /* functional template */
+  const __vue_is_functional_template__$g = false;
+  /* component normalizer */
+  function __vue_normalize__$g(
+    template, style, script,
+    scope, functional, moduleIdentifier,
+    createInjector, createInjectorSSR
+  ) {
+    const component = (typeof script === 'function' ? script.options : script) || {};
+
+    // For security concerns, we use only base name in production mode.
+    component.__file = "/Users/azamatx/projects/base-js/package/src/listing-fields/AttachmentPreview.vue";
+
+    if (!component.render) {
+      component.render = template.render;
+      component.staticRenderFns = template.staticRenderFns;
+      component._compiled = true;
+
+      if (functional) component.functional = true;
+    }
+
+    component._scopeId = scope;
+
+    return component
+  }
+  /* style inject */
+  
+  /* style inject SSR */
+  
+
+  
+  var AttachmentPreview = __vue_normalize__$g(
+    { render: __vue_render__$g, staticRenderFns: __vue_staticRenderFns__$g },
+    __vue_inject_styles__$g,
+    __vue_script__$g,
+    __vue_scope_id__$g,
+    __vue_is_functional_template__$g,
+    __vue_module_identifier__$g,
+    undefined,
+    undefined
+  );
+
+//
+
+function fileToAttached(file) {
+  return {
+    id: Math.random(),
+    file: file,
+    filename: file.name,
+    mime_type: file.type,
+    size: file.size
+  };
+}
+
+var script$h = {
+  components: {
+    draggable: draggable,
+    AttachmentPreview: AttachmentPreview
+  },
+  mixins: [FormField],
+  data: function data() {
+    return {};
+  },
+  computed: {
+    hasAttached: function hasAttached() {
+      return this.field.multiple ? !!this.field.attached.length : !!this.field.attached;
+    },
+    draggableOptions: function draggableOptions() {
+      var options = {
+        direction: 'horizontal'
+      };
+      assign(options, this.field.draggableOptions);
+      return options;
+    },
+    previewOptions: function previewOptions() {
+      return pick(this.field, ['previewMaxWidth', 'previewMaxHeight', 'previewMinWidth', 'previewMinHeight', 'previewCrop']);
+    },
+    sortables: {
+      get: function get() {
+        return this.field.attached;
+      },
+      set: function set(sorted) {
+        this.field.attached = sorted;
+        this.fieldValue = this.field.attached.map(function (attachment) {
+          return attachment.file ? attachment.file : attachment.id;
+        });
+      }
+    }
+  },
+  methods: {
+    setInitialValue: function setInitialValue() {
+      if (!this.field.multiple) {
+        return;
+      }
+
+      if (!this.field.attached) {
+        this.field.attached = [];
+      }
+
+      if (!this.fieldValue) {
+        this.fieldValue = [];
+      }
+    },
+    remove: function remove(attachment) {
+      if (this.field.multiple) {
+        this.field.attached = this.field.attached.filter(function (a) {
+          return a.id !== attachment.id;
+        });
+        this.fieldValue = this.fieldValue.filter(function (id) {
+          if (attachment.file) {
+            return id !== attachment.file;
+          }
+
+          return id !== attachment.id;
+        });
+      } else {
+        this.field.attached = null;
+        this.fieldValue = null;
+      }
+    },
+    clear: function clear() {
+      if (this.field.multiple) {
+        this.field.attached = [];
+        this.fieldValue = [];
+      } else {
+        this.field.attached = null;
+        this.fieldValue = null;
+      }
+    },
+    input: function input($event) {
+      var files = [];
+
+      for (var i = 0; i < $event.target.files.length; i += 1) {
+        files.push($event.target.files[i]);
+      }
+
+      this.field.attached = this.field.multiple ? this.field.attached.concat(files.map(fileToAttached)) : fileToAttached(files[0]);
+      this.fieldValue = this.field.multiple ? this.fieldValue.concat(files) : files[0];
+      this.$refs.input.value = '';
+    }
+  }
+};
+
+/* script */
+            const __vue_script__$h = script$h;
+            
+/* template */
+var __vue_render__$h = function() {
+  var _vm = this;
+  var _h = _vm.$createElement;
+  var _c = _vm._self._c || _h;
+  return _c(
+    _vm.layoutComponent,
+    { tag: "component", attrs: { field: _vm.field, errors: _vm.errors } },
+    [
+      _c("template", { slot: "field" }, [
+        _c("div", { staticClass: "custom-file" }, [
+          _c("input", {
+            ref: "input",
+            staticClass: "custom-file-input",
+            class: _vm.errorClasses,
+            attrs: {
+              id: _vm.field.attribute,
+              dusk: _vm.field.attribute,
+              multiple: _vm.field.multiple || false,
+              accept: _vm.field.mimeTypes,
+              type: "file"
+            },
+            on: {
+              input: function($event) {
+                _vm.input($event);
+              }
+            }
+          }),
+          _vm._v(" "),
+          _c(
+            "label",
+            {
+              staticClass: "custom-file-label",
+              attrs: { for: _vm.field.attribute }
+            },
+            [_vm._v(_vm._s(_vm.field.placeholder || "Click to select files"))]
+          )
+        ]),
+        _vm._v(" "),
+        _vm.hasAttached && _vm.field.multiple
+          ? _c(
+              "div",
+              [
+                _c(
+                  "draggable",
+                  {
+                    staticClass: "field-attachments mt-4",
+                    attrs: { options: _vm.draggableOptions },
+                    model: {
+                      value: _vm.sortables,
+                      callback: function($$v) {
+                        _vm.sortables = $$v;
+                      },
+                      expression: "sortables"
+                    }
+                  },
+                  _vm._l(_vm.field.attached, function(attachment) {
+                    return _c(
+                      "div",
+                      {
+                        key: attachment.id,
+                        staticClass:
+                          "field-attachment field-attachment-draggable bg-light rounded p-2"
+                      },
+                      [
+                        _c("attachment-preview", {
+                          attrs: {
+                            attachment: attachment,
+                            options: _vm.previewOptions
+                          }
+                        }),
+                        _vm._v(" "),
+                        _c(
+                          "button",
+                          {
+                            staticClass:
+                              "close rounded btn-remove bg-secondary",
+                            attrs: { type: "button" },
+                            on: {
+                              click: function($event) {
+                                $event.preventDefault();
+                                _vm.remove(attachment);
+                              }
+                            }
+                          },
+                          [
+                            _c("span", { attrs: { "aria-hidden": "true" } }, [
+                              _vm._v("×")
+                            ])
+                          ]
+                        )
+                      ],
+                      1
+                    )
+                  })
+                ),
+                _vm._v(" "),
+                _vm.hasAttached && _vm.field.multiple
+                  ? _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-sm btn-warning",
+                        on: {
+                          click: function($event) {
+                            $event.stopPropagation();
+                            $event.preventDefault();
+                            _vm.clear();
+                          }
+                        }
+                      },
+                      [_vm._v("Clear all")]
+                    )
+                  : _vm._e()
+              ],
+              1
+            )
+          : _vm._e(),
+        _vm._v(" "),
+        _vm.hasAttached && !_vm.field.multiple
+          ? _c("div", [
+              _c("div", { staticClass: "field-attachments mt-4" }, [
+                _c(
+                  "div",
+                  { staticClass: "field-attachment bg-light rounded p-2" },
+                  [
+                    _c("attachment-preview", {
+                      attrs: {
+                        attachment: _vm.field.attached,
+                        options: _vm.previewOptions
+                      }
+                    }),
+                    _vm._v(" "),
+                    _c(
+                      "button",
+                      {
+                        staticClass: "close rounded btn-remove bg-secondary",
+                        attrs: { type: "button" },
+                        on: {
+                          click: function($event) {
+                            $event.stopPropagation();
+                            $event.preventDefault();
+                            _vm.clear();
+                          }
+                        }
+                      },
+                      [
+                        _c("span", { attrs: { "aria-hidden": "true" } }, [
+                          _vm._v("×")
+                        ])
+                      ]
+                    )
+                  ],
+                  1
+                )
+              ])
+            ])
+          : _vm._e()
+      ])
+    ],
+    2
+  )
+};
+var __vue_staticRenderFns__$h = [];
+__vue_render__$h._withStripped = true;
+
+  /* style */
+  const __vue_inject_styles__$h = function (inject) {
+    if (!inject) return
+    inject("data-v-5aa6457f_0", { source: "\n.field-attachments[data-v-5aa6457f] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: flex-start;\n}\n.field-attachment[data-v-5aa6457f] {\n  position: relative;\n  margin-right: 1rem;\n  margin-bottom: 1rem;\n}\n.btn-remove[data-v-5aa6457f] {\n  position: absolute;\n  top: -.5rem;\n  right: -.5rem;\n  line-height: 100%;\n  height: 1.5rem;\n  width: 1.5rem;\n  opacity: 1;\n  color: white;\n}\n.field-attachment-preview[data-v-5aa6457f] {\n  font-size: 85%;\n}\n.field-attachment-draggable[data-v-5aa6457f] {\n  cursor: move;\n}\n\n/*# sourceMappingURL=FormAttachmentField.vue.map */", map: {"version":3,"sources":["/Users/azamatx/projects/base-js/package/src/listing-fields/FormAttachmentField.vue","FormAttachmentField.vue"],"names":[],"mappings":";AA6LA;EACA,cAAA;EACA,gBAAA;EACA,wBAAA;CACA;AAEA;EACA,mBAAA;EACA,mBAAA;EACA,oBAAA;CACA;AAEA;EACA,mBAAA;EACA,YAAA;EACA,cAAA;EACA,kBAAA;EACA,eAAA;EACA,cAAA;EACA,WAAA;EACA,aAAA;CACA;AAEA;EACA,eAAA;CACA;AAEA;EACA,aAAA;CACA;;AChMA,mDAAmD","file":"FormAttachmentField.vue","sourcesContent":[null,".field-attachments {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: flex-start; }\n\n.field-attachment {\n  position: relative;\n  margin-right: 1rem;\n  margin-bottom: 1rem; }\n\n.btn-remove {\n  position: absolute;\n  top: -.5rem;\n  right: -.5rem;\n  line-height: 100%;\n  height: 1.5rem;\n  width: 1.5rem;\n  opacity: 1;\n  color: white; }\n\n.field-attachment-preview {\n  font-size: 85%; }\n\n.field-attachment-draggable {\n  cursor: move; }\n\n/*# sourceMappingURL=FormAttachmentField.vue.map */"]}, media: undefined });
+
+  };
+  /* scoped */
+  const __vue_scope_id__$h = "data-v-5aa6457f";
+  /* module identifier */
+  const __vue_module_identifier__$h = undefined;
+  /* functional template */
+  const __vue_is_functional_template__$h = false;
+  /* component normalizer */
+  function __vue_normalize__$h(
+    template, style, script,
+    scope, functional, moduleIdentifier,
+    createInjector, createInjectorSSR
+  ) {
+    const component = (typeof script === 'function' ? script.options : script) || {};
+
+    // For security concerns, we use only base name in production mode.
+    component.__file = "/Users/azamatx/projects/base-js/package/src/listing-fields/FormAttachmentField.vue";
+
+    if (!component.render) {
+      component.render = template.render;
+      component.staticRenderFns = template.staticRenderFns;
+      component._compiled = true;
+
+      if (functional) component.functional = true;
+    }
+
+    component._scopeId = scope;
+
+    {
+      let hook;
+      if (style) {
+        hook = function(context) {
+          style.call(this, createInjector(context));
+        };
+      }
+
+      if (hook !== undefined) {
+        if (component.functional) {
+          // register for functional component in vue file
+          const originalRender = component.render;
+          component.render = function renderWithStyleInjection(h, context) {
+            hook.call(context);
+            return originalRender(h, context)
+          };
+        } else {
+          // inject component registration as beforeCreate hook
+          const existing = component.beforeCreate;
+          component.beforeCreate = existing ? [].concat(existing, hook) : [hook];
+        }
+      }
+    }
+
+    return component
+  }
+  /* style inject */
+  function __vue_create_injector__$3() {
+    const head = document.head || document.getElementsByTagName('head')[0];
+    const styles = __vue_create_injector__$3.styles || (__vue_create_injector__$3.styles = {});
+    const isOldIE =
+      typeof navigator !== 'undefined' &&
+      /msie [6-9]\\b/.test(navigator.userAgent.toLowerCase());
+
+    return function addStyle(id, css) {
+      if (document.querySelector('style[data-vue-ssr-id~="' + id + '"]')) return // SSR styles are present.
+
+      const group = isOldIE ? css.media || 'default' : id;
+      const style = styles[group] || (styles[group] = { ids: [], parts: [], element: undefined });
+
+      if (!style.ids.includes(id)) {
+        let code = css.source;
+        let index = style.ids.length;
+
+        style.ids.push(id);
+
+        if (isOldIE) {
+          style.element = style.element || document.querySelector('style[data-group=' + group + ']');
+        }
+
+        if (!style.element) {
+          const el = style.element = document.createElement('style');
+          el.type = 'text/css';
+
+          if (css.media) el.setAttribute('media', css.media);
+          if (isOldIE) {
+            el.setAttribute('data-group', group);
+            el.setAttribute('data-next-index', '0');
+          }
+
+          head.appendChild(el);
+        }
+
+        if (isOldIE) {
+          index = parseInt(style.element.getAttribute('data-next-index'));
+          style.element.setAttribute('data-next-index', index + 1);
+        }
+
+        if (style.element.styleSheet) {
+          style.parts.push(code);
+          style.element.styleSheet.cssText = style.parts
+            .filter(Boolean)
+            .join('\n');
+        } else {
+          const textNode = document.createTextNode(code);
+          const nodes = style.element.childNodes;
+          if (nodes[index]) style.element.removeChild(nodes[index]);
+          if (nodes.length) style.element.insertBefore(textNode, nodes[index]);
+          else style.element.appendChild(textNode);
+        }
+      }
+    }
+  }
+  /* style inject SSR */
+  
+
+  
+  var FormAttachmentField = __vue_normalize__$h(
+    { render: __vue_render__$h, staticRenderFns: __vue_staticRenderFns__$h },
+    __vue_inject_styles__$h,
+    __vue_script__$h,
+    __vue_scope_id__$h,
+    __vue_is_functional_template__$h,
+    __vue_module_identifier__$h,
+    __vue_create_injector__$3,
+    undefined
+  );
+
+/** Used for built-in method references. */
+
+var objectProto$i = Object.prototype;
+/** Used to check objects for own properties. */
+
+var hasOwnProperty$f = objectProto$i.hasOwnProperty;
+/**
+ * Assigns own and inherited enumerable string keyed properties of source
+ * objects to the destination object for all destination properties that
+ * resolve to `undefined`. Source objects are applied from left to right.
+ * Once a property is set, additional values of the same property are ignored.
+ *
+ * **Note:** This method mutates `object`.
+ *
+ * @static
+ * @since 0.1.0
+ * @memberOf _
+ * @category Object
+ * @param {Object} object The destination object.
+ * @param {...Object} [sources] The source objects.
+ * @returns {Object} Returns `object`.
+ * @see _.defaultsDeep
+ * @example
+ *
+ * _.defaults({ 'a': 1 }, { 'b': 2 }, { 'a': 3 });
+ * // => { 'a': 1, 'b': 2 }
+ */
+
+var defaults = baseRest(function (object, sources) {
+  object = Object(object);
+  var index = -1;
+  var length = sources.length;
+  var guard = length > 2 ? sources[2] : undefined;
+
+  if (guard && isIterateeCall(sources[0], sources[1], guard)) {
+    length = 1;
+  }
+
+  while (++index < length) {
+    var source = sources[index];
+    var props = keysIn$1(source);
+    var propsIndex = -1;
+    var propsLength = props.length;
+
+    while (++propsIndex < propsLength) {
+      var key = props[propsIndex];
+      var value = object[key];
+
+      if (value === undefined || eq(value, objectProto$i[key]) && !hasOwnProperty$f.call(object, key)) {
+        object[key] = source[key];
+      }
+    }
+  }
+
+  return object;
+});
+
+var script$i = {
+  name: 'FormLocationField',
+  mixins: [FormField],
+  components: {
+    VueGoogleAutocomplete: VueGoogleAutocomplete
+  },
+  data: function data() {
+    return {
+      googleLoaded: false,
+      map: null,
+      marker: null,
+      geocoder: null
+    };
+  },
+  mounted: function mounted() {
+    var _this = this;
+
+    if (window.google === undefined) {
+      this.loadGoogleMaps().then(function () {
+        _this.googleLoaded = true;
+
+        _this.$nextTick(_this.initAutocomplete);
+      });
+    } else {
+      this.googleLoaded = true;
+      this.$nextTick(this.initAutocomplete);
+    }
+  },
+  methods: {
+    setInitialValue: function setInitialValue() {
+      if (!this.fieldValue) {
+        this.fieldValue = {};
+      }
+    },
+    loadGoogleMaps: function loadGoogleMaps() {
+      return new Promise(function (resolve) {
+        var mapsScript = document.createElement('script');
+        mapsScript.onload = resolve;
+        mapsScript.setAttribute('src', "https://maps.googleapis.com/maps/api/js?key=".concat(config$1.googleKey, "&libraries=places"));
+        document.head.appendChild(mapsScript);
+      });
+    },
+    initAutocomplete: function initAutocomplete() {
+      if (this.fieldValue && this.fieldValue.address) {
+        this.$refs.address.update(this.fieldValue.address);
+      }
+
+      if (this.field.withMap) {
+        this.initMap();
+      }
+    },
+    initMap: function initMap() {
+      var _this2 = this;
+
+      var options = defaults(this.field.withMap, {
+        center: {
+          lat: 41.299,
+          lng: 69.24
+        },
+        zoom: 1
+      });
+
+      if (this.fieldValue && this.fieldValue.latlng) {
+        var _this$fieldValue$latl = this.fieldValue.latlng.split(',').map(parseFloat),
+            _this$fieldValue$latl2 = _slicedToArray(_this$fieldValue$latl, 2),
+            lat = _this$fieldValue$latl2[0],
+            lng = _this$fieldValue$latl2[1];
+
+        options.center = {
+          lat: lat,
+          lng: lng
+        };
+      }
+
+      this.map = new google.maps.Map(this.$refs.map, options);
+      this.marker = new google.maps.Marker({
+        position: options.center,
+        map: this.map,
+        draggable: true
+      });
+      this.geocoder = new google.maps.Geocoder();
+      this.marker.addListener('dragend', function () {
+        _this2.setAddressFromMarker();
+      });
+    },
+    setAddressFromMarker: function setAddressFromMarker() {
+      var _this3 = this;
+
+      var position = this.marker.getPosition();
+      this.$set(this.fieldValue, 'latlng', [position.lat(), position.lng()].join(','));
+      this.geocoder.geocode({
+        'location': position
+      }, function (results, status) {
+        if (status === 'OK') {
+          _this3.setAddressFromGeocode(results);
+        } else {
+          console.error('Geocoder failed due to: ' + status);
+        }
+      });
+    },
+    setAddressFromGeocode: function setAddressFromGeocode(results) {
+      if (results[0]) {
+        this.$set(this.fieldValue, 'address', results[0].formatted_address);
+        this.$refs.address.update(this.fieldValue.address);
+      }
+    },
+    setAddressData: function setAddressData(addressData, placeResultData, id) {
+      this.$set(this.fieldValue, 'latlng', addressData.latitude + ',' + addressData.longitude);
+      this.$set(this.fieldValue, 'address', placeResultData.formatted_address);
+
+      if (this.marker) {
+        this.setMarkerFromResult(addressData);
+      }
+    },
+    setMarkerFromResult: function setMarkerFromResult(addressData) {
+      var latlng = {
+        lat: addressData.latitude,
+        lng: addressData.longitude
+      };
+      this.marker.setPosition(latlng);
+      this.map.panTo(latlng);
+    }
+  }
+};
+
+/* script */
+            const __vue_script__$i = script$i;
+            
+/* template */
+var __vue_render__$i = function() {
+  var _vm = this;
+  var _h = _vm.$createElement;
+  var _c = _vm._self._c || _h;
+  return _c(
+    _vm.layoutComponent,
+    { tag: "component", attrs: { field: _vm.field, errors: _vm.errors } },
+    [
+      _c(
+        "template",
+        { slot: "field" },
+        [
+          _vm.googleLoaded
+            ? _c("vue-google-autocomplete", {
+                ref: "address",
+                attrs: {
+                  id: _vm.field.attribute + "-address",
+                  placeholder: _vm.field.placeholder,
+                  types: _vm.field.types || "address",
+                  classname: "form-control"
+                },
+                on: { placechanged: _vm.setAddressData }
+              })
+            : _vm._e(),
+          _vm._v(" "),
+          _vm.field.withMap
+            ? _c(
+                "div",
+                { staticClass: "mt-2 embed-responsive embed-responsive-16by9" },
+                [
+                  _c(
+                    "div",
+                    {
+                      ref: "map",
+                      staticClass: "embed-responsive-item rounded",
+                      attrs: { id: _vm.field.attribute + "-map" }
+                    },
+                    [_vm._v("\n        Map is loading ...\n      ")]
+                  )
+                ]
+              )
+            : _vm._e()
+        ],
+        1
+      )
+    ],
+    2
+  )
+};
+var __vue_staticRenderFns__$i = [];
+__vue_render__$i._withStripped = true;
+
+  /* style */
+  const __vue_inject_styles__$i = undefined;
+  /* scoped */
+  const __vue_scope_id__$i = undefined;
+  /* module identifier */
+  const __vue_module_identifier__$i = undefined;
+  /* functional template */
+  const __vue_is_functional_template__$i = false;
+  /* component normalizer */
+  function __vue_normalize__$i(
+    template, style, script,
+    scope, functional, moduleIdentifier,
+    createInjector, createInjectorSSR
+  ) {
+    const component = (typeof script === 'function' ? script.options : script) || {};
+
+    // For security concerns, we use only base name in production mode.
+    component.__file = "/Users/azamatx/projects/base-js/package/src/listing-fields/FormLocationField.vue";
+
+    if (!component.render) {
+      component.render = template.render;
+      component.staticRenderFns = template.staticRenderFns;
+      component._compiled = true;
+
+      if (functional) component.functional = true;
+    }
+
+    component._scopeId = scope;
+
+    return component
+  }
+  /* style inject */
+  
+  /* style inject SSR */
+  
+
+  
+  var FormLocationField = __vue_normalize__$i(
+    { render: __vue_render__$i, staticRenderFns: __vue_staticRenderFns__$i },
+    __vue_inject_styles__$i,
+    __vue_script__$i,
+    __vue_scope_id__$i,
+    __vue_is_functional_template__$i,
+    __vue_module_identifier__$i,
+    undefined,
+    undefined
+  );
+
+/**
+ * The base implementation of `_.map` without support for iteratee shorthands.
+ *
+ * @private
+ * @param {Array|Object} collection The collection to iterate over.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @returns {Array} Returns the new mapped array.
+ */
+
+function baseMap(collection, iteratee) {
+  var index = -1,
+      result = isArrayLike(collection) ? Array(collection.length) : [];
+  baseEach(collection, function (value, key, collection) {
+    result[++index] = iteratee(value, key, collection);
+  });
+  return result;
+}
+
+/**
+ * Creates an array of values by running each element in `collection` thru
+ * `iteratee`. The iteratee is invoked with three arguments:
+ * (value, index|key, collection).
+ *
+ * Many lodash methods are guarded to work as iteratees for methods like
+ * `_.every`, `_.filter`, `_.map`, `_.mapValues`, `_.reject`, and `_.some`.
+ *
+ * The guarded methods are:
+ * `ary`, `chunk`, `curry`, `curryRight`, `drop`, `dropRight`, `every`,
+ * `fill`, `invert`, `parseInt`, `random`, `range`, `rangeRight`, `repeat`,
+ * `sampleSize`, `slice`, `some`, `sortBy`, `split`, `take`, `takeRight`,
+ * `template`, `trim`, `trimEnd`, `trimStart`, and `words`
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Collection
+ * @param {Array|Object} collection The collection to iterate over.
+ * @param {Function} [iteratee=_.identity] The function invoked per iteration.
+ * @returns {Array} Returns the new mapped array.
+ * @example
+ *
+ * function square(n) {
+ *   return n * n;
+ * }
+ *
+ * _.map([4, 8], square);
+ * // => [16, 64]
+ *
+ * _.map({ 'a': 4, 'b': 8 }, square);
+ * // => [16, 64] (iteration order is not guaranteed)
+ *
+ * var users = [
+ *   { 'user': 'barney' },
+ *   { 'user': 'fred' }
+ * ];
+ *
+ * // The `_.property` iteratee shorthand.
+ * _.map(users, 'user');
+ * // => ['barney', 'fred']
+ */
+
+function map(collection, iteratee) {
+  var func = isArray(collection) ? arrayMap : baseMap;
+  return func(collection, baseIteratee(iteratee, 3));
+}
+
+/**
+ * Gets the timestamp of the number of milliseconds that have elapsed since
+ * the Unix epoch (1 January 1970 00:00:00 UTC).
+ *
+ * @static
+ * @memberOf _
+ * @since 2.4.0
+ * @category Date
+ * @returns {number} Returns the timestamp.
+ * @example
+ *
+ * _.defer(function(stamp) {
+ *   console.log(_.now() - stamp);
+ * }, _.now());
+ * // => Logs the number of milliseconds it took for the deferred invocation.
+ */
+
+var now = function now() {
+  return root.Date.now();
+};
+
+/** Error message constants. */
+
+var FUNC_ERROR_TEXT$1 = 'Expected a function';
+/* Built-in method references for those with the same name as other `lodash` methods. */
+
+var nativeMax$2 = Math.max,
+    nativeMin = Math.min;
+/**
+ * Creates a debounced function that delays invoking `func` until after `wait`
+ * milliseconds have elapsed since the last time the debounced function was
+ * invoked. The debounced function comes with a `cancel` method to cancel
+ * delayed `func` invocations and a `flush` method to immediately invoke them.
+ * Provide `options` to indicate whether `func` should be invoked on the
+ * leading and/or trailing edge of the `wait` timeout. The `func` is invoked
+ * with the last arguments provided to the debounced function. Subsequent
+ * calls to the debounced function return the result of the last `func`
+ * invocation.
+ *
+ * **Note:** If `leading` and `trailing` options are `true`, `func` is
+ * invoked on the trailing edge of the timeout only if the debounced function
+ * is invoked more than once during the `wait` timeout.
+ *
+ * If `wait` is `0` and `leading` is `false`, `func` invocation is deferred
+ * until to the next tick, similar to `setTimeout` with a timeout of `0`.
+ *
+ * See [David Corbacho's article](https://css-tricks.com/debouncing-throttling-explained-examples/)
+ * for details over the differences between `_.debounce` and `_.throttle`.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @category Function
+ * @param {Function} func The function to debounce.
+ * @param {number} [wait=0] The number of milliseconds to delay.
+ * @param {Object} [options={}] The options object.
+ * @param {boolean} [options.leading=false]
+ *  Specify invoking on the leading edge of the timeout.
+ * @param {number} [options.maxWait]
+ *  The maximum time `func` is allowed to be delayed before it's invoked.
+ * @param {boolean} [options.trailing=true]
+ *  Specify invoking on the trailing edge of the timeout.
+ * @returns {Function} Returns the new debounced function.
+ * @example
+ *
+ * // Avoid costly calculations while the window size is in flux.
+ * jQuery(window).on('resize', _.debounce(calculateLayout, 150));
+ *
+ * // Invoke `sendMail` when clicked, debouncing subsequent calls.
+ * jQuery(element).on('click', _.debounce(sendMail, 300, {
+ *   'leading': true,
+ *   'trailing': false
+ * }));
+ *
+ * // Ensure `batchLog` is invoked once after 1 second of debounced calls.
+ * var debounced = _.debounce(batchLog, 250, { 'maxWait': 1000 });
+ * var source = new EventSource('/stream');
+ * jQuery(source).on('message', debounced);
+ *
+ * // Cancel the trailing debounced invocation.
+ * jQuery(window).on('popstate', debounced.cancel);
+ */
+
+function debounce(func, wait, options) {
+  var lastArgs,
+      lastThis,
+      maxWait,
+      result,
+      timerId,
+      lastCallTime,
+      lastInvokeTime = 0,
+      leading = false,
+      maxing = false,
+      trailing = true;
+
+  if (typeof func != 'function') {
+    throw new TypeError(FUNC_ERROR_TEXT$1);
+  }
+
+  wait = toNumber(wait) || 0;
+
+  if (isObject(options)) {
+    leading = !!options.leading;
+    maxing = 'maxWait' in options;
+    maxWait = maxing ? nativeMax$2(toNumber(options.maxWait) || 0, wait) : maxWait;
+    trailing = 'trailing' in options ? !!options.trailing : trailing;
+  }
+
+  function invokeFunc(time) {
+    var args = lastArgs,
+        thisArg = lastThis;
+    lastArgs = lastThis = undefined;
+    lastInvokeTime = time;
+    result = func.apply(thisArg, args);
+    return result;
+  }
+
+  function leadingEdge(time) {
+    // Reset any `maxWait` timer.
+    lastInvokeTime = time; // Start the timer for the trailing edge.
+
+    timerId = setTimeout(timerExpired, wait); // Invoke the leading edge.
+
+    return leading ? invokeFunc(time) : result;
+  }
+
+  function remainingWait(time) {
+    var timeSinceLastCall = time - lastCallTime,
+        timeSinceLastInvoke = time - lastInvokeTime,
+        timeWaiting = wait - timeSinceLastCall;
+    return maxing ? nativeMin(timeWaiting, maxWait - timeSinceLastInvoke) : timeWaiting;
+  }
+
+  function shouldInvoke(time) {
+    var timeSinceLastCall = time - lastCallTime,
+        timeSinceLastInvoke = time - lastInvokeTime; // Either this is the first call, activity has stopped and we're at the
+    // trailing edge, the system time has gone backwards and we're treating
+    // it as the trailing edge, or we've hit the `maxWait` limit.
+
+    return lastCallTime === undefined || timeSinceLastCall >= wait || timeSinceLastCall < 0 || maxing && timeSinceLastInvoke >= maxWait;
+  }
+
+  function timerExpired() {
+    var time = now();
+
+    if (shouldInvoke(time)) {
+      return trailingEdge(time);
+    } // Restart the timer.
+
+
+    timerId = setTimeout(timerExpired, remainingWait(time));
+  }
+
+  function trailingEdge(time) {
+    timerId = undefined; // Only invoke if we have `lastArgs` which means `func` has been
+    // debounced at least once.
+
+    if (trailing && lastArgs) {
+      return invokeFunc(time);
+    }
+
+    lastArgs = lastThis = undefined;
+    return result;
+  }
+
+  function cancel() {
+    if (timerId !== undefined) {
+      clearTimeout(timerId);
+    }
+
+    lastInvokeTime = 0;
+    lastArgs = lastCallTime = lastThis = timerId = undefined;
+  }
+
+  function flush() {
+    return timerId === undefined ? result : trailingEdge(now());
+  }
+
+  function debounced() {
+    var time = now(),
+        isInvoking = shouldInvoke(time);
+    lastArgs = arguments;
+    lastThis = this;
+    lastCallTime = time;
+
+    if (isInvoking) {
+      if (timerId === undefined) {
+        return leadingEdge(lastCallTime);
+      }
+
+      if (maxing) {
+        // Handle invocations in a tight loop.
+        timerId = setTimeout(timerExpired, wait);
+        return invokeFunc(lastCallTime);
+      }
+    }
+
+    if (timerId === undefined) {
+      timerId = setTimeout(timerExpired, wait);
+    }
+
+    return result;
+  }
+
+  debounced.cancel = cancel;
+  debounced.flush = flush;
+  return debounced;
+}
+
+/**
+ * Casts `value` as an array if it's not one.
+ *
+ * @static
+ * @memberOf _
+ * @since 4.4.0
+ * @category Lang
+ * @param {*} value The value to inspect.
+ * @returns {Array} Returns the cast array.
+ * @example
+ *
+ * _.castArray(1);
+ * // => [1]
+ *
+ * _.castArray({ 'a': 1 });
+ * // => [{ 'a': 1 }]
+ *
+ * _.castArray('abc');
+ * // => ['abc']
+ *
+ * _.castArray(null);
+ * // => [null]
+ *
+ * _.castArray(undefined);
+ * // => [undefined]
+ *
+ * _.castArray();
+ * // => []
+ *
+ * var array = [1, 2, 3];
+ * console.log(_.castArray(array) === array);
+ * // => true
+ */
+
+function castArray() {
+  if (!arguments.length) {
+    return [];
+  }
+
+  var value = arguments[0];
+  return isArray(value) ? value : [value];
+}
+
+/**
+ * Gets the first element of `array`.
+ *
+ * @static
+ * @memberOf _
+ * @since 0.1.0
+ * @alias first
+ * @category Array
+ * @param {Array} array The array to query.
+ * @returns {*} Returns the first element of `array`.
+ * @example
+ *
+ * _.head([1, 2, 3]);
+ * // => 1
+ *
+ * _.head([]);
+ * // => undefined
+ */
+function head(array) {
+  return array && array.length ? array[0] : undefined;
+}
+
+//
+var script$j = {
+  components: {
+    vSelect: vSelect
+  },
+  mixins: [FormField],
+  data: function data() {
+    return {
+      options: [],
+      params: {},
+      filterable: false,
+      busy: false
+    };
+  },
+  computed: {
+    selected: {
+      get: function get() {
+        var _this = this;
+
+        var selected = [];
+        var values = this.fieldValue === null || this.fieldValue === undefined ? [] : castArray(this.fieldValue);
+        values.forEach(function (value) {
+          selected.push(find(_this.options, {
+            value: value
+          }) || _this.getMissedOption(value));
+        });
+
+        if (this.field.multiple) {
+          return selected;
+        }
+
+        return head(selected);
+      },
+      set: function set(option) {
+        if (this.field.multiple) {
+          var values = map(option, 'value');
+
+          if (!isEqual(values, this.fieldValue)) {
+            this.fieldValue = values;
+          }
+
+          return;
+        }
+
+        this.fieldValue = option ? option.value : null;
+      }
+    }
+  },
+  created: function created() {
+    var _this2 = this;
+
+    // Take initial options from field config
+    // It could contain initially selected option
+    this.options = this.field.options || [];
+    this.params = defaults(this.field.source ? this.field.source.params : {}, {
+      per_page: 9
+    });
+    this.fetch = debounce(function () {
+      _this2.loading(true);
+
+      var promise = _this2.$http({
+        url: _this2.field.source.url,
+        params: _this2.params
+      });
+
+      promise.then(function (response) {
+        _this2.options = response.data.data;
+      }).finally(function () {
+        _this2.loading(false);
+      });
+      return promise;
+    }, 300);
+  },
+  mounted: function mounted() {
+    if (!this.options.length && this.field.preload) {
+      this.fetch();
+    }
+  },
+  methods: {
+    loading: function loading() {
+      var value = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+      this.$refs.select.toggleLoading(value);
+    },
+    onSearch: function onSearch(search) {
+      this.params[this.field.queryParam || 'query'] = search;
+      this.fetch();
+    },
+    getMissedOption: function getMissedOption(value) {
+      return {
+        value: value,
+        label: this.$refs.select && this.$refs.select.mutableLoading ? '...' : '(Missed option)'
+      };
+    }
+  }
+};
+
+/* script */
+            const __vue_script__$j = script$j;
+            
+/* template */
+var __vue_render__$j = function() {
+  var _vm = this;
+  var _h = _vm.$createElement;
+  var _c = _vm._self._c || _h;
+  return _c(
+    _vm.layoutComponent,
+    { tag: "component", attrs: { field: _vm.field, errors: _vm.errors } },
+    [
+      _c(
+        "template",
+        { slot: "field" },
+        [
+          _c("v-select", {
+            ref: "select",
+            staticClass: "form-control",
+            class: _vm.errorClasses,
+            attrs: {
+              disabled: _vm.busy,
+              id: _vm.field.attribute,
+              options: _vm.options,
+              filterable: _vm.filterable,
+              placeholder: _vm.field.placeholder,
+              multiple: _vm.field.multiple || false
+            },
+            on: { search: _vm.onSearch },
+            scopedSlots: _vm._u([
+              {
+                key: "option",
+                fn: function(option) {
+                  return [
+                    option.image
+                      ? _c("img", {
+                          staticClass: "float-left mr-2 rounded",
+                          staticStyle: { width: "45px" },
+                          attrs: { src: option.image }
+                        })
+                      : _vm._e(),
+                    _vm._v(" "),
+                    _c("div", [_vm._v(_vm._s(option.label))]),
+                    _vm._v(" "),
+                    option.extra
+                      ? _c("div", { staticClass: "text-muted text-sm" }, [
+                          _vm._v(
+                            "\n          " + _vm._s(option.extra) + "\n        "
+                          )
+                        ])
+                      : _vm._e()
+                  ]
+                }
+              }
+            ]),
+            model: {
+              value: _vm.selected,
+              callback: function($$v) {
+                _vm.selected = $$v;
+              },
+              expression: "selected"
+            }
+          })
+        ],
+        1
+      )
+    ],
+    2
+  )
+};
+var __vue_staticRenderFns__$j = [];
+__vue_render__$j._withStripped = true;
+
+  /* style */
+  const __vue_inject_styles__$j = function (inject) {
+    if (!inject) return
+    inject("data-v-4c5ce4be_0", { source: "\n.form-control.v-select {\n  padding: 0 10px;\n}\n.form-control.v-select .dropdown-toggle {\n    border: none;\n    padding: 0;\n}\n.form-control.v-select .dropdown-toggle::after {\n      display: none;\n}\n.form-control.v-select .dropdown-toggle input[type=search] {\n      margin: 0;\n}\n.form-control.v-select .selected-tag {\n    margin-top: 0;\n}\n.form-control.v-select .vs__selected-options {\n    margin-left: -7px;\n    padding-left: 0;\n}\n.form-control.v-select .vs__actions {\n    padding-right: 0;\n}\n\n/*# sourceMappingURL=FormRelationField.vue.map */", map: {"version":3,"sources":["/Users/azamatx/projects/base-js/package/src/listing-fields/FormRelationField.vue","FormRelationField.vue"],"names":[],"mappings":";AAgJA;EACA,gBAAA;CA2BA;AA5BA;IAIA,aAAA;IACA,WAAA;CASA;AAdA;MAQA,cAAA;CACA;AATA;MAYA,UAAA;CACA;AAbA;IAiBA,cAAA;CACA;AAlBA;IAqBA,kBAAA;IACA,gBAAA;CACA;AAvBA;IA0BA,iBAAA;CACA;;AC1JA,iDAAiD","file":"FormRelationField.vue","sourcesContent":[null,".form-control.v-select {\n  padding: 0 10px; }\n  .form-control.v-select .dropdown-toggle {\n    border: none;\n    padding: 0; }\n    .form-control.v-select .dropdown-toggle::after {\n      display: none; }\n    .form-control.v-select .dropdown-toggle input[type=search] {\n      margin: 0; }\n  .form-control.v-select .selected-tag {\n    margin-top: 0; }\n  .form-control.v-select .vs__selected-options {\n    margin-left: -7px;\n    padding-left: 0; }\n  .form-control.v-select .vs__actions {\n    padding-right: 0; }\n\n/*# sourceMappingURL=FormRelationField.vue.map */"]}, media: undefined });
+
+  };
+  /* scoped */
+  const __vue_scope_id__$j = undefined;
+  /* module identifier */
+  const __vue_module_identifier__$j = undefined;
+  /* functional template */
+  const __vue_is_functional_template__$j = false;
+  /* component normalizer */
+  function __vue_normalize__$j(
+    template, style, script,
+    scope, functional, moduleIdentifier,
+    createInjector, createInjectorSSR
+  ) {
+    const component = (typeof script === 'function' ? script.options : script) || {};
+
+    // For security concerns, we use only base name in production mode.
+    component.__file = "/Users/azamatx/projects/base-js/package/src/listing-fields/FormRelationField.vue";
+
+    if (!component.render) {
+      component.render = template.render;
+      component.staticRenderFns = template.staticRenderFns;
+      component._compiled = true;
+
+      if (functional) component.functional = true;
+    }
+
+    component._scopeId = scope;
+
+    {
+      let hook;
+      if (style) {
+        hook = function(context) {
+          style.call(this, createInjector(context));
+        };
+      }
+
+      if (hook !== undefined) {
+        if (component.functional) {
+          // register for functional component in vue file
+          const originalRender = component.render;
+          component.render = function renderWithStyleInjection(h, context) {
+            hook.call(context);
+            return originalRender(h, context)
+          };
+        } else {
+          // inject component registration as beforeCreate hook
+          const existing = component.beforeCreate;
+          component.beforeCreate = existing ? [].concat(existing, hook) : [hook];
+        }
+      }
+    }
+
+    return component
+  }
+  /* style inject */
+  function __vue_create_injector__$4() {
+    const head = document.head || document.getElementsByTagName('head')[0];
+    const styles = __vue_create_injector__$4.styles || (__vue_create_injector__$4.styles = {});
+    const isOldIE =
+      typeof navigator !== 'undefined' &&
+      /msie [6-9]\\b/.test(navigator.userAgent.toLowerCase());
+
+    return function addStyle(id, css) {
+      if (document.querySelector('style[data-vue-ssr-id~="' + id + '"]')) return // SSR styles are present.
+
+      const group = isOldIE ? css.media || 'default' : id;
+      const style = styles[group] || (styles[group] = { ids: [], parts: [], element: undefined });
+
+      if (!style.ids.includes(id)) {
+        let code = css.source;
+        let index = style.ids.length;
+
+        style.ids.push(id);
+
+        if (isOldIE) {
+          style.element = style.element || document.querySelector('style[data-group=' + group + ']');
+        }
+
+        if (!style.element) {
+          const el = style.element = document.createElement('style');
+          el.type = 'text/css';
+
+          if (css.media) el.setAttribute('media', css.media);
+          if (isOldIE) {
+            el.setAttribute('data-group', group);
+            el.setAttribute('data-next-index', '0');
+          }
+
+          head.appendChild(el);
+        }
+
+        if (isOldIE) {
+          index = parseInt(style.element.getAttribute('data-next-index'));
+          style.element.setAttribute('data-next-index', index + 1);
+        }
+
+        if (style.element.styleSheet) {
+          style.parts.push(code);
+          style.element.styleSheet.cssText = style.parts
+            .filter(Boolean)
+            .join('\n');
+        } else {
+          const textNode = document.createTextNode(code);
+          const nodes = style.element.childNodes;
+          if (nodes[index]) style.element.removeChild(nodes[index]);
+          if (nodes.length) style.element.insertBefore(textNode, nodes[index]);
+          else style.element.appendChild(textNode);
+        }
+      }
+    }
+  }
+  /* style inject SSR */
+  
+
+  
+  var FormRelationField = __vue_normalize__$j(
+    { render: __vue_render__$j, staticRenderFns: __vue_staticRenderFns__$j },
+    __vue_inject_styles__$j,
+    __vue_script__$j,
+    __vue_scope_id__$j,
+    __vue_is_functional_template__$j,
+    __vue_module_identifier__$j,
+    __vue_create_injector__$4,
+    undefined
+  );
+
+
+
+var components$1 = /*#__PURE__*/Object.freeze({
+FormAttachmentField: FormAttachmentField,
+FormLocationField: FormLocationField,
+FormRelationField: FormRelationField
+});
+
+var ListingPlugin = {
+  install: function install(Vue$$1, options) {
+    assign(config$1, options);
+    Object.keys(components$1).forEach(function (name) {
+      Vue$$1.component(name, components$1[name]);
+    });
+  }
+};
+
 exports.BasePlugin = plugin;
+exports.ListingPlugin = ListingPlugin;
 exports.HandlesValidationErrors = HandlesValidationErrors;
 exports.FieldLayoutMixin = FieldLayoutMixin;
 exports.FormField = FormField;
@@ -7532,6 +9279,10 @@ exports.FormRadiosField = RadiosField;
 exports.FormCheckboxField = CheckboxField;
 exports.FormCheckboxesField = CheckboxesField;
 exports.FormTextareaField = TextareaField;
+exports.FormEditorField = EditorField;
+exports.FormAttachmentField = FormAttachmentField;
+exports.FormLocationField = FormLocationField;
+exports.FormRelationField = FormRelationField;
 exports.setProp = setProp;
 exports.getProp = getProp;
 

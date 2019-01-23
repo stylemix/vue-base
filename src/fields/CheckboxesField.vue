@@ -2,8 +2,7 @@
 	<component
 		:is="layoutComponent"
 		:field="field"
-		:errors="errors"
-		:show-label="false">
+		:errors="errors">
 		<template slot="field">
 			<div v-for="(option, index) in field.options"
 				 :key="option.value"

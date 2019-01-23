@@ -13,21 +13,23 @@ import FormRadiosField from './fields/RadiosField.vue';
 import FormCheckboxField from './fields/CheckboxField.vue';
 import FormCheckboxesField from './fields/CheckboxesField.vue';
 import FormTextareaField from './fields/TextareaField.vue';
+import FormEditorField from './fields/EditorField.vue';
 
 export {
-	Field,
-	Fields,
-	EmptyLayout,
-	FormAsterisk,
-	VerticalLayout,
-	HorizontalLayout,
-	InlineLayout,
-	FormUndefined,
-	FormTextField,
-	FormFileField,
-	FormSelectField,
-	FormRadiosField,
-	FormCheckboxField,
-	FormCheckboxesField,
-	FormTextareaField
+  Field,
+  Fields,
+  EmptyLayout,
+  FormAsterisk,
+  VerticalLayout,
+  HorizontalLayout,
+  InlineLayout,
+  FormUndefined,
+  FormTextField,
+  FormFileField,
+  FormSelectField,
+  FormRadiosField,
+  FormCheckboxField,
+  FormCheckboxesField,
+  FormTextareaField,
+  FormEditorField,
 }
