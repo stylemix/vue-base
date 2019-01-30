@@ -11,7 +11,7 @@ import filter from 'lodash-es/filter';
 import find from 'lodash-es/find';
 import forOwn from 'lodash-es/forOwn';
 import isArray from 'lodash-es/isArray';
-import { VueQuillEditor } from 'vue-quill-editor';
+import { quillEditor } from 'vue-quill-editor';
 import assign from 'lodash-es/assign';
 import loadImage from 'blueimp-load-image';
 import draggable from 'vuedraggable';
@@ -1213,7 +1213,7 @@ var FormField = {
 		 * @param value
 		 */
 		fill(value) {
-			if (isEqual(value, this.field.value)) {
+			if (isEqual(value, this.fieldValue)) {
 				return;
 			}
 
@@ -2530,7 +2530,7 @@ var script$f = {
   name: 'FormEditorField',
 
   components: {
-    Editor: VueQuillEditor,
+    Editor: quillEditor,
   },
 
   mixins: [FormField],
@@ -2606,11 +2606,11 @@ __vue_render__$f._withStripped = true;
   /* style */
   const __vue_inject_styles__$f = function (inject) {
     if (!inject) return
-    inject("data-v-902cfbdc_0", { source: "\n.editor-field[data-v-902cfbdc] .ql-editor {\n  height: 140px;\n}\n", map: {"version":3,"sources":["/Users/azamatx/projects/base-js/package/src/fields/EditorField.vue"],"names":[],"mappings":";AA6DA;EACA,cAAA;CACA","file":"EditorField.vue","sourcesContent":["<template>\n  <component\n    :is=\"layoutComponent\"\n    :field=\"field\"\n    :errors=\"errors\">\n    <template slot=\"field\">\n      <editor\n        v-model=\"field.value\"\n        :options=\"options\"\n        class=\"editor-field\" />\n    </template>\n  </component>\n</template>\n\n<script>\nimport { VueQuillEditor } from 'vue-quill-editor';\nimport assign from 'lodash-es/assign';\nimport FormField from '../mixins/FormField';\n\nexport default {\n  name: 'FormEditorField',\n\n  components: {\n    Editor: VueQuillEditor,\n  },\n\n  mixins: [FormField],\n\n  data() {\n    return {\n    };\n  },\n\n  computed: {\n    options() {\n      let options = {\n        modules: {\n          toolbar: [\n            ['bold', 'italic', 'underline', 'strike'], // toggled buttons\n            ['blockquote', 'code-block'],\n            [{ list: 'ordered' }, { list: 'bullet' }],\n            ['link', 'image'],\n            [{ size: ['small', false, 'large', 'huge'] }], // custom dropdown\n            [{ header: [1, 2, 3, 4, 5, 6, false] }],\n            [{ font: [] }],\n            [{ align: [] }],\n            ['clean'],\n          ],\n        },\n      };\n\n      assign(options, this.field.options);\n      assign(options.modules, this.field.modules);\n\n      return options;\n    }\n  }\n};\n</script>\n\n<style scoped>\n  .editor-field >>> .ql-editor {\n    height: 140px;\n  }\n</style>\n"]}, media: undefined });
+    inject("data-v-31458a08_0", { source: "\n.editor-field[data-v-31458a08] .ql-editor {\n  height: 140px;\n}\n", map: {"version":3,"sources":["/Users/azamatx/projects/base-js/package/src/fields/EditorField.vue"],"names":[],"mappings":";AA6DA;EACA,cAAA;CACA","file":"EditorField.vue","sourcesContent":["<template>\n  <component\n    :is=\"layoutComponent\"\n    :field=\"field\"\n    :errors=\"errors\">\n    <template slot=\"field\">\n      <editor\n        v-model=\"field.value\"\n        :options=\"options\"\n        class=\"editor-field\" />\n    </template>\n  </component>\n</template>\n\n<script>\nimport { quillEditor } from 'vue-quill-editor';\nimport assign from 'lodash-es/assign';\nimport FormField from '../mixins/FormField';\n\nexport default {\n  name: 'FormEditorField',\n\n  components: {\n    Editor: quillEditor,\n  },\n\n  mixins: [FormField],\n\n  data() {\n    return {\n    };\n  },\n\n  computed: {\n    options() {\n      let options = {\n        modules: {\n          toolbar: [\n            ['bold', 'italic', 'underline', 'strike'], // toggled buttons\n            ['blockquote', 'code-block'],\n            [{ list: 'ordered' }, { list: 'bullet' }],\n            ['link', 'image'],\n            [{ size: ['small', false, 'large', 'huge'] }], // custom dropdown\n            [{ header: [1, 2, 3, 4, 5, 6, false] }],\n            [{ font: [] }],\n            [{ align: [] }],\n            ['clean'],\n          ],\n        },\n      };\n\n      assign(options, this.field.options);\n      assign(options.modules, this.field.modules);\n\n      return options;\n    }\n  }\n};\n</script>\n\n<style scoped>\n  .editor-field >>> .ql-editor {\n    height: 140px;\n  }\n</style>\n"]}, media: undefined });
 
   };
   /* scoped */
-  const __vue_scope_id__$f = "data-v-902cfbdc";
+  const __vue_scope_id__$f = "data-v-31458a08";
   /* module identifier */
   const __vue_module_identifier__$f = undefined;
   /* functional template */

@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { VueQuillEditor } from 'vue-quill-editor';
+import { quillEditor } from 'vue-quill-editor';
 import assign from 'lodash-es/assign';
 import FormField from '../mixins/FormField';
 
@@ -21,7 +21,7 @@ export default {
   name: 'FormEditorField',
 
   components: {
-    Editor: VueQuillEditor,
+    Editor: quillEditor,
   },
 
   mixins: [FormField],
