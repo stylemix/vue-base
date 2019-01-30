@@ -1,5 +1,7 @@
 <template>
-	<div class="form-group row" :class="errorClasses">
+	<div class="form-group row"
+         :attribute="field.attribute"
+         :class="errorClasses">
 		<label v-if="showLabel"
 			   :for="field.attribute"
 			   class="col-sm-4 col-form-label text-sm-right">

@@ -1,5 +1,7 @@
 <template>
-	<div class="d-inline-block mb-2 mr-sm-2" :class="errorClasses">
+	<div class="d-inline-block mb-2 mr-sm-2"
+         :attribute="field.attribute"
+         :class="errorClasses">
 		<label class="sr-only" :for="field.attribute">
 			{{ field.label || fieldLabel }}
 			<form-asterisk v-if="field.required" />

@@ -489,7 +489,12 @@ var __vue_render__$2 = function() {
   var _vm = this;
   var _h = _vm.$createElement;
   var _c = _vm._self._c || _h;
-  return _c("div", { class: _vm.layoutClass }, [_vm._t("field")], 2)
+  return _c(
+    "div",
+    { class: _vm.layoutClass, attrs: { attribute: _vm.field.attribute } },
+    [_vm._t("field")],
+    2
+  )
 };
 var __vue_staticRenderFns__$2 = [];
 __vue_render__$2._withStripped = true;
@@ -709,7 +714,11 @@ var __vue_render__$4 = function() {
   var _c = _vm._self._c || _h;
   return _c(
     "div",
-    { staticClass: "form-group", class: _vm.errorClasses },
+    {
+      staticClass: "form-group",
+      class: _vm.errorClasses,
+      attrs: { attribute: _vm.field.attribute }
+    },
     [
       _vm.showLabel
         ? _c(
@@ -717,7 +726,9 @@ var __vue_render__$4 = function() {
             { attrs: { for: _vm.field.attribute } },
             [
               _vm._v(
-                "\n\t\t" + _vm._s(_vm.fieldLabel || _vm.field.label) + "\n\t\t"
+                "\n\t\t\t" +
+                  _vm._s(_vm.fieldLabel || _vm.field.label) +
+                  "\n\t\t\t"
               ),
               _vm.field.required ? _c("form-asterisk") : _vm._e()
             ],
@@ -729,7 +740,7 @@ var __vue_render__$4 = function() {
               staticClass: "placeholder-label",
               attrs: { for: _vm.field.attribute }
             },
-            [_vm._v("\n\t\t \n\t")]
+            [_vm._v("\n\t\t\t \n\t\t")]
           ),
       _vm._v(" "),
       _vm._t("field"),
@@ -745,7 +756,7 @@ var __vue_render__$4 = function() {
       _vm._v(" "),
       _vm.showHelpText && _vm.field.helpText
         ? _c("small", { staticClass: "form-text text-muted" }, [
-            _vm._v("\n\t\t" + _vm._s(_vm.field.helpText) + "\n\t")
+            _vm._v("\n\t\t\t" + _vm._s(_vm.field.helpText) + "\n\t\t")
           ])
         : _vm._e()
     ],
@@ -758,11 +769,11 @@ __vue_render__$4._withStripped = true;
   /* style */
   const __vue_inject_styles__$4 = function (inject) {
     if (!inject) return
-    inject("data-v-4e3a873a_0", { source: "\n.placeholder-label[data-v-4e3a873a] {\n\tdisplay: none;\n}\n.col .placeholder-label[data-v-4e3a873a] {\n\tdisplay: block;\n}\n[class*=\" col-\"] .placeholder-label[data-v-4e3a873a] {\n\tdisplay: block;\n}\n", map: {"version":3,"sources":["/Users/azamatx/projects/base-js/package/src/layouts/VericalLayout.vue"],"names":[],"mappings":";AAkCA;CACA,cAAA;CACA;AAEA;CACA,eAAA;CACA;AACA;CACA,eAAA;CACA","file":"VericalLayout.vue","sourcesContent":["<template>\n\t<div class=\"form-group\" :class=\"errorClasses\">\n\t\t<label v-if=\"showLabel\"\n\t\t\t   :for=\"field.attribute\">\n\t\t\t{{ fieldLabel || field.label }}\n\t\t\t<form-asterisk v-if=\"field.required\" />\n\t\t</label>\n\t\t<label v-else class=\"placeholder-label\"\n\t\t\t   :for=\"field.attribute\">\n\t\t\t&nbsp;\n\t\t</label>\n\t\t<slot name=\"field\"/>\n\t\t<slot name=\"errors\">\n\t\t\t<div v-if=\"hasError\"\n\t\t\t\t v-html=\"errorMessages\"\n\t\t\t\t class=\"invalid-feedback d-block\">\n\t\t\t</div>\n\t\t</slot>\n\t\t<small v-if=\"showHelpText && field.helpText\"\n\t\t\t   class=\"form-text text-muted\">\n\t\t\t{{ field.helpText }}\n\t\t</small>\n\t</div>\n</template>\n\n<script>\n\timport FieldLayoutMixin from \"../mixins/FieldLayoutMixin\";\n\n\texport default {\n\t\tmixins: [ FieldLayoutMixin ]\n\t}\n</script>\n\n<style type=\"text/scss\" scoped>\n\t.placeholder-label {\n\t\tdisplay: none;\n\t}\n\n\t.col .placeholder-label {\n\t\tdisplay: block;\n\t}\n\t[class*=\" col-\"] .placeholder-label {\n\t\tdisplay: block;\n\t}\n</style>\n"]}, media: undefined });
+    inject("data-v-dee2f926_0", { source: "\n.placeholder-label[data-v-dee2f926] {\n\tdisplay: none;\n}\n.col .placeholder-label[data-v-dee2f926] {\n\tdisplay: block;\n}\n[class*=\" col-\"] .placeholder-label[data-v-dee2f926] {\n\tdisplay: block;\n}\n", map: {"version":3,"sources":["/Users/azamatx/projects/base-js/package/src/layouts/VericalLayout.vue"],"names":[],"mappings":";AAoCA;CACA,cAAA;CACA;AAEA;CACA,eAAA;CACA;AACA;CACA,eAAA;CACA","file":"VericalLayout.vue","sourcesContent":["<template>\n\t<div class=\"form-group\"\n         :attribute=\"field.attribute\"\n         :class=\"errorClasses\">\n\t\t<label v-if=\"showLabel\"\n\t\t\t   :for=\"field.attribute\">\n\t\t\t{{ fieldLabel || field.label }}\n\t\t\t<form-asterisk v-if=\"field.required\" />\n\t\t</label>\n\t\t<label v-else class=\"placeholder-label\"\n\t\t\t   :for=\"field.attribute\">\n\t\t\t&nbsp;\n\t\t</label>\n\t\t<slot name=\"field\"/>\n\t\t<slot name=\"errors\">\n\t\t\t<div v-if=\"hasError\"\n\t\t\t\t v-html=\"errorMessages\"\n\t\t\t\t class=\"invalid-feedback d-block\">\n\t\t\t</div>\n\t\t</slot>\n\t\t<small v-if=\"showHelpText && field.helpText\"\n\t\t\t   class=\"form-text text-muted\">\n\t\t\t{{ field.helpText }}\n\t\t</small>\n\t</div>\n</template>\n\n<script>\n\timport FieldLayoutMixin from \"../mixins/FieldLayoutMixin\";\n\n\texport default {\n\t\tmixins: [ FieldLayoutMixin ]\n\t}\n</script>\n\n<style type=\"text/scss\" scoped>\n\t.placeholder-label {\n\t\tdisplay: none;\n\t}\n\n\t.col .placeholder-label {\n\t\tdisplay: block;\n\t}\n\t[class*=\" col-\"] .placeholder-label {\n\t\tdisplay: block;\n\t}\n</style>\n"]}, media: undefined });
 
   };
   /* scoped */
-  const __vue_scope_id__$4 = "data-v-4e3a873a";
+  const __vue_scope_id__$4 = "data-v-dee2f926";
   /* module identifier */
   const __vue_module_identifier__$4 = undefined;
   /* functional template */
@@ -899,48 +910,58 @@ var __vue_render__$5 = function() {
   var _vm = this;
   var _h = _vm.$createElement;
   var _c = _vm._self._c || _h;
-  return _c("div", { staticClass: "form-group row", class: _vm.errorClasses }, [
-    _vm.showLabel
-      ? _c(
-          "label",
-          {
-            staticClass: "col-sm-4 col-form-label text-sm-right",
-            attrs: { for: _vm.field.attribute }
-          },
-          [
-            _vm._v(
-              "\n\t\t" + _vm._s(_vm.fieldLabel || _vm.field.label) + "\n\t\t"
-            ),
-            _vm.field.required ? _c("form-asterisk") : _vm._e()
-          ],
-          1
-        )
-      : _vm._e(),
-    _vm._v(" "),
-    _c(
-      "div",
-      { staticClass: "col-sm-8", class: { "offset-sm-4": !_vm.showLabel } },
-      [
-        _vm._t("field"),
-        _vm._v(" "),
-        _vm._t("errors", [
-          _vm.hasError
-            ? _c("div", {
-                staticClass: "invalid-feedback d-block",
-                domProps: { innerHTML: _vm._s(_vm.errorMessages) }
-              })
+  return _c(
+    "div",
+    {
+      staticClass: "form-group row",
+      class: _vm.errorClasses,
+      attrs: { attribute: _vm.field.attribute }
+    },
+    [
+      _vm.showLabel
+        ? _c(
+            "label",
+            {
+              staticClass: "col-sm-4 col-form-label text-sm-right",
+              attrs: { for: _vm.field.attribute }
+            },
+            [
+              _vm._v(
+                "\n\t\t\t" +
+                  _vm._s(_vm.fieldLabel || _vm.field.label) +
+                  "\n\t\t\t"
+              ),
+              _vm.field.required ? _c("form-asterisk") : _vm._e()
+            ],
+            1
+          )
+        : _vm._e(),
+      _vm._v(" "),
+      _c(
+        "div",
+        { staticClass: "col-sm-8", class: { "offset-sm-4": !_vm.showLabel } },
+        [
+          _vm._t("field"),
+          _vm._v(" "),
+          _vm._t("errors", [
+            _vm.hasError
+              ? _c("div", {
+                  staticClass: "invalid-feedback d-block",
+                  domProps: { innerHTML: _vm._s(_vm.errorMessages) }
+                })
+              : _vm._e()
+          ]),
+          _vm._v(" "),
+          _vm.showHelpText && _vm.field.helpText
+            ? _c("small", { staticClass: "form-text text-muted" }, [
+                _vm._v("\n\t\t\t\t" + _vm._s(_vm.field.helpText) + "\n\t\t\t")
+              ])
             : _vm._e()
-        ]),
-        _vm._v(" "),
-        _vm.showHelpText && _vm.field.helpText
-          ? _c("small", { staticClass: "form-text text-muted" }, [
-              _vm._v("\n\t\t\t" + _vm._s(_vm.field.helpText) + "\n\t\t")
-            ])
-          : _vm._e()
-      ],
-      2
-    )
-  ])
+        ],
+        2
+      )
+    ]
+  )
 };
 var __vue_staticRenderFns__$5 = [];
 __vue_render__$5._withStripped = true;
@@ -1008,14 +1029,18 @@ var __vue_render__$6 = function() {
   var _c = _vm._self._c || _h;
   return _c(
     "div",
-    { staticClass: "d-inline-block mb-2 mr-sm-2", class: _vm.errorClasses },
+    {
+      staticClass: "d-inline-block mb-2 mr-sm-2",
+      class: _vm.errorClasses,
+      attrs: { attribute: _vm.field.attribute }
+    },
     [
       _c(
         "label",
         { staticClass: "sr-only", attrs: { for: _vm.field.attribute } },
         [
           _vm._v(
-            "\n\t\t" + _vm._s(_vm.field.label || _vm.fieldLabel) + "\n\t\t"
+            "\n\t\t\t" + _vm._s(_vm.field.label || _vm.fieldLabel) + "\n\t\t\t"
           ),
           _vm.field.required ? _c("form-asterisk") : _vm._e()
         ],
@@ -1035,7 +1060,7 @@ var __vue_render__$6 = function() {
       _vm._v(" "),
       _vm.showHelpText && _vm.field.helpText
         ? _c("small", { staticClass: "form-text text-muted" }, [
-            _vm._v("\n\t\t" + _vm._s(_vm.field.helpText) + "\n\t")
+            _vm._v("\n\t\t\t" + _vm._s(_vm.field.helpText) + "\n\t\t")
           ])
         : _vm._e()
     ],

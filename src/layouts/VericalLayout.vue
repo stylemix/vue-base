@@ -1,5 +1,7 @@
 <template>
-	<div class="form-group" :class="errorClasses">
+	<div class="form-group"
+         :attribute="field.attribute"
+         :class="errorClasses">
 		<label v-if="showLabel"
 			   :for="field.attribute">
 			{{ fieldLabel || field.label }}
