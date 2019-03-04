@@ -65,7 +65,7 @@
 			 * Get the textarea cols.
 			 */
 			inputCols() {
-				return this.cols || this.field.rows
+				return this.cols || this.field.cols
 			},
 
 			/**

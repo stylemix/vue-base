@@ -8,10 +8,11 @@
         v-if="googleLoaded"
         :id="field.attribute + '-address'"
         :placeholder="field.placeholder"
-        :types="field.types || 'address'"
+        :types="geocodeTypes"
         ref="address"
         classname="form-control"
-        v-on:placechanged="setAddressData"/>
+        @placechanged="setAddressData"
+        @keypress.enter.prevent />
       <div
         v-if="field.withMap"
         class="mt-2 embed-responsive embed-responsive-16by9">
@@ -48,6 +49,24 @@
       geocoder: null,
     }),
 
+    computed: {
+      geocodeTypes() {
+        return this.field.types;
+      }
+    },
+
+    watch: {
+      'fieldValue.address': function () {
+        this.updateAddress();
+      },
+      'fieldValue.latlng': function () {
+        this.updateMarker();
+      },
+      'fieldValue.zoom': function () {
+        this.updateZoom();
+      },
+    },
+
     mounted() {
       if (window.google === undefined) {
         this.loadGoogleMaps().then(() => {
@@ -76,12 +95,15 @@
       },
       initAutocomplete() {
         if (this.fieldValue && this.fieldValue.address) {
-          this.$refs.address.update(this.fieldValue.address);
+          this.updateAddress();
         }
 
         if (this.field.withMap) {
           this.initMap();
         }
+      },
+      updateAddress() {
+        this.$refs.address.update(this.fieldValue.address);
       },
       initMap() {
         const options = defaults(this.field.withMap, {
@@ -92,6 +114,10 @@
         if (this.fieldValue && this.fieldValue.latlng) {
           const [lat, lng] = this.fieldValue.latlng.split(',').map(parseFloat);
           options.center = {lat, lng};
+        }
+
+        if (this.fieldValue && this.fieldValue.zoom) {
+          options.zoom = this.fieldValue.zoom;
         }
 
         this.map = new google.maps.Map(this.$refs.map, options);
@@ -106,6 +132,10 @@
 
         this.marker.addListener('dragend', () => {
           this.setAddressFromMarker();
+        });
+
+        this.map.addListener('zoom_changed', () => {
+          this.setZoomFromMap();
         });
       },
       setAddressFromMarker() {
@@ -123,15 +153,32 @@
       setAddressFromGeocode(results) {
         if (results[0]) {
           this.$set(this.fieldValue, 'address', results[0].formatted_address);
-          this.$refs.address.update(this.fieldValue.address);
         }
       },
       setAddressData: function (addressData, placeResultData, id) {
         this.$set(this.fieldValue, 'latlng', addressData.latitude + ',' + addressData.longitude);
         this.$set(this.fieldValue, 'address', placeResultData.formatted_address);
-        if (this.marker) {
-          this.setMarkerFromResult(addressData);
+      },
+      updateMarker() {
+        if (!this.marker || !this.fieldValue.latlng) {
+          return;
         }
+
+        let latlng = {
+          lat: parseFloat(this.fieldValue.latlng.split(',')[0]),
+          lng: parseFloat(this.fieldValue.latlng.split(',')[1]),
+        };
+
+        this.marker.setPosition(latlng);
+        this.map.panTo(latlng);
+        this.map.setZoom(this.fieldValue.zoom || 12);
+      },
+      updateZoom() {
+        if (!this.map || !this.fieldValue.zoom) {
+          return;
+        }
+
+        this.map.setZoom(this.fieldValue.zoom);
       },
       setMarkerFromResult(addressData) {
         let latlng = {
@@ -140,6 +187,10 @@
         };
         this.marker.setPosition(latlng);
         this.map.panTo(latlng);
+        this.map.setZoom(this.fieldValue.zoom || 12);
+      },
+      setZoomFromMap() {
+        this.$set(this.fieldValue, 'zoom', this.map.getZoom());
       },
     },
   };

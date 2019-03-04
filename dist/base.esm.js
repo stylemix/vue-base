@@ -1,4 +1,4 @@
-/* stylemix-base v1.3.0 (c) Azamat X <azamat@stylemix.net> - UNLICENSED */
+/* stylemix-base v1.3.1 (c) Azamat X <azamat@stylemix.net> - UNLICENSED */
 import Vue from 'vue';
 import keyBy from 'lodash-es/keyBy';
 import mapValues from 'lodash-es/mapValues';
@@ -2405,7 +2405,7 @@ var script$e = {
 		 * Get the textarea cols.
 		 */
 		inputCols() {
-			return this.cols || this.field.rows
+			return this.cols || this.field.cols
 		},
 
 		/**
@@ -2586,11 +2586,11 @@ var __vue_render__$f = function() {
             staticClass: "editor-field",
             attrs: { options: _vm.options },
             model: {
-              value: _vm.field.value,
+              value: _vm.fieldValue,
               callback: function($$v) {
-                _vm.$set(_vm.field, "value", $$v);
+                _vm.fieldValue = $$v;
               },
-              expression: "field.value"
+              expression: "fieldValue"
             }
           })
         ],
@@ -2606,11 +2606,11 @@ __vue_render__$f._withStripped = true;
   /* style */
   const __vue_inject_styles__$f = function (inject) {
     if (!inject) return
-    inject("data-v-31458a08_0", { source: "\n.editor-field[data-v-31458a08] .ql-editor {\n  height: 140px;\n}\n", map: {"version":3,"sources":["/Users/azamatx/projects/base-js/package/src/fields/EditorField.vue"],"names":[],"mappings":";AA6DA;EACA,cAAA;CACA","file":"EditorField.vue","sourcesContent":["<template>\n  <component\n    :is=\"layoutComponent\"\n    :field=\"field\"\n    :errors=\"errors\">\n    <template slot=\"field\">\n      <editor\n        v-model=\"field.value\"\n        :options=\"options\"\n        class=\"editor-field\" />\n    </template>\n  </component>\n</template>\n\n<script>\nimport { quillEditor } from 'vue-quill-editor';\nimport assign from 'lodash-es/assign';\nimport FormField from '../mixins/FormField';\n\nexport default {\n  name: 'FormEditorField',\n\n  components: {\n    Editor: quillEditor,\n  },\n\n  mixins: [FormField],\n\n  data() {\n    return {\n    };\n  },\n\n  computed: {\n    options() {\n      let options = {\n        modules: {\n          toolbar: [\n            ['bold', 'italic', 'underline', 'strike'], // toggled buttons\n            ['blockquote', 'code-block'],\n            [{ list: 'ordered' }, { list: 'bullet' }],\n            ['link', 'image'],\n            [{ size: ['small', false, 'large', 'huge'] }], // custom dropdown\n            [{ header: [1, 2, 3, 4, 5, 6, false] }],\n            [{ font: [] }],\n            [{ align: [] }],\n            ['clean'],\n          ],\n        },\n      };\n\n      assign(options, this.field.options);\n      assign(options.modules, this.field.modules);\n\n      return options;\n    }\n  }\n};\n</script>\n\n<style scoped>\n  .editor-field >>> .ql-editor {\n    height: 140px;\n  }\n</style>\n"]}, media: undefined });
+    inject("data-v-5640060c_0", { source: "\n.editor-field[data-v-5640060c] .ql-editor {\n  height: 140px;\n}\n", map: {"version":3,"sources":["/Users/azamatx/projects/base-js/package/src/fields/EditorField.vue"],"names":[],"mappings":";AA6DA;EACA,cAAA;CACA","file":"EditorField.vue","sourcesContent":["<template>\n  <component\n    :is=\"layoutComponent\"\n    :field=\"field\"\n    :errors=\"errors\">\n    <template slot=\"field\">\n      <editor\n        v-model=\"fieldValue\"\n        :options=\"options\"\n        class=\"editor-field\" />\n    </template>\n  </component>\n</template>\n\n<script>\nimport { quillEditor } from 'vue-quill-editor';\nimport assign from 'lodash-es/assign';\nimport FormField from '../mixins/FormField';\n\nexport default {\n  name: 'FormEditorField',\n\n  components: {\n    Editor: quillEditor,\n  },\n\n  mixins: [FormField],\n\n  data() {\n    return {\n    };\n  },\n\n  computed: {\n    options() {\n      let options = {\n        modules: {\n          toolbar: [\n            ['bold', 'italic', 'underline', 'strike'], // toggled buttons\n            ['blockquote', 'code-block'],\n            [{ list: 'ordered' }, { list: 'bullet' }],\n            ['link', 'image'],\n            [{ size: ['small', false, 'large', 'huge'] }], // custom dropdown\n            [{ header: [1, 2, 3, 4, 5, 6, false] }],\n            [{ font: [] }],\n            [{ align: [] }],\n            ['clean'],\n          ],\n        },\n      };\n\n      assign(options, this.field.options);\n      assign(options.modules, this.field.modules);\n\n      return options;\n    }\n  }\n};\n</script>\n\n<style scoped>\n  .editor-field >>> .ql-editor {\n    height: 140px;\n  }\n</style>\n"]}, media: undefined });
 
   };
   /* scoped */
-  const __vue_scope_id__$f = "data-v-31458a08";
+  const __vue_scope_id__$f = "data-v-5640060c";
   /* module identifier */
   const __vue_module_identifier__$f = undefined;
   /* functional template */
@@ -3362,6 +3362,24 @@ var script$i = {
     geocoder: null,
   }),
 
+  computed: {
+    geocodeTypes() {
+      return this.field.types;
+    }
+  },
+
+  watch: {
+    'fieldValue.address': function () {
+      this.updateAddress();
+    },
+    'fieldValue.latlng': function () {
+      this.updateMarker();
+    },
+    'fieldValue.zoom': function () {
+      this.updateZoom();
+    },
+  },
+
   mounted() {
     if (window.google === undefined) {
       this.loadGoogleMaps().then(() => {
@@ -3390,12 +3408,15 @@ var script$i = {
     },
     initAutocomplete() {
       if (this.fieldValue && this.fieldValue.address) {
-        this.$refs.address.update(this.fieldValue.address);
+        this.updateAddress();
       }
 
       if (this.field.withMap) {
         this.initMap();
       }
+    },
+    updateAddress() {
+      this.$refs.address.update(this.fieldValue.address);
     },
     initMap() {
       const options = defaults(this.field.withMap, {
@@ -3406,6 +3427,10 @@ var script$i = {
       if (this.fieldValue && this.fieldValue.latlng) {
         const [lat, lng] = this.fieldValue.latlng.split(',').map(parseFloat);
         options.center = {lat, lng};
+      }
+
+      if (this.fieldValue && this.fieldValue.zoom) {
+        options.zoom = this.fieldValue.zoom;
       }
 
       this.map = new google.maps.Map(this.$refs.map, options);
@@ -3420,6 +3445,10 @@ var script$i = {
 
       this.marker.addListener('dragend', () => {
         this.setAddressFromMarker();
+      });
+
+      this.map.addListener('zoom_changed', () => {
+        this.setZoomFromMap();
       });
     },
     setAddressFromMarker() {
@@ -3437,15 +3466,32 @@ var script$i = {
     setAddressFromGeocode(results) {
       if (results[0]) {
         this.$set(this.fieldValue, 'address', results[0].formatted_address);
-        this.$refs.address.update(this.fieldValue.address);
       }
     },
     setAddressData: function (addressData, placeResultData, id) {
       this.$set(this.fieldValue, 'latlng', addressData.latitude + ',' + addressData.longitude);
       this.$set(this.fieldValue, 'address', placeResultData.formatted_address);
-      if (this.marker) {
-        this.setMarkerFromResult(addressData);
+    },
+    updateMarker() {
+      if (!this.marker || !this.fieldValue.latlng) {
+        return;
       }
+
+      let latlng = {
+        lat: parseFloat(this.fieldValue.latlng.split(',')[0]),
+        lng: parseFloat(this.fieldValue.latlng.split(',')[1]),
+      };
+
+      this.marker.setPosition(latlng);
+      this.map.panTo(latlng);
+      this.map.setZoom(this.fieldValue.zoom || 12);
+    },
+    updateZoom() {
+      if (!this.map || !this.fieldValue.zoom) {
+        return;
+      }
+
+      this.map.setZoom(this.fieldValue.zoom);
     },
     setMarkerFromResult(addressData) {
       let latlng = {
@@ -3454,6 +3500,10 @@ var script$i = {
       };
       this.marker.setPosition(latlng);
       this.map.panTo(latlng);
+      this.map.setZoom(this.fieldValue.zoom || 12);
+    },
+    setZoomFromMap() {
+      this.$set(this.fieldValue, 'zoom', this.map.getZoom());
     },
   },
 };
@@ -3480,10 +3530,21 @@ var __vue_render__$i = function() {
                 attrs: {
                   id: _vm.field.attribute + "-address",
                   placeholder: _vm.field.placeholder,
-                  types: _vm.field.types || "address",
+                  types: _vm.geocodeTypes,
                   classname: "form-control"
                 },
-                on: { placechanged: _vm.setAddressData }
+                on: {
+                  placechanged: _vm.setAddressData,
+                  keypress: function($event) {
+                    if (
+                      !("button" in $event) &&
+                      _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+                    ) {
+                      return null
+                    }
+                    $event.preventDefault();
+                  }
+                }
               })
             : _vm._e(),
           _vm._v(" "),
@@ -3575,7 +3636,6 @@ var script$j = {
     return {
       options: [],
       params: {},
-      filterable: false,
       busy: false,
     };
   },
@@ -3607,6 +3667,9 @@ var script$j = {
         this.fieldValue = option ? option.value : null;
       },
     },
+    filterable() {
+      return !this.field.ajax;
+    }
   },
   created() {
     // Take initial options from field config
@@ -3645,6 +3708,9 @@ var script$j = {
       this.$refs.select.toggleLoading(value);
     },
     onSearch(search) {
+      if (!this.field.ajax) {
+        return;
+      }
       this.params[this.field.queryParam || 'query'] = search;
       this.fetch();
     },
@@ -3733,7 +3799,7 @@ __vue_render__$j._withStripped = true;
   /* style */
   const __vue_inject_styles__$j = function (inject) {
     if (!inject) return
-    inject("data-v-4c5ce4be_0", { source: "\n.form-control.v-select {\n  padding: 0 10px;\n}\n.form-control.v-select .dropdown-toggle {\n    border: none;\n    padding: 0;\n}\n.form-control.v-select .dropdown-toggle::after {\n      display: none;\n}\n.form-control.v-select .dropdown-toggle input[type=search] {\n      margin: 0;\n}\n.form-control.v-select .selected-tag {\n    margin-top: 0;\n}\n.form-control.v-select .vs__selected-options {\n    margin-left: -7px;\n    padding-left: 0;\n}\n.form-control.v-select .vs__actions {\n    padding-right: 0;\n}\n\n/*# sourceMappingURL=FormRelationField.vue.map */", map: {"version":3,"sources":["/Users/azamatx/projects/base-js/package/src/listing-fields/FormRelationField.vue","FormRelationField.vue"],"names":[],"mappings":";AAgJA;EACA,gBAAA;CA2BA;AA5BA;IAIA,aAAA;IACA,WAAA;CASA;AAdA;MAQA,cAAA;CACA;AATA;MAYA,UAAA;CACA;AAbA;IAiBA,cAAA;CACA;AAlBA;IAqBA,kBAAA;IACA,gBAAA;CACA;AAvBA;IA0BA,iBAAA;CACA;;AC1JA,iDAAiD","file":"FormRelationField.vue","sourcesContent":[null,".form-control.v-select {\n  padding: 0 10px; }\n  .form-control.v-select .dropdown-toggle {\n    border: none;\n    padding: 0; }\n    .form-control.v-select .dropdown-toggle::after {\n      display: none; }\n    .form-control.v-select .dropdown-toggle input[type=search] {\n      margin: 0; }\n  .form-control.v-select .selected-tag {\n    margin-top: 0; }\n  .form-control.v-select .vs__selected-options {\n    margin-left: -7px;\n    padding-left: 0; }\n  .form-control.v-select .vs__actions {\n    padding-right: 0; }\n\n/*# sourceMappingURL=FormRelationField.vue.map */"]}, media: undefined });
+    inject("data-v-88ba0a44_0", { source: "\n.form-control.v-select {\n  padding: 0 10px;\n}\n.form-control.v-select .dropdown-toggle {\n    border: none;\n    padding: 0;\n}\n.form-control.v-select .dropdown-toggle::after {\n      display: none;\n}\n.form-control.v-select .dropdown-toggle input[type=search] {\n      margin: 0;\n}\n.form-control.v-select .selected-tag {\n    margin-top: 0;\n}\n.form-control.v-select .vs__selected-options {\n    margin-left: -7px;\n    padding-left: 0;\n}\n.form-control.v-select .vs__actions {\n    padding-right: 0;\n}\n\n/*# sourceMappingURL=FormRelationField.vue.map */", map: {"version":3,"sources":["/Users/azamatx/projects/base-js/package/src/listing-fields/FormRelationField.vue","FormRelationField.vue"],"names":[],"mappings":";AAqJA;EACA,gBAAA;CA2BA;AA5BA;IAIA,aAAA;IACA,WAAA;CASA;AAdA;MAQA,cAAA;CACA;AATA;MAYA,UAAA;CACA;AAbA;IAiBA,cAAA;CACA;AAlBA;IAqBA,kBAAA;IACA,gBAAA;CACA;AAvBA;IA0BA,iBAAA;CACA;;AC/JA,iDAAiD","file":"FormRelationField.vue","sourcesContent":[null,".form-control.v-select {\n  padding: 0 10px; }\n  .form-control.v-select .dropdown-toggle {\n    border: none;\n    padding: 0; }\n    .form-control.v-select .dropdown-toggle::after {\n      display: none; }\n    .form-control.v-select .dropdown-toggle input[type=search] {\n      margin: 0; }\n  .form-control.v-select .selected-tag {\n    margin-top: 0; }\n  .form-control.v-select .vs__selected-options {\n    margin-left: -7px;\n    padding-left: 0; }\n  .form-control.v-select .vs__actions {\n    padding-right: 0; }\n\n/*# sourceMappingURL=FormRelationField.vue.map */"]}, media: undefined });
 
   };
   /* scoped */

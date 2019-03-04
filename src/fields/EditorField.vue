@@ -5,7 +5,7 @@
     :errors="errors">
     <template slot="field">
       <editor
-        v-model="field.value"
+        v-model="fieldValue"
         :options="options"
         class="editor-field" />
     </template>

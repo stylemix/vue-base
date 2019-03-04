@@ -58,7 +58,6 @@
       return {
         options: [],
         params: {},
-        filterable: false,
         busy: false,
       };
     },
@@ -90,6 +89,9 @@
           this.fieldValue = option ? option.value : null;
         },
       },
+      filterable() {
+        return !this.field.ajax;
+      }
     },
     created() {
       // Take initial options from field config
@@ -128,6 +130,9 @@
         this.$refs.select.toggleLoading(value);
       },
       onSearch(search) {
+        if (!this.field.ajax) {
+          return;
+        }
         this.params[this.field.queryParam || 'query'] = search;
         this.fetch();
       },
