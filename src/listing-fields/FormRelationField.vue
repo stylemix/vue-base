@@ -44,6 +44,7 @@
   import find from 'lodash-es/find';
   import head from 'lodash-es/head';
   import isEqual from 'lodash-es/isEqual';
+  import uniqBy from 'lodash-es/uniqBy';
   import vSelect from 'vue-select';
   import FormField from '../mixins/FormField';
 
@@ -73,7 +74,7 @@
           });
 
           if (this.field.multiple) {
-            return selected;
+            return uniqBy(selected, 'value');
           }
 
           return head(selected);
@@ -82,7 +83,7 @@
           if (this.field.multiple) {
             const values = map(option, 'value');
             if (!isEqual(values, this.fieldValue)) {
-              this.fieldValue = values;
+              this.fieldValue = uniqBy(values);
             }
             return;
           }
@@ -111,7 +112,7 @@
 
         promise
           .then((response) => {
-            this.options = response.data.data;
+            this.setOptions(response.data.data);
           })
           .finally(() => {
             this.loading(false);
@@ -142,6 +143,10 @@
           label: this.$refs.select && this.$refs.select.mutableLoading ? '...' : '(Missed option)',
         };
       },
+      setOptions(options) {
+        let preserveOptions = castArray(this.selected);
+        this.options = uniqBy(preserveOptions.concat(options), 'value');
+      }
     },
   };
 </script>
@@ -149,6 +154,8 @@
 <style lang="scss">
   .form-control.v-select {
     padding: 0 10px;
+    height: auto;
+    min-height: calc(2.25rem + 2px);
 
     .dropdown-toggle {
       border: none;
@@ -160,16 +167,19 @@
 
       input[type=search] {
         margin: 0;
+        height: auto;
+        min-height: calc(2.25rem + 2px);
       }
     }
 
     .selected-tag {
-      margin-top: 0;
+      margin-top: 3px;
+      margin-bottom: 5px;
     }
 
     .vs__selected-options {
-      margin-left: -7px;
-      padding-left: 0;
+      margin-left: -9px;
+      padding: 0;
     }
 
     .vs__actions {
