@@ -29,14 +29,14 @@
 
 <script>
   import VueGoogleAutocomplete from 'vue-google-autocomplete';
-  import FormField from '../mixins/FormField';
+  import FieldMixin from '../mixins/FieldMixin';
   import defaults from 'lodash-es/defaults';
   import config from './config';
 
   export default {
     name: 'FormLocationField',
 
-    mixins: [FormField],
+    mixins: [FieldMixin],
 
     components: {
       VueGoogleAutocomplete,
@@ -55,16 +55,22 @@
       }
     },
 
-    watch: {
-      'fieldValue.address': function () {
-        this.updateAddress();
-      },
-      'fieldValue.latlng': function () {
-        this.updateMarker();
-      },
-      'fieldValue.zoom': function () {
-        this.updateZoom();
-      },
+    created() {
+      if (!this.field.initialValue) {
+        this.field.initialValue = {
+          address: null,
+          latlng: null,
+          zoom: null,
+        };
+      }
+
+      if (!this.fieldValue) {
+        this.field.applyInitialValue(this.model);
+      }
+
+      this.$watch('fieldValue.address', this.updateAddress);
+      this.$watch('fieldValue.latlng', this.updateMarker);
+      this.$watch('fieldValue.zoom', this.updateZoom);
     },
 
     mounted() {
@@ -80,11 +86,6 @@
     },
 
     methods: {
-      setInitialValue() {
-        if (!this.fieldValue) {
-          this.fieldValue = {};
-        }
-      },
       loadGoogleMaps() {
         return new Promise((resolve) => {
           let mapsScript = document.createElement('script');

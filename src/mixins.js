@@ -1,11 +1,13 @@
 import HandlesValidationErrors from './mixins/HandlesValidationErrors';
 import FieldLayoutMixin from './mixins/FieldLayoutMixin';
-import FormField from './mixins/FormField';
-import FormComponent from './mixins/FormComponent';
+import FieldMixin from './mixins/FieldMixin';
+import FormMixin from './mixins/FormMixin';
 
 export {
-	HandlesValidationErrors,
-	FieldLayoutMixin,
-	FormField,
-	FormComponent,
+  HandlesValidationErrors,
+  FieldLayoutMixin,
+  FieldMixin,
+  FormMixin,
+  FieldMixin as FormField, // compatibility
+  FormMixin as FormComponent, // compatibility
 }

@@ -1,58 +1,76 @@
 ### Installation
 ```bash
-npm install git@git.stylemix.net:azamatx/stylemix-base-js.git
-```
-or
-```bash
-yarn add git@git.stylemix.net:azamatx/stylemix-base-js.git
+npm install git@github.com:stylemix/vue-base.git
+# or
+yarn add git@github.com:stylemix/vue-base.git
 ```
 
 In your main app js:
 ```
-import { Plugin as BasePlugin } from 'stylemix-base'
+import { BasePlugin } from 'stylemix-base'
 
 Vue.use(BasePlugin)
 ```
 
 ### Example form
 
-In Vue:
+In ContactForm.vue:
 ```vue
-// ContactForm.vue
 <template>
-	<form method="post" @submit.prevent="submit">
-		<fields :fields="fields.all()" :errors="errors"></fields>
-		<button type="submit" class="btn btn-primary">Send</button>
-	</form>
+  <form method="post" @submit.prevent="submit">
+    <fields
+      :fields="fields.all()"
+      :model="model"
+      :errors="errors" />
+    <button
+      type="submit"
+      class="btn btn-primary">
+      Send
+    </button>
+  </form>
 </template>
 
 <script>
-	import { FormComponent } from 'stylemix-base';
+  import { FormMixin } from 'stylemix-base';
 
-	export default {
-		mixins: [ FormComponent ],
+  export default {
+    mixins: [ FormMixin ],
+    
+    data() {
+      return {
+        model: {
+          title: 'Initial title',
+          email: null,
+        },
+      };
+    },
 
-		created() {
-			this.setFields([
-				{
-					attribute: 'title',
-					component: 'text-field',
-					value: 'Initial value'
-				}
-			])
-		},
+    created() {
+      this.setFields([
+        {
+          attribute: 'title',
+          component: 'text-field',
+          required: true,
+        },
+        {
+          attribute: 'email',
+          component: 'text-field',
+          type: 'email'
+        },
+      ])
+    },
 
-		methods: {
-			submit() {
-				this.errors.clear();
+    methods: {
+      submit() {
+        this.errors.clear();
 
-				let formData = this.formData();
+        let formData = this.formData();
 
-				formData.append('_method', 'POST');
+        formData.append('_method', 'POST');
 
-				// send form data
-			}
-		}
-	}
+        // send form data
+      }
+    }
+  }
 </script>
 ```

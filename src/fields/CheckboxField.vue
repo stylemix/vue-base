@@ -26,12 +26,12 @@
 </template>
 
 <script>
-	import { FormField } from '../mixins';
+	import { FieldMixin } from '../mixins';
 
 	export default {
 		name: 'CheckboxField',
 
-		mixins: [ FormField ],
+		mixins: [ FieldMixin ],
 
 		props: {
 			fieldLabel: { type: String },

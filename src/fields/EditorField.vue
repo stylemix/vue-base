@@ -15,7 +15,7 @@
 <script>
 import { quillEditor } from 'vue-quill-editor';
 import assign from 'lodash-es/assign';
-import FormField from '../mixins/FormField';
+import FieldMixin from '../mixins/FieldMixin';
 
 export default {
   name: 'FormEditorField',
@@ -24,7 +24,7 @@ export default {
     Editor: quillEditor,
   },
 
-  mixins: [FormField],
+  mixins: [FieldMixin],
 
   data() {
     return {

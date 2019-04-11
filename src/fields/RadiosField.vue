@@ -25,12 +25,12 @@
 </template>
 
 <script>
-	import { FormField } from '../mixins';
+	import { FieldMixin } from '../mixins';
 
 	export default {
 		name: 'RadiosField',
 
-		mixins: [ FormField ],
+		mixins: [ FieldMixin ],
 
 		props: {
 			radiosLayout: { type: String }

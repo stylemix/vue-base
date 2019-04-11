@@ -1,5 +1,7 @@
-/* stylemix-base v1.3.1 (c) Azamat X <azamat@stylemix.net> - UNLICENSED */
+/* stylemix-base v1.4.0 (c) Azamat X <azamat@stylemix.net> - UNLICENSED */
 import Vue from 'vue';
+import forOwn from 'lodash-es/forOwn';
+import cloneDeep from 'lodash-es/cloneDeep';
 import keyBy from 'lodash-es/keyBy';
 import mapValues from 'lodash-es/mapValues';
 import isEqual from 'lodash-es/isEqual';
@@ -9,7 +11,6 @@ import values from 'lodash-es/values';
 import omit from 'lodash-es/omit';
 import filter from 'lodash-es/filter';
 import find from 'lodash-es/find';
-import forOwn from 'lodash-es/forOwn';
 import isArray from 'lodash-es/isArray';
 import { quillEditor } from 'vue-quill-editor';
 import assign from 'lodash-es/assign';
@@ -21,49 +22,160 @@ import map from 'lodash-es/map';
 import debounce from 'lodash-es/debounce';
 import castArray from 'lodash-es/castArray';
 import head from 'lodash-es/head';
+import uniqBy from 'lodash-es/uniqBy';
 import vSelect from 'vue-select';
 
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
+function setProp(obj, props, value) {
+	if (typeof props === "string") {
+		props = props.split('.');
+	}
+
+	const prop = props.shift();
+
+	if (!obj[prop] && props.length) {
+		Vue.set(obj, prop, {});
+	}
+
+	if (!props.length) {
+		Vue.set(obj, prop, value);
+		return;
+	}
+
+	setProp(obj[prop], props, value);
+}
+
+function getProp(obj, props) {
+	if (typeof props === "string") {
+		props = props.split('.');
+	}
+
+	const prop = props.shift();
+
+	if (!obj[prop] || !props.length) {
+		return obj[prop];
+	}
+
+	return getProp(obj[prop], props);
+}
+
+/**
+ * Append given data to formData object with given base name
+ *
+ * @param {FormData} formData
+ * @param value
+ * @param {String} name
+ */
+function appendFormData(formData, value, name) {
+  if (value === null || value === undefined) {
+    value = '';
+  } else if (value === true) {
+    value = 1;
+  } else if (value === false) {
+    value = 0;
+  } else if (typeof value === 'object' && !(value instanceof File)) {
+    if (value instanceof Array && value.length === 0) {
+      formData.append(name, '');
+      return;
+    }
+
+    forOwn(value, (value, key) => {
+      appendFormData(formData, value, `${name}[${key}]`);
+    });
+
+    return;
+  }
+
+  formData.append(name, value);
+}
+
+/**
+ * Resolves field attribute name to form data name
+ *
+ * @param {Object} field
+ * @returns {String}
+ */
+function formDataName(field) {
+  let name = field.attribute;
+
+  if (field.attribute.indexOf('.') !== -1) {
+    name = field
+      .attribute.replace(/\./, '[')
+      .replace('.', '][') + ']';
+  }
+
+  return name;
+}
+
+/**
+ * @property {String} attribute
+ * @property {String} component
+ * @property {Boolean} multiple
+ * @property {*} initialValue
+ * @property {Array} depends
+ * @property {Array} dependentFields
+ */
+class Field {
+
+  /**
+   * Construct the Field instance
+   *
+   * @param {Object} field
+   */
+  constructor(field) {
+    Object.assign(this, field);
+  }
+
+  /**
+   * Sets model value to initial value
+   *
+   * @param {Object} model
+   */
+  applyInitialValue(model) {
+    setProp(model, this.attribute, cloneDeep(this.initialValue) || (this.multiple ? [] : null));
+  }
+
+  /**
+   * Appends model value to FormValue
+   *
+   * @param {FormData} formData
+   * @param {Object} model
+   */
+  appendFormData(formData, model) {
+    appendFormData(formData, getProp(model, this.attribute), formDataName(this));
+  }
+}
+
 //
 
 var script = {
-	name: "Field",
+  name: "Field",
 
-	props: {
-		field: {
-			default: function () {
-				return {
-					component: 'undefined'
-				}
-			}
-		},
-		model: Object,
-		errors: {},
-		eventBus: { type: Object },
-		layout: {}
-	},
+  props: {
+    field: {
+      type: Field,
+      default: function () {
+        return new Field({
+          component: 'undefined'
+        })
+      }
+    },
+    model: Object,
+    errors: {},
+    eventBus: {type: Object},
+    layout: {}
+  },
 
-	computed: {
-		$events () {
-			return this.eventBus || this.$parent;
-		}
-	},
+  computed: {
+    $events() {
+      return this.eventBus || this.$parent;
+    }
+  },
 
-	methods: {
-		input: function ($event) {
-			this.$emit('input', $event);
-		}
-	},
+  methods: {
+    input: function ($event) {
+      this.$emit('input', $event);
+    }
+  },
 };
 
 /* script */
@@ -126,7 +238,7 @@ __vue_render__._withStripped = true;
   
 
   
-  var Field = __vue_normalize__(
+  var Field$1 = __vue_normalize__(
     { render: __vue_render__, staticRenderFns: __vue_staticRenderFns__ },
     __vue_inject_styles__,
     __vue_script__,
@@ -222,23 +334,23 @@ class Errors {
 //
 
 var script$1 = {
-	name: "Fields",
+  name: "Fields",
 
-	props: {
-		fields: {},
-		model: Object,
-		errors: {
-			default: () => new Errors()
-		},
-		eventBus: { type: Object },
-		layout: String
-	},
+  props: {
+    fields: {},
+    model: Object,
+    errors: {
+      default: () => new Errors()
+    },
+    eventBus: {type: Object},
+    layout: String
+  },
 
-	computed: {
-		$events () {
-			return this.eventBus || this.$parent;
-		}
-	},
+  computed: {
+    $events() {
+      return this.eventBus || this.$parent;
+    }
+  },
 };
 
 /* script */
@@ -1081,293 +1193,261 @@ __vue_render__$7._withStripped = true;
     undefined
   );
 
-function setProp(obj, props, value) {
-	if (typeof props === "string") {
-		props = props.split('.');
-	}
+var FieldMixin = {
+  mixins: [HandlesValidationErrors],
 
-	const prop = props.shift();
+  props: {
+    field: {type: Field, required: true},
+    model: {type: Object},
+    eventBus: {type: Object},
+    layout: {type: String},
+    layoutClass: {type: String},
+  },
 
-	if (!obj[prop] && props.length) {
-		Vue.set(obj, prop, {});
-	}
+  data: () => ({
+    errorClass: 'is-invalid',
+    eventBusListeners: [],
+  }),
 
-	if (!props.length) {
-		Vue.set(obj, prop, value);
-		return;
-	}
+  computed: {
+    /**
+     * Used for v-model binding on input element
+     */
+    fieldValue: {
+      get() {
+        return this.value();
+      },
+      set(value) {
+        this.fill(value);
+      },
+    },
+    layoutComponent: function () {
+      return (this.layout || config.defaultLayout) + '-layout';
+    },
+    $events() {
+      return this.eventBus || this.$root;
+    }
+  },
 
-	setProp(obj[prop], props, value);
-}
+  created() {
+    if (this.model && !has(this.model, this.field.attribute)) {
+      this.field.applyInitialValue(this.model);
+    }
 
-function getProp(obj, props) {
-	if (typeof props === "string") {
-		props = props.split('.');
-	}
+    // Register a global event for setting the field's value
+    this.listenEventBus('field-value-' + this.field.attribute, this.fill);
 
-	const prop = props.shift();
+    if (this.field.depends && this.field.depends.length) {
+      this.field.depends.forEach(attr => {
+        this.listenEventBus('field-change-' + attr, value => {
+          this.triggerDependentChange(attr, value);
+        });
+      });
 
-	if (!obj[prop] || !props.length) {
-		return obj[prop];
-	}
+      this.triggerDependentChange();
+    }
+  },
 
-	return getProp(obj[prop], props);
-}
+  destroyed() {
+    this.unlistenEventBus();
+  },
 
-var FormField = {
-	mixins: [ HandlesValidationErrors ],
+  methods: {
 
-	props: {
-		field: { type: Object, required: true },
-		model: { type: Object },
-		eventBus: { type: Object },
-		layout: { type: String },
-		layoutClass: { type: String },
-	},
+    /**
+     * Perform some sanitize actions when filling the value
+     *
+     * @param {*} value
+     * @returns {*}
+     */
+    sanitizeValue(value) {
+      return value;
+    },
 
-	data: () => ({
-		errorClass: 'is-invalid',
-	}),
+    /**
+     * Update the field's value
+     * @param value
+     */
+    fill(value) {
+      let valueSet = this.sanitizeValue(value);
 
-	computed: {
-		/**
-		 * Used for v-model binding on input element
-		 */
-		fieldValue: {
-			get() {
-				return this.value();
-			},
-			set(value) {
-				this.fill(value);
-			},
-		},
-		layoutComponent: function () {
-			return (this.layout || config.defaultLayout) + '-layout';
-		},
-		$events () {
-			return this.eventBus || this.$root;
-		}
-	},
+      if (isEqual(valueSet, this.value())) {
+        return;
+      }
 
-	created() {
-		this.setInitialValue();
+      if (this.model) {
+        setProp(this.model, this.field.attribute, valueSet);
+      }
 
-		if (this.model) {
-			if (!has(this.model, this.field.attribute)) {
-				setProp(this.model, this.field.attribute, this.field.value);
-			}
+      this.triggerChange();
+    },
 
-			this.$watch(
-				() => getProp(this.model, this.field.attribute),
-				(value) => {
-					this.field.value = value;
-					this.triggerChange();
-				},
-				{ deep: true }
-			);
-		}
+    /**
+     * Get field's value
+     * @returns {*}
+     */
+    value() {
+      return this.model ? getProp(this.model, this.field.attribute) : (this.field.multiple ? [] : null);
+    },
 
-		// Register a global event for setting the field's value
-		this.$events.$on('field-value-' + this.field.attribute, this.fill);
+    triggerChange() {
+      this.$events.$emit('field-change', this.value(), this.field.attribute);
+      this.$events.$emit('field-change-' + this.field.attribute, this.value());
+    },
 
-		if (this.field.depends && this.field.depends.length) {
-			this.field.depends.forEach(attr => {
-				this.$events.$on('field-change-' + attr, value => {
-					this.triggerDependentChange(attr, value);
-				});
-			});
+    triggerDependentChange(attribute, value) {
+      let values$$1 = mapValues(keyBy(this.field.dependentFields, 'attribute'), (field) => {
+        return getProp(this.model, field.attribute);
+      });
+      this.handleDependentChange(attribute, value, values$$1);
+    },
 
-			this.triggerDependentChange();
-		}
-	},
+    handleDependentChange(attribute, value, values$$1) {
+      // console.log(this.field.attribute + ':handleDependentChange', arguments)
+    },
 
-	destroyed() {
-		this.$events.$off('field-value-' + this.field.attribute);
+    listenEventBus(event, callback) {
+      this.$events.$on(event, callback);
+      this.eventBusListeners.push({ event, callback });
+    },
 
-		if (this.field.depends && this.field.depends.length) {
-			this.field.depends.forEach(attr => {
-				this.$events.$off('field-change-' + attr);
-			});
-		}
-	},
-
-	methods: {
-		/*
-		 * Set the initial value for the field
-		 */
-		setInitialValue() {
-		},
-
-		/**
-		 * Perform some sanitize actions when filling the value
-		 *
-		 * @param value
-		 * @returns {*}
-		 */
-		sanitizeValue(value) {
-			return value;
-		},
-
-		/**
-		 * Update the field's value
-		 * @param value
-		 */
-		fill(value) {
-			if (isEqual(value, this.fieldValue)) {
-				return;
-			}
-
-			if (!this.model) {
-				this.field.value = this.sanitizeValue(value);
-				this.triggerChange();
-			} else {
-				setProp(this.model, this.field.attribute, this.sanitizeValue(value));
-			}
-		},
-
-		/**
-		 * Get field's value
-		 * @returns {*}
-		 */
-		value() {
-			if (!this.model) {
-				return this.field.value;
-			}
-
-			return getProp(this.model, this.field.attribute);
-		},
-
-		triggerChange() {
-			this.$events.$emit('field-change', this.field.value, this.field.attribute);
-			this.$events.$emit('field-change-' + this.field.attribute, this.field.value);
-		},
-
-		triggerDependentChange(attribute, value) {
-			let values$$1 = mapValues(keyBy(this.field.dependentFields, 'attribute'), 'value');
-			this.handleDependentChange(attribute, value, values$$1);
-		},
-
-		handleDependentChange(attribute, value, values$$1) {
-			//console.log(this.field.attribute + ':handleDependentChange', arguments)
-		}
-	},
+    unlistenEventBus() {
+      this.eventBusListeners.forEach(({ event, callback}) => {
+        this.$events.$off(event, callback);
+      });
+    }
+  },
 };
 
 class FieldList {
 
-	constructor(fields) {
-		this.list = fields;
-		this.byAttribute = keyBy(fields, 'attribute');
+  constructor(fields) {
+    this.list = [];
+    this.byAttribute = {};
 
-		// Collect dependencies and assign
-		fields.forEach(field => {
-			// Add default method to get form data attribute
-			field.formDataName = () => {
-				let name = field.attribute;
+    // Collect Field instances
+    fields.forEach(fieldConfig => {
+      let field = new Field(fieldConfig);
+      this.list.push(field);
+      this.byAttribute[field.attribute] = field;
+    });
 
-				if (field.attribute.indexOf('.') !== -1) {
-					name = field
-						.attribute.replace(/\./, '[')
-						.replace('.', '][') + ']';
-				}
+    // Collect dependencies and assign
+    this.list.forEach(field => {
+      if (!field.depends) {
+        return;
+      }
 
-				return name;
-			};
+      field.dependentFields = this.only(...field.depends);
+    });
+  }
 
-			// Add default form data fill method
-			field.fillFormData = (formData) => {
-				function append(value, name) {
-					if (value === null || value === undefined) {
-						value = '';
-					}
-					else if (value === true) {
-						value = 1;
-					}
-					else if (value === false) {
-						value = 0;
-					}
-					else if (typeof value === 'object' && !(value instanceof File)) {
-						forOwn(value, (value, key) => {
-							append(value, `${name}[${key}]`);
-						});
+  /**
+   * Get all fields
+   *
+   * @returns {Field[]}
+   */
+  all() {
+    return this.list
+  }
 
-						return;
-					}
+  /**
+   * @returns {Field}
+   */
+  get(attribute) {
+    return this.byAttribute[attribute];
+  }
 
-					formData.append(name, value);
-				}
+  /**
+   * @returns {Field}
+   */
+  find(predicate) {
+    return find(this.list, predicate);
+  }
 
-				append(field.value, field.formDataName());
-			};
+  /**
+   * @returns {Field[]}
+   */
+  only(...attributes) {
+    return values(pick(this.byAttribute, attributes))
+  }
 
-			// Add default model data fill method
-			field.fillModel = model => {
-				setProp(model, field.attribute, field.value);
-			};
+  /**
+   * @returns {Field[]}
+   */
+  except(...attributes) {
+    return values(omit(this.byAttribute, attributes))
+  }
 
-			if (!field.depends) {
-				return;
-			}
-
-			field.dependentFields = this.only(...field.depends);
-		});
-	}
-
-	all() {
-		return this.list
-	}
-
-	get(attribute) {
-		return this.byAttribute[attribute];
-	}
-
-	find(predicate) {
-		return find(this.list, predicate);
-	}
-
-	only(...attributes) {
-		return values(pick(this.byAttribute, attributes))
-	}
-
-	except(...attributes) {
-		return values(omit(this.byAttribute, attributes))
-	}
-
-	filter(predicate) {
-		return filter(this.list, predicate)
-	}
+  /**
+   * @returns {Field[]}
+   */
+  filter(predicate) {
+    return filter(this.list, predicate)
+  }
 
 }
 
-var FormComponent = {
-	data() {
-		return {
-			fields: new FieldList([]),
-			errors: new Errors()
-		}
-	},
+var FormMixin = {
+  data() {
+    return {
+      fields: new FieldList([]),
+      errors: new Errors()
+    }
+  },
 
-	methods: {
-		setFields(fields) {
-			this.fields = new FieldList(fields);
-		},
+  methods: {
 
-		formData(only) {
-			let formData = new FormData();
-			let fields = only || this.fields.all();
+    /**
+     * Set new field list.
+     * Implemented form components should use this function when setting up fields.
+     *
+     * @param {Array} fields
+     */
+    setFields(fields) {
+      this.fields = new FieldList(fields);
+    },
 
-			fields.forEach(field => {
-				field.fillFormData(formData);
-			});
+    /**
+     * Create FormData object for the model data.
+     * Used when data going to be sent as multipart/form-data
+     *
+     * @param {Object} model Source model
+     * @param {Array|null} only (Optional) List of fields to use instead of main fields
+     * @returns {FormData}
+     */
+    formData(model, only = null) {
+      let formData = new FormData();
+      let fields = only || this.fields.all();
 
-			return formData
-		},
+      fields.forEach(field => {
+        field.appendFormData(formData, model);
+      });
 
-		setValidationErrors(errors) {
-			this.errors = new Errors(errors);
-		},
+      return formData;
+    },
 
-	}
+    /**
+     * Set new validation errors.
+     * Usually used when setting up error messages came from server.
+     *
+     * @param errors
+     */
+    setValidationErrors(errors) {
+      this.errors = new Errors(errors);
+    },
+
+    /**
+     * Reset field values for model. Sets initial field value.
+     *
+     * @param {Object} model
+     */
+    resetModel(model) {
+      this.fields.all().forEach(field => {
+        field.applyInitialValue(model);
+      });
+    }
+  }
 };
 
 //
@@ -1375,7 +1455,7 @@ var FormComponent = {
 var script$8 = {
 	name: 'FormTextField',
 
-	mixins: [ FormField ],
+	mixins: [ FieldMixin ],
 
 	props: {
 		readonly: {},
@@ -1645,7 +1725,7 @@ __vue_render__$8._withStripped = true;
 var script$9 = {
 	name: 'FormTextField',
 
-	mixins: [ FormField ],
+	mixins: [ FieldMixin ],
 
 	props: {
 		placeholder: {}
@@ -1766,7 +1846,7 @@ __vue_render__$9._withStripped = true;
 //
 
 var script$a = {
-	mixins: [ FormField ],
+	mixins: [ FieldMixin ],
 
 	props: {
 		disabled: {},
@@ -1914,7 +1994,7 @@ __vue_render__$a._withStripped = true;
 var script$b = {
 	name: 'RadiosField',
 
-	mixins: [ FormField ],
+	mixins: [ FieldMixin ],
 
 	props: {
 		radiosLayout: { type: String }
@@ -2050,7 +2130,7 @@ __vue_render__$b._withStripped = true;
 var script$c = {
 	name: 'CheckboxField',
 
-	mixins: [ FormField ],
+	mixins: [ FieldMixin ],
 
 	props: {
 		fieldLabel: { type: String },
@@ -2204,31 +2284,30 @@ __vue_render__$c._withStripped = true;
 //
 
 var script$d = {
-	name: 'CheckboxesField',
+  name: 'CheckboxesField',
 
-	mixins: [ FormField ],
+  mixins: [FieldMixin],
 
-	props: {
-		checkboxLayout: { type: String }
-	},
+  props: {
+    checkboxLayout: {type: String}
+  },
 
-	computed: {
-		checkboxLayoutClass() {
-			let layout = this.checkboxLayout || this.field.checkboxLayout;
-			return `form-check-${layout}`;
-		}
-	},
+  computed: {
+    checkboxLayoutClass() {
+      let layout = this.checkboxLayout || this.field.checkboxLayout;
+      return `form-check-${layout}`;
+    }
+  },
 
-	methods: {
-		/*
-		 * Set the initial value for the field
-		 */
-		setInitialValue() {
-			if (!isArray(this.fieldValue)) {
-				this.fieldValue = [];
-			}
-		},
-	}
+  created() {
+    if (!isArray(this.field.initialValue)) {
+      this.field.initialValue = [];
+    }
+
+    if (!isArray(this.value())) {
+      this.fill([]);
+    }
+  },
 };
 
 /* script */
@@ -2301,7 +2380,7 @@ var __vue_render__$d = function() {
                   staticClass: "form-check-label",
                   attrs: { for: _vm.field.attribute + index }
                 },
-                [_vm._v("\n\t\t\t\t" + _vm._s(option.label) + "\n\t\t\t")]
+                [_vm._v("\n        " + _vm._s(option.label) + "\n      ")]
               )
             ]
           )
@@ -2367,7 +2446,7 @@ __vue_render__$d._withStripped = true;
 var script$e = {
 	name: 'FormTextareaField',
 
-	mixins: [ FormField ],
+	mixins: [ FieldMixin ],
 
 	props: {
 		readonly: {},
@@ -2533,7 +2612,7 @@ var script$f = {
     Editor: quillEditor,
   },
 
-  mixins: [FormField],
+  mixins: [FieldMixin],
 
   data() {
     return {
@@ -2606,11 +2685,11 @@ __vue_render__$f._withStripped = true;
   /* style */
   const __vue_inject_styles__$f = function (inject) {
     if (!inject) return
-    inject("data-v-5640060c_0", { source: "\n.editor-field[data-v-5640060c] .ql-editor {\n  height: 140px;\n}\n", map: {"version":3,"sources":["/Users/azamatx/projects/base-js/package/src/fields/EditorField.vue"],"names":[],"mappings":";AA6DA;EACA,cAAA;CACA","file":"EditorField.vue","sourcesContent":["<template>\n  <component\n    :is=\"layoutComponent\"\n    :field=\"field\"\n    :errors=\"errors\">\n    <template slot=\"field\">\n      <editor\n        v-model=\"fieldValue\"\n        :options=\"options\"\n        class=\"editor-field\" />\n    </template>\n  </component>\n</template>\n\n<script>\nimport { quillEditor } from 'vue-quill-editor';\nimport assign from 'lodash-es/assign';\nimport FormField from '../mixins/FormField';\n\nexport default {\n  name: 'FormEditorField',\n\n  components: {\n    Editor: quillEditor,\n  },\n\n  mixins: [FormField],\n\n  data() {\n    return {\n    };\n  },\n\n  computed: {\n    options() {\n      let options = {\n        modules: {\n          toolbar: [\n            ['bold', 'italic', 'underline', 'strike'], // toggled buttons\n            ['blockquote', 'code-block'],\n            [{ list: 'ordered' }, { list: 'bullet' }],\n            ['link', 'image'],\n            [{ size: ['small', false, 'large', 'huge'] }], // custom dropdown\n            [{ header: [1, 2, 3, 4, 5, 6, false] }],\n            [{ font: [] }],\n            [{ align: [] }],\n            ['clean'],\n          ],\n        },\n      };\n\n      assign(options, this.field.options);\n      assign(options.modules, this.field.modules);\n\n      return options;\n    }\n  }\n};\n</script>\n\n<style scoped>\n  .editor-field >>> .ql-editor {\n    height: 140px;\n  }\n</style>\n"]}, media: undefined });
+    inject("data-v-7353c2a3_0", { source: "\n.editor-field[data-v-7353c2a3] .ql-editor {\n  height: 140px;\n}\n", map: {"version":3,"sources":["/Users/azamatx/projects/base-js/package/src/fields/EditorField.vue"],"names":[],"mappings":";AA6DA;EACA,cAAA;CACA","file":"EditorField.vue","sourcesContent":["<template>\n  <component\n    :is=\"layoutComponent\"\n    :field=\"field\"\n    :errors=\"errors\">\n    <template slot=\"field\">\n      <editor\n        v-model=\"fieldValue\"\n        :options=\"options\"\n        class=\"editor-field\" />\n    </template>\n  </component>\n</template>\n\n<script>\nimport { quillEditor } from 'vue-quill-editor';\nimport assign from 'lodash-es/assign';\nimport FieldMixin from '../mixins/FieldMixin';\n\nexport default {\n  name: 'FormEditorField',\n\n  components: {\n    Editor: quillEditor,\n  },\n\n  mixins: [FieldMixin],\n\n  data() {\n    return {\n    };\n  },\n\n  computed: {\n    options() {\n      let options = {\n        modules: {\n          toolbar: [\n            ['bold', 'italic', 'underline', 'strike'], // toggled buttons\n            ['blockquote', 'code-block'],\n            [{ list: 'ordered' }, { list: 'bullet' }],\n            ['link', 'image'],\n            [{ size: ['small', false, 'large', 'huge'] }], // custom dropdown\n            [{ header: [1, 2, 3, 4, 5, 6, false] }],\n            [{ font: [] }],\n            [{ align: [] }],\n            ['clean'],\n          ],\n        },\n      };\n\n      assign(options, this.field.options);\n      assign(options.modules, this.field.modules);\n\n      return options;\n    }\n  }\n};\n</script>\n\n<style scoped>\n  .editor-field >>> .ql-editor {\n    height: 140px;\n  }\n</style>\n"]}, media: undefined });
 
   };
   /* scoped */
-  const __vue_scope_id__$f = "data-v-5640060c";
+  const __vue_scope_id__$f = "data-v-7353c2a3";
   /* module identifier */
   const __vue_module_identifier__$f = undefined;
   /* functional template */
@@ -2737,7 +2816,7 @@ __vue_render__$f._withStripped = true;
 
 
 var components = /*#__PURE__*/Object.freeze({
-Field: Field,
+Field: Field$1,
 Fields: Fields,
 EmptyLayout: EmptyLayout,
 FormAsterisk: Asterisk,
@@ -2900,7 +2979,7 @@ __vue_render__$g._withStripped = true;
     const component = (typeof script === 'function' ? script.options : script) || {};
 
     // For security concerns, we use only base name in production mode.
-    component.__file = "/Users/azamatx/projects/base-js/package/src/listing-fields/AttachmentPreview.vue";
+    component.__file = "/Users/azamatx/projects/base-js/package/src/extra-fields/AttachmentPreview.vue";
 
     if (!component.render) {
       component.render = template.render;
@@ -2949,7 +3028,7 @@ var script$h = {
     AttachmentPreview,
   },
 
-  mixins: [FormField],
+  mixins: [FieldMixin],
 
   data() {
     return {
@@ -2989,12 +3068,9 @@ var script$h = {
     },
   },
 
-  methods: {
-    setInitialValue() {
-      if (!this.field.multiple) {
-        return;
-      }
-
+  created() {
+    if (this.field.multiple) {
+      // For correct reactivity and sorting
       if (!this.field.attached) {
         this.field.attached = [];
       }
@@ -3002,7 +3078,10 @@ var script$h = {
       if (!this.fieldValue) {
         this.fieldValue = [];
       }
-    },
+    }
+  },
+
+  methods: {
     remove(attachment) {
       if (this.field.multiple) {
         this.field.attached = this.field.attached.filter((a) => a.id !== attachment.id);
@@ -3216,11 +3295,11 @@ __vue_render__$h._withStripped = true;
   /* style */
   const __vue_inject_styles__$h = function (inject) {
     if (!inject) return
-    inject("data-v-5aa6457f_0", { source: "\n.field-attachments[data-v-5aa6457f] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: flex-start;\n}\n.field-attachment[data-v-5aa6457f] {\n  position: relative;\n  margin-right: 1rem;\n  margin-bottom: 1rem;\n}\n.btn-remove[data-v-5aa6457f] {\n  position: absolute;\n  top: -.5rem;\n  right: -.5rem;\n  line-height: 100%;\n  height: 1.5rem;\n  width: 1.5rem;\n  opacity: 1;\n  color: white;\n}\n.field-attachment-preview[data-v-5aa6457f] {\n  font-size: 85%;\n}\n.field-attachment-draggable[data-v-5aa6457f] {\n  cursor: move;\n}\n\n/*# sourceMappingURL=FormAttachmentField.vue.map */", map: {"version":3,"sources":["/Users/azamatx/projects/base-js/package/src/listing-fields/FormAttachmentField.vue","FormAttachmentField.vue"],"names":[],"mappings":";AA6LA;EACA,cAAA;EACA,gBAAA;EACA,wBAAA;CACA;AAEA;EACA,mBAAA;EACA,mBAAA;EACA,oBAAA;CACA;AAEA;EACA,mBAAA;EACA,YAAA;EACA,cAAA;EACA,kBAAA;EACA,eAAA;EACA,cAAA;EACA,WAAA;EACA,aAAA;CACA;AAEA;EACA,eAAA;CACA;AAEA;EACA,aAAA;CACA;;AChMA,mDAAmD","file":"FormAttachmentField.vue","sourcesContent":[null,".field-attachments {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: flex-start; }\n\n.field-attachment {\n  position: relative;\n  margin-right: 1rem;\n  margin-bottom: 1rem; }\n\n.btn-remove {\n  position: absolute;\n  top: -.5rem;\n  right: -.5rem;\n  line-height: 100%;\n  height: 1.5rem;\n  width: 1.5rem;\n  opacity: 1;\n  color: white; }\n\n.field-attachment-preview {\n  font-size: 85%; }\n\n.field-attachment-draggable {\n  cursor: move; }\n\n/*# sourceMappingURL=FormAttachmentField.vue.map */"]}, media: undefined });
+    inject("data-v-102b0677_0", { source: "\n.field-attachments[data-v-102b0677] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: flex-start;\n}\n.field-attachment[data-v-102b0677] {\n  position: relative;\n  margin-right: 1rem;\n  margin-bottom: 1rem;\n}\n.btn-remove[data-v-102b0677] {\n  position: absolute;\n  top: -.5rem;\n  right: -.5rem;\n  line-height: 100%;\n  height: 1.5rem;\n  width: 1.5rem;\n  opacity: 1;\n  color: white;\n}\n.field-attachment-preview[data-v-102b0677] {\n  font-size: 85%;\n}\n.field-attachment-draggable[data-v-102b0677] {\n  cursor: move;\n}\n\n/*# sourceMappingURL=FormAttachmentField.vue.map */", map: {"version":3,"sources":["/Users/azamatx/projects/base-js/package/src/extra-fields/FormAttachmentField.vue","FormAttachmentField.vue"],"names":[],"mappings":";AA6LA;EACA,cAAA;EACA,gBAAA;EACA,wBAAA;CACA;AAEA;EACA,mBAAA;EACA,mBAAA;EACA,oBAAA;CACA;AAEA;EACA,mBAAA;EACA,YAAA;EACA,cAAA;EACA,kBAAA;EACA,eAAA;EACA,cAAA;EACA,WAAA;EACA,aAAA;CACA;AAEA;EACA,eAAA;CACA;AAEA;EACA,aAAA;CACA;;AChMA,mDAAmD","file":"FormAttachmentField.vue","sourcesContent":[null,".field-attachments {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: flex-start; }\n\n.field-attachment {\n  position: relative;\n  margin-right: 1rem;\n  margin-bottom: 1rem; }\n\n.btn-remove {\n  position: absolute;\n  top: -.5rem;\n  right: -.5rem;\n  line-height: 100%;\n  height: 1.5rem;\n  width: 1.5rem;\n  opacity: 1;\n  color: white; }\n\n.field-attachment-preview {\n  font-size: 85%; }\n\n.field-attachment-draggable {\n  cursor: move; }\n\n/*# sourceMappingURL=FormAttachmentField.vue.map */"]}, media: undefined });
 
   };
   /* scoped */
-  const __vue_scope_id__$h = "data-v-5aa6457f";
+  const __vue_scope_id__$h = "data-v-102b0677";
   /* module identifier */
   const __vue_module_identifier__$h = undefined;
   /* functional template */
@@ -3234,7 +3313,7 @@ __vue_render__$h._withStripped = true;
     const component = (typeof script === 'function' ? script.options : script) || {};
 
     // For security concerns, we use only base name in production mode.
-    component.__file = "/Users/azamatx/projects/base-js/package/src/listing-fields/FormAttachmentField.vue";
+    component.__file = "/Users/azamatx/projects/base-js/package/src/extra-fields/FormAttachmentField.vue";
 
     if (!component.render) {
       component.render = template.render;
@@ -3349,7 +3428,7 @@ __vue_render__$h._withStripped = true;
 var script$i = {
   name: 'FormLocationField',
 
-  mixins: [FormField],
+  mixins: [FieldMixin],
 
   components: {
     VueGoogleAutocomplete,
@@ -3368,16 +3447,22 @@ var script$i = {
     }
   },
 
-  watch: {
-    'fieldValue.address': function () {
-      this.updateAddress();
-    },
-    'fieldValue.latlng': function () {
-      this.updateMarker();
-    },
-    'fieldValue.zoom': function () {
-      this.updateZoom();
-    },
+  created() {
+    if (!this.field.initialValue) {
+      this.field.initialValue = {
+        address: null,
+        latlng: null,
+        zoom: null,
+      };
+    }
+
+    if (!this.fieldValue) {
+      this.field.applyInitialValue(this.model);
+    }
+
+    this.$watch('fieldValue.address', this.updateAddress);
+    this.$watch('fieldValue.latlng', this.updateMarker);
+    this.$watch('fieldValue.zoom', this.updateZoom);
   },
 
   mounted() {
@@ -3393,11 +3478,6 @@ var script$i = {
   },
 
   methods: {
-    setInitialValue() {
-      if (!this.fieldValue) {
-        this.fieldValue = {};
-      }
-    },
     loadGoogleMaps() {
       return new Promise((resolve) => {
         let mapsScript = document.createElement('script');
@@ -3592,7 +3672,7 @@ __vue_render__$i._withStripped = true;
     const component = (typeof script === 'function' ? script.options : script) || {};
 
     // For security concerns, we use only base name in production mode.
-    component.__file = "/Users/azamatx/projects/base-js/package/src/listing-fields/FormLocationField.vue";
+    component.__file = "/Users/azamatx/projects/base-js/package/src/extra-fields/FormLocationField.vue";
 
     if (!component.render) {
       component.render = template.render;
@@ -3630,7 +3710,7 @@ var script$j = {
     vSelect,
   },
 
-  mixins: [FormField],
+  mixins: [FieldMixin],
 
   data() {
     return {
@@ -3639,6 +3719,7 @@ var script$j = {
       busy: false,
     };
   },
+
   computed: {
     selected: {
       get() {
@@ -3651,7 +3732,7 @@ var script$j = {
         });
 
         if (this.field.multiple) {
-          return selected;
+          return uniqBy(selected, 'value');
         }
 
         return head(selected);
@@ -3660,7 +3741,7 @@ var script$j = {
         if (this.field.multiple) {
           const values$$1 = map(option, 'value');
           if (!isEqual(values$$1, this.fieldValue)) {
-            this.fieldValue = values$$1;
+            this.fieldValue = uniqBy(values$$1);
           }
           return;
         }
@@ -3671,6 +3752,7 @@ var script$j = {
       return !this.field.ajax;
     }
   },
+
   created() {
     // Take initial options from field config
     // It could contain initially selected option
@@ -3689,7 +3771,7 @@ var script$j = {
 
       promise
         .then((response) => {
-          this.options = response.data.data;
+          this.setOptions(response.data.data);
         })
         .finally(() => {
           this.loading(false);
@@ -3698,11 +3780,13 @@ var script$j = {
       return promise;
     }, 300);
   },
+
   mounted() {
-    if (!this.options.length && this.field.preload) {
+    if (this.field.preload) {
       this.fetch();
     }
   },
+
   methods: {
     loading(value = true) {
       this.$refs.select.toggleLoading(value);
@@ -3717,9 +3801,13 @@ var script$j = {
     getMissedOption(value) {
       return {
         value,
-        label: this.$refs.select && this.$refs.select.mutableLoading ? '...' : '(Missed option)',
+        label: this.$refs.select && this.$refs.select.mutableLoading ? '...' : value,
       };
     },
+    setOptions(options) {
+      let preserveOptions = castArray(this.selected);
+      this.options = uniqBy(preserveOptions.concat(options), 'value');
+    }
   },
 };
 
@@ -3799,7 +3887,7 @@ __vue_render__$j._withStripped = true;
   /* style */
   const __vue_inject_styles__$j = function (inject) {
     if (!inject) return
-    inject("data-v-88ba0a44_0", { source: "\n.form-control.v-select {\n  padding: 0 10px;\n}\n.form-control.v-select .dropdown-toggle {\n    border: none;\n    padding: 0;\n}\n.form-control.v-select .dropdown-toggle::after {\n      display: none;\n}\n.form-control.v-select .dropdown-toggle input[type=search] {\n      margin: 0;\n}\n.form-control.v-select .selected-tag {\n    margin-top: 0;\n}\n.form-control.v-select .vs__selected-options {\n    margin-left: -7px;\n    padding-left: 0;\n}\n.form-control.v-select .vs__actions {\n    padding-right: 0;\n}\n\n/*# sourceMappingURL=FormRelationField.vue.map */", map: {"version":3,"sources":["/Users/azamatx/projects/base-js/package/src/listing-fields/FormRelationField.vue","FormRelationField.vue"],"names":[],"mappings":";AAqJA;EACA,gBAAA;CA2BA;AA5BA;IAIA,aAAA;IACA,WAAA;CASA;AAdA;MAQA,cAAA;CACA;AATA;MAYA,UAAA;CACA;AAbA;IAiBA,cAAA;CACA;AAlBA;IAqBA,kBAAA;IACA,gBAAA;CACA;AAvBA;IA0BA,iBAAA;CACA;;AC/JA,iDAAiD","file":"FormRelationField.vue","sourcesContent":[null,".form-control.v-select {\n  padding: 0 10px; }\n  .form-control.v-select .dropdown-toggle {\n    border: none;\n    padding: 0; }\n    .form-control.v-select .dropdown-toggle::after {\n      display: none; }\n    .form-control.v-select .dropdown-toggle input[type=search] {\n      margin: 0; }\n  .form-control.v-select .selected-tag {\n    margin-top: 0; }\n  .form-control.v-select .vs__selected-options {\n    margin-left: -7px;\n    padding-left: 0; }\n  .form-control.v-select .vs__actions {\n    padding-right: 0; }\n\n/*# sourceMappingURL=FormRelationField.vue.map */"]}, media: undefined });
+    inject("data-v-b92b8b94_0", { source: "\n.form-control.v-select {\n  padding: 0 10px;\n  height: auto;\n  min-height: calc(2.25rem + 2px);\n}\n.form-control.v-select .dropdown-toggle {\n    border: none;\n    padding: 0;\n}\n.form-control.v-select .dropdown-toggle::after {\n      display: none;\n}\n.form-control.v-select .dropdown-toggle input[type=search] {\n      margin: 0;\n      height: auto;\n      min-height: calc(2.25rem + 2px);\n}\n.form-control.v-select .selected-tag {\n    margin-top: 3px;\n    margin-bottom: 5px;\n}\n.form-control.v-select .vs__selected-options {\n    margin-left: -9px;\n    padding: 0;\n}\n.form-control.v-select .vs__actions {\n    padding-right: 0;\n}\n\n/*# sourceMappingURL=FormRelationField.vue.map */", map: {"version":3,"sources":["/Users/azamatx/projects/base-js/package/src/extra-fields/FormRelationField.vue","FormRelationField.vue"],"names":[],"mappings":";AA8JA;EACA,gBAAA;EACA,aAAA;EACA,gCAAA;CA8BA;AAjCA;IAMA,aAAA;IACA,WAAA;CAWA;AAlBA;MAUA,cAAA;CACA;AAXA;MAcA,UAAA;MACA,aAAA;MACA,gCAAA;CACA;AAjBA;IAqBA,gBAAA;IACA,mBAAA;CACA;AAvBA;IA0BA,kBAAA;IACA,WAAA;CACA;AA5BA;IA+BA,iBAAA;CACA;;ACxKA,iDAAiD","file":"FormRelationField.vue","sourcesContent":[null,".form-control.v-select {\n  padding: 0 10px;\n  height: auto;\n  min-height: calc(2.25rem + 2px); }\n  .form-control.v-select .dropdown-toggle {\n    border: none;\n    padding: 0; }\n    .form-control.v-select .dropdown-toggle::after {\n      display: none; }\n    .form-control.v-select .dropdown-toggle input[type=search] {\n      margin: 0;\n      height: auto;\n      min-height: calc(2.25rem + 2px); }\n  .form-control.v-select .selected-tag {\n    margin-top: 3px;\n    margin-bottom: 5px; }\n  .form-control.v-select .vs__selected-options {\n    margin-left: -9px;\n    padding: 0; }\n  .form-control.v-select .vs__actions {\n    padding-right: 0; }\n\n/*# sourceMappingURL=FormRelationField.vue.map */"]}, media: undefined });
 
   };
   /* scoped */
@@ -3817,7 +3905,7 @@ __vue_render__$j._withStripped = true;
     const component = (typeof script === 'function' ? script.options : script) || {};
 
     // For security concerns, we use only base name in production mode.
-    component.__file = "/Users/azamatx/projects/base-js/package/src/listing-fields/FormRelationField.vue";
+    component.__file = "/Users/azamatx/projects/base-js/package/src/extra-fields/FormRelationField.vue";
 
     if (!component.render) {
       component.render = template.render;
@@ -3935,7 +4023,7 @@ FormLocationField: FormLocationField,
 FormRelationField: FormRelationField
 });
 
-var ListingPlugin = {
+var ExtraPlugin = {
   install (Vue$$1, options) {
     assign(config$1, options);
 
@@ -3945,5 +4033,5 @@ var ListingPlugin = {
   }
 };
 
-export { plugin as BasePlugin, ListingPlugin, HandlesValidationErrors, FieldLayoutMixin, FormField, FormComponent, Field, Fields, EmptyLayout, Asterisk as FormAsterisk, VericalLayout as VerticalLayout, HorizontalLayout, InlineLayout, Undefined as FormUndefined, TextField as FormTextField, FileField as FormFileField, SelectField as FormSelectField, RadiosField as FormRadiosField, CheckboxField as FormCheckboxField, CheckboxesField as FormCheckboxesField, TextareaField as FormTextareaField, EditorField as FormEditorField, FormAttachmentField, FormLocationField, FormRelationField, setProp, getProp };
+export { plugin as BasePlugin, ExtraPlugin, Field, FieldList, ExtraPlugin as ListingPlugin, HandlesValidationErrors, FieldLayoutMixin, FieldMixin, FormMixin, FieldMixin as FormField, FormMixin as FormComponent, Fields, EmptyLayout, Asterisk as FormAsterisk, VericalLayout as VerticalLayout, HorizontalLayout, InlineLayout, Undefined as FormUndefined, TextField as FormTextField, FileField as FormFileField, SelectField as FormSelectField, RadiosField as FormRadiosField, CheckboxField as FormCheckboxField, CheckboxesField as FormCheckboxesField, TextareaField as FormTextareaField, EditorField as FormEditorField, FormAttachmentField, FormLocationField, FormRelationField, setProp, getProp };
 //# sourceMappingURL=base.esm.js.map

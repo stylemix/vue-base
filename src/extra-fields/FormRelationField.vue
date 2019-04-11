@@ -46,14 +46,14 @@
   import isEqual from 'lodash-es/isEqual';
   import uniqBy from 'lodash-es/uniqBy';
   import vSelect from 'vue-select';
-  import FormField from '../mixins/FormField';
+  import FieldMixin from '../mixins/FieldMixin';
 
   export default {
     components: {
       vSelect,
     },
 
-    mixins: [FormField],
+    mixins: [FieldMixin],
 
     data() {
       return {
@@ -62,6 +62,7 @@
         busy: false,
       };
     },
+
     computed: {
       selected: {
         get() {
@@ -94,6 +95,7 @@
         return !this.field.ajax;
       }
     },
+
     created() {
       // Take initial options from field config
       // It could contain initially selected option
@@ -121,11 +123,13 @@
         return promise;
       }, 300);
     },
+
     mounted() {
-      if (!this.options.length && this.field.preload) {
+      if (this.field.preload) {
         this.fetch();
       }
     },
+
     methods: {
       loading(value = true) {
         this.$refs.select.toggleLoading(value);
@@ -140,7 +144,7 @@
       getMissedOption(value) {
         return {
           value,
-          label: this.$refs.select && this.$refs.select.mutableLoading ? '...' : '(Missed option)',
+          label: this.$refs.select && this.$refs.select.mutableLoading ? '...' : value,
         };
       },
       setOptions(options) {

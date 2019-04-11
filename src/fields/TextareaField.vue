@@ -22,12 +22,12 @@
 </template>
 
 <script>
-	import { FormField } from '../mixins';
+	import { FieldMixin } from '../mixins';
 
 	export default {
 		name: 'FormTextareaField',
 
-		mixins: [ FormField ],
+		mixins: [ FieldMixin ],
 
 		props: {
 			readonly: {},

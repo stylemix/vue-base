@@ -69,7 +69,7 @@
 <script>
   import draggable from 'vuedraggable';
   import assign from 'lodash-es/assign';
-  import FormField from '../mixins/FormField';
+  import FieldMixin from '../mixins/FieldMixin';
   import AttachmentPreview from './AttachmentPreview.vue';
   import pick from 'lodash-es/pick';
 
@@ -89,7 +89,7 @@ export default {
     AttachmentPreview,
   },
 
-  mixins: [FormField],
+  mixins: [FieldMixin],
 
   data() {
     return {
@@ -129,12 +129,9 @@ export default {
     },
   },
 
-  methods: {
-    setInitialValue() {
-      if (!this.field.multiple) {
-        return;
-      }
-
+  created() {
+    if (this.field.multiple) {
+      // For correct reactivity and sorting
       if (!this.field.attached) {
         this.field.attached = [];
       }
@@ -142,7 +139,10 @@ export default {
       if (!this.fieldValue) {
         this.fieldValue = [];
       }
-    },
+    }
+  },
+
+  methods: {
     remove(attachment) {
       if (this.field.multiple) {
         this.field.attached = this.field.attached.filter((a) => a.id !== attachment.id);

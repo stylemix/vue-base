@@ -26,10 +26,10 @@
 </template>
 
 <script>
-	import { FormField } from '../mixins';
+	import { FieldMixin } from '../mixins';
 
 	export default {
-		mixins: [ FormField ],
+		mixins: [ FieldMixin ],
 
 		props: {
 			disabled: {},

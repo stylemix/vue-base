@@ -1,12 +1,17 @@
 import BasePlugin from './src/plugin';
-import ListingPlugin from './src/listing-fields/ListingPlugin';
+import ExtraPlugin from './src/extra-fields/ExtraPlugin';
+import Field from './src/utils/Field';
+import FieldList from './src/utils/FieldList';
 
 export * from './src/mixins';
 export * from './src/components';
-export * from './src/listing-fields/index';
+export * from './src/extra-fields/index';
 export * from './src/utils/props';
 
 export {
   BasePlugin,
-  ListingPlugin
+  ExtraPlugin,
+  Field,
+  FieldList,
+  ExtraPlugin as ListingPlugin, // compatibility
 }
