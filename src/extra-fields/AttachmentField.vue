@@ -41,6 +41,7 @@
           </div>
         </draggable>
         <button
+          type="button"
           v-if="hasAttached && field.multiple"
           @click.stop.prevent="clear()"
           class="btn btn-sm btn-warning">Clear all</button>

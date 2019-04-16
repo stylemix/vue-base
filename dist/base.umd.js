@@ -8390,6 +8390,7 @@ var __vue_render__$i = function() {
                       "button",
                       {
                         staticClass: "btn btn-sm btn-warning",
+                        attrs: { type: "button" },
                         on: {
                           click: function($event) {
                             $event.stopPropagation();
@@ -8456,11 +8457,11 @@ __vue_render__$i._withStripped = true;
   /* style */
   const __vue_inject_styles__$i = function (inject) {
     if (!inject) return
-    inject("data-v-64a839da_0", { source: "\n.field-attachments[data-v-64a839da] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: flex-start;\n}\n.field-attachment[data-v-64a839da] {\n  position: relative;\n  margin-right: 1rem;\n  margin-bottom: 1rem;\n}\n.btn-remove[data-v-64a839da] {\n  position: absolute;\n  top: -.5rem;\n  right: -.5rem;\n  line-height: 100%;\n  height: 1.5rem;\n  width: 1.5rem;\n  opacity: 1;\n  color: white;\n}\n.field-attachment-preview[data-v-64a839da] {\n  font-size: 85%;\n}\n.field-attachment-draggable[data-v-64a839da] {\n  cursor: move;\n}\n\n/*# sourceMappingURL=AttachmentField.vue.map */", map: {"version":3,"sources":["/Users/azamatx/projects/base-js/package/src/extra-fields/AttachmentField.vue","AttachmentField.vue"],"names":[],"mappings":";AA6LA;EACA,cAAA;EACA,gBAAA;EACA,wBAAA;CACA;AAEA;EACA,mBAAA;EACA,mBAAA;EACA,oBAAA;CACA;AAEA;EACA,mBAAA;EACA,YAAA;EACA,cAAA;EACA,kBAAA;EACA,eAAA;EACA,cAAA;EACA,WAAA;EACA,aAAA;CACA;AAEA;EACA,eAAA;CACA;AAEA;EACA,aAAA;CACA;;AChMA,+CAA+C","file":"AttachmentField.vue","sourcesContent":[null,".field-attachments {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: flex-start; }\n\n.field-attachment {\n  position: relative;\n  margin-right: 1rem;\n  margin-bottom: 1rem; }\n\n.btn-remove {\n  position: absolute;\n  top: -.5rem;\n  right: -.5rem;\n  line-height: 100%;\n  height: 1.5rem;\n  width: 1.5rem;\n  opacity: 1;\n  color: white; }\n\n.field-attachment-preview {\n  font-size: 85%; }\n\n.field-attachment-draggable {\n  cursor: move; }\n\n/*# sourceMappingURL=AttachmentField.vue.map */"]}, media: undefined });
+    inject("data-v-01300eda_0", { source: "\n.field-attachments[data-v-01300eda] {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: flex-start;\n}\n.field-attachment[data-v-01300eda] {\n  position: relative;\n  margin-right: 1rem;\n  margin-bottom: 1rem;\n}\n.btn-remove[data-v-01300eda] {\n  position: absolute;\n  top: -.5rem;\n  right: -.5rem;\n  line-height: 100%;\n  height: 1.5rem;\n  width: 1.5rem;\n  opacity: 1;\n  color: white;\n}\n.field-attachment-preview[data-v-01300eda] {\n  font-size: 85%;\n}\n.field-attachment-draggable[data-v-01300eda] {\n  cursor: move;\n}\n\n/*# sourceMappingURL=AttachmentField.vue.map */", map: {"version":3,"sources":["/Users/azamatx/projects/base-js/package/src/extra-fields/AttachmentField.vue","AttachmentField.vue"],"names":[],"mappings":";AA8LA;EACA,cAAA;EACA,gBAAA;EACA,wBAAA;CACA;AAEA;EACA,mBAAA;EACA,mBAAA;EACA,oBAAA;CACA;AAEA;EACA,mBAAA;EACA,YAAA;EACA,cAAA;EACA,kBAAA;EACA,eAAA;EACA,cAAA;EACA,WAAA;EACA,aAAA;CACA;AAEA;EACA,eAAA;CACA;AAEA;EACA,aAAA;CACA;;ACjMA,+CAA+C","file":"AttachmentField.vue","sourcesContent":[null,".field-attachments {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: flex-start; }\n\n.field-attachment {\n  position: relative;\n  margin-right: 1rem;\n  margin-bottom: 1rem; }\n\n.btn-remove {\n  position: absolute;\n  top: -.5rem;\n  right: -.5rem;\n  line-height: 100%;\n  height: 1.5rem;\n  width: 1.5rem;\n  opacity: 1;\n  color: white; }\n\n.field-attachment-preview {\n  font-size: 85%; }\n\n.field-attachment-draggable {\n  cursor: move; }\n\n/*# sourceMappingURL=AttachmentField.vue.map */"]}, media: undefined });
 
   };
   /* scoped */
-  const __vue_scope_id__$i = "data-v-64a839da";
+  const __vue_scope_id__$i = "data-v-01300eda";
   /* module identifier */
   const __vue_module_identifier__$i = undefined;
   /* functional template */
