@@ -50,7 +50,9 @@ export default {
 
     // Register a global event for setting the field's value
     this.listenEventBus('field-value-' + this.field.attribute, this.fill);
+  },
 
+  mounted() {
     if (this.field.depends && this.field.depends.length) {
       this.field.depends.forEach(attr => {
         this.listenEventBus('field-change-' + attr, value => {

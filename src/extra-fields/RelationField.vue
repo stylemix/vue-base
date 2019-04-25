@@ -149,7 +149,7 @@
       },
       setOptions(options) {
         let preserveOptions = castArray(this.selected);
-        this.options = uniqBy(preserveOptions.concat(options), 'value');
+        this.options = uniqBy(options.concat(preserveOptions), 'value');
       }
     },
   };

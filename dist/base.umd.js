@@ -1,4 +1,4 @@
-/* stylemix-base v1.4.0 (c) Azamat X <azamat@stylemix.net> - UNLICENSED */
+/* stylemix-base v1.4.1 (c) Azamat X <azamat@stylemix.net> - UNLICENSED */
 (function (global, factory) {
 typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('vue'), require('blueimp-load-image'), require('vuedraggable'), require('vue-quill-editor'), require('vue-google-autocomplete'), require('vue-select')) :
 typeof define === 'function' && define.amd ? define(['exports', 'vue', 'blueimp-load-image', 'vuedraggable', 'vue-quill-editor', 'vue-google-autocomplete', 'vue-select'], factory) :
@@ -5238,14 +5238,15 @@ var FieldMixin = {
     }
   },
   created: function created() {
-    var _this = this;
-
     if (this.model && !has(this.model, this.field.attribute)) {
       this.field.applyInitialValue(this.model);
     } // Register a global event for setting the field's value
 
 
     this.listenEventBus('field-value-' + this.field.attribute, this.fill);
+  },
+  mounted: function mounted() {
+    var _this = this;
 
     if (this.field.depends && this.field.depends.length) {
       this.field.depends.forEach(function (attr) {
@@ -7016,7 +7017,7 @@ __vue_render__$a._withStripped = true;
 
 //
 var script$b = {
-  name: 'FormTextField',
+  name: 'FormFileField',
   mixins: [FieldMixin],
   props: {
     placeholder: {}
@@ -9787,7 +9788,7 @@ var script$l = {
     },
     setOptions: function setOptions(options) {
       var preserveOptions = castArray(this.selected);
-      this.options = uniqBy(preserveOptions.concat(options), 'value');
+      this.options = uniqBy(options.concat(preserveOptions), 'value');
     }
   }
 };
@@ -9868,7 +9869,7 @@ __vue_render__$l._withStripped = true;
   /* style */
   const __vue_inject_styles__$l = function (inject) {
     if (!inject) return
-    inject("data-v-0fd8f41a_0", { source: "\n.form-control.v-select {\n  padding: 0 10px;\n  height: auto;\n  min-height: calc(2.25rem + 2px);\n}\n.form-control.v-select .dropdown-toggle {\n    border: none;\n    padding: 0;\n}\n.form-control.v-select .dropdown-toggle::after {\n      display: none;\n}\n.form-control.v-select .dropdown-toggle input[type=search] {\n      margin: 0;\n      height: auto;\n      min-height: calc(2.25rem + 2px);\n}\n.form-control.v-select .selected-tag {\n    margin-top: 3px;\n    margin-bottom: 5px;\n}\n.form-control.v-select .vs__selected-options {\n    margin-left: -9px;\n    padding: 0;\n}\n.form-control.v-select .vs__actions {\n    padding-right: 0;\n}\n\n/*# sourceMappingURL=RelationField.vue.map */", map: {"version":3,"sources":["/Users/azamatx/projects/base-js/package/src/extra-fields/RelationField.vue","RelationField.vue"],"names":[],"mappings":";AA8JA;EACA,gBAAA;EACA,aAAA;EACA,gCAAA;CA8BA;AAjCA;IAMA,aAAA;IACA,WAAA;CAWA;AAlBA;MAUA,cAAA;CACA;AAXA;MAcA,UAAA;MACA,aAAA;MACA,gCAAA;CACA;AAjBA;IAqBA,gBAAA;IACA,mBAAA;CACA;AAvBA;IA0BA,kBAAA;IACA,WAAA;CACA;AA5BA;IA+BA,iBAAA;CACA;;ACxKA,6CAA6C","file":"RelationField.vue","sourcesContent":[null,".form-control.v-select {\n  padding: 0 10px;\n  height: auto;\n  min-height: calc(2.25rem + 2px); }\n  .form-control.v-select .dropdown-toggle {\n    border: none;\n    padding: 0; }\n    .form-control.v-select .dropdown-toggle::after {\n      display: none; }\n    .form-control.v-select .dropdown-toggle input[type=search] {\n      margin: 0;\n      height: auto;\n      min-height: calc(2.25rem + 2px); }\n  .form-control.v-select .selected-tag {\n    margin-top: 3px;\n    margin-bottom: 5px; }\n  .form-control.v-select .vs__selected-options {\n    margin-left: -9px;\n    padding: 0; }\n  .form-control.v-select .vs__actions {\n    padding-right: 0; }\n\n/*# sourceMappingURL=RelationField.vue.map */"]}, media: undefined });
+    inject("data-v-8ad9171c_0", { source: "\n.form-control.v-select {\n  padding: 0 10px;\n  height: auto;\n  min-height: calc(2.25rem + 2px);\n}\n.form-control.v-select .dropdown-toggle {\n    border: none;\n    padding: 0;\n}\n.form-control.v-select .dropdown-toggle::after {\n      display: none;\n}\n.form-control.v-select .dropdown-toggle input[type=search] {\n      margin: 0;\n      height: auto;\n      min-height: calc(2.25rem + 2px);\n}\n.form-control.v-select .selected-tag {\n    margin-top: 3px;\n    margin-bottom: 5px;\n}\n.form-control.v-select .vs__selected-options {\n    margin-left: -9px;\n    padding: 0;\n}\n.form-control.v-select .vs__actions {\n    padding-right: 0;\n}\n\n/*# sourceMappingURL=RelationField.vue.map */", map: {"version":3,"sources":["/Users/azamatx/projects/base-js/package/src/extra-fields/RelationField.vue","RelationField.vue"],"names":[],"mappings":";AA8JA;EACA,gBAAA;EACA,aAAA;EACA,gCAAA;CA8BA;AAjCA;IAMA,aAAA;IACA,WAAA;CAWA;AAlBA;MAUA,cAAA;CACA;AAXA;MAcA,UAAA;MACA,aAAA;MACA,gCAAA;CACA;AAjBA;IAqBA,gBAAA;IACA,mBAAA;CACA;AAvBA;IA0BA,kBAAA;IACA,WAAA;CACA;AA5BA;IA+BA,iBAAA;CACA;;ACxKA,6CAA6C","file":"RelationField.vue","sourcesContent":[null,".form-control.v-select {\n  padding: 0 10px;\n  height: auto;\n  min-height: calc(2.25rem + 2px); }\n  .form-control.v-select .dropdown-toggle {\n    border: none;\n    padding: 0; }\n    .form-control.v-select .dropdown-toggle::after {\n      display: none; }\n    .form-control.v-select .dropdown-toggle input[type=search] {\n      margin: 0;\n      height: auto;\n      min-height: calc(2.25rem + 2px); }\n  .form-control.v-select .selected-tag {\n    margin-top: 3px;\n    margin-bottom: 5px; }\n  .form-control.v-select .vs__selected-options {\n    margin-left: -9px;\n    padding: 0; }\n  .form-control.v-select .vs__actions {\n    padding-right: 0; }\n\n/*# sourceMappingURL=RelationField.vue.map */"]}, media: undefined });
 
   };
   /* scoped */

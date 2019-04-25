@@ -1,59 +1,72 @@
 <template>
-	<component
-		:is="layoutComponent"
-		:field="field"
-		:errors="errors">
-		<template slot="field">
-			<input
-				:id="field.attribute"
-				:dusk="field.attribute"
-				type="file"
-				ref="inputElement"
-				v-on:input="input($event)"
-				:multiple="field.multiple || false"
-				class="form-control"
-				:class="errorClasses"
-				:placeholder="inputPlaceholder"
-				:accept="field.mimeTypes"
-			/>
-		</template>
-	</component>
+  <component
+    :is="layoutComponent"
+    :field="field"
+    :errors="errors">
+    <template slot="field">
+      <div class="custom-file">
+        <input
+          type="file"
+          ref="inputElement"
+          :id="field.attribute"
+          :dusk="field.attribute"
+          :multiple="field.multiple || false"
+          :class="errorClasses"
+          :accept="field.mimeTypes"
+          class="custom-file-input"
+          @input="input($event)"
+        />
+        <label
+          :for="field.attribute"
+          :placeholder="field.browse_label"
+          class="custom-file-label text-truncate">
+          {{ inputPlaceholder }}
+        </label>
+      </div>
+    </template>
+  </component>
 </template>
 
 <script>
-	import { FieldMixin } from '../mixins';
+  import { FieldMixin } from '../mixins';
 
-	export default {
-		name: 'FormTextField',
+  export default {
+    name: 'FormFileField',
 
-		mixins: [ FieldMixin ],
+    mixins: [FieldMixin],
 
-		props: {
-			placeholder: {}
-		},
+    props: {
+      placeholder: {}
+    },
 
-		computed: {
-			/**
-			 * Get the input placeholder.
-			 */
-			inputPlaceholder() {
-				return this.placeholder || this.field.placeholder
-			}
-		},
+    computed: {
+      /**
+       * Get the input placeholder.
+       */
+      inputPlaceholder() {
+        if (!this.fieldValue || (this.field.multiple && this.fieldValue.length === 0)) {
+          return this.placeholder || this.field.placeholder
+        }
 
-		methods: {
+        if (this.field.multiple) {
+          return this.fieldValue.map(file => {
+            return file.name
+          }).join(', ')
+        }
 
-			input ($event) {
-				let files = []
-				for (let i = 0; i < $event.target.files.length; i++) {
-					files.push($event.target.files[i]);
-				}
+        return this.fieldValue.name
+      }
+    },
 
-				this.fieldValue = this.field.multiple ? files : files[0];
-				this.$refs.inputElement.value = '';
-			}
+    methods: {
+      input($event) {
+        let files = []
+        for (let i = 0; i < $event.target.files.length; i++) {
+          files.push($event.target.files[i]);
+        }
 
-		}
-
-	}
+        this.fieldValue = this.field.multiple ? files : files[0];
+      },
+    },
+  }
 </script>
