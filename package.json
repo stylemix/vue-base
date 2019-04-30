@@ -3,7 +3,7 @@
   "version": "1.4.1",
   "author": "Azamat X <azamat@stylemix.net>",
   "license": "UNLICENSED",
-  "main": "dist/base.esm.js",
+  "main": "index.js",
   "private": true,
   "dependencies": {
     "lodash-es": "^4.17.11"

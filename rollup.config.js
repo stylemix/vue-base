@@ -67,7 +67,7 @@ function build(format, min, suffix = `${format}`) {
 export default [
   // build('amd'),
   // build('cjs'),
-  build('es', false, 'esm'),
+  // build('es', false, 'esm'),
   // build('iife'),
   build('umd'),
   // build('system')
