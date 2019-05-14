@@ -10,6 +10,7 @@
   },
   "peerDependencies": {
     "blueimp-load-image": "2.*",
+    "vue-ctk-date-time-picker": "2.*",
     "vue-google-autocomplete": "1.*",
     "vue-quill-editor": "3.*",
     "vue-select": "2.*",
