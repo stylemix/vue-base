@@ -6,15 +6,21 @@ import filter from "lodash-es/filter";
 import find from "lodash-es/find";
 import Field from './Field';
 
+/**
+ * @property {Array} list
+ * @property {Errors} errors
+ */
 export default class FieldList {
 
-  constructor(fields) {
+  constructor(fields, errors) {
     this.list = [];
     this.byAttribute = {};
+    this.errors = errors
 
     // Collect Field instances
     fields.forEach(fieldConfig => {
       let field = new Field(fieldConfig);
+      field.errors = this.errors;
       this.list.push(field);
       this.byAttribute[field.attribute] = field;
     });

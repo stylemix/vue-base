@@ -2,11 +2,10 @@
   <component
     :is="'form-' + field.component"
     :field="field"
-    :model="model"
-    @input="input"
-    :errors="errors"
-    :event-bus="$events"
+    :model="modelResolved"
+    :form="formResolved"
     :layout="layout"
+    @input="input"
   />
 </template>
 
@@ -27,14 +26,17 @@
       },
       model: Object,
       errors: {},
-      eventBus: {type: Object},
+      form: {type: Object},
       layout: {}
     },
 
     computed: {
-      $events() {
-        return this.eventBus || this.$parent;
-      }
+      formResolved() {
+        return this.form || this.$parent;
+      },
+      modelResolved() {
+        return this.model || this.formResolved.model
+      },
     },
 
     methods: {

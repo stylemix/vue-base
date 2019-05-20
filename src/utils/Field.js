@@ -9,6 +9,7 @@ import { appendFormData, formDataName } from './form_data';
  * @property {*} initialValue
  * @property {Array} depends
  * @property {Array} dependentFields
+ * @property {Errors} errors
  */
 export default class Field {
 

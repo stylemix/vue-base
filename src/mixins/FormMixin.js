@@ -18,7 +18,19 @@ export default {
      * @param {Array} fields
      */
     setFields(fields) {
-      this.fields = new FieldList(fields);
+      this.fields = new FieldList(fields, this.errors);
+    },
+
+    /**
+     * Set group for fields by given attribute names
+     *
+     * @param {String} group
+     * @param {Array} attributes
+     */
+    setFieldGroup(group, attributes) {
+      this.fields.only(...attributes).forEach(field => {
+        field.group = group
+      })
     },
 
     /**
@@ -47,7 +59,8 @@ export default {
      * @param errors
      */
     setValidationErrors(errors) {
-      this.errors = new Errors(errors);
+      this.errors.clear();
+      this.errors.record(errors);
     },
 
     /**
