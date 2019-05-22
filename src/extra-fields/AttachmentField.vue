@@ -1,8 +1,7 @@
 <template>
   <component
     :is="layoutComponent"
-    :field="field"
-    :errors="errors">
+    v-bind="layoutProps">
     <template slot="field">
       <div class="custom-file">
         <input

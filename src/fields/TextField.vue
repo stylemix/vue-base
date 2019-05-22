@@ -1,8 +1,7 @@
 <template>
 	<component
 		:is="layoutComponent"
-		:field="field"
-		:errors="errors">
+		v-bind="layoutProps">
 		<template slot="field">
 			<input
 				:id="field.attribute"

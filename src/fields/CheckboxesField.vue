@@ -1,8 +1,7 @@
 <template>
   <component
     :is="layoutComponent"
-    :field="field"
-    :errors="errors">
+    v-bind="layoutProps">
     <template slot="field">
       <div
         v-for="(option, index) in field.options"

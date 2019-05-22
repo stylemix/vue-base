@@ -5,6 +5,7 @@
     :model="modelResolved"
     :form="formResolved"
     :layout="layout"
+    :layout-class="layoutClass"
     @input="input"
   />
 </template>
@@ -27,7 +28,8 @@
       model: Object,
       errors: {},
       form: {type: Object},
-      layout: {}
+      layout: String,
+      layoutClass: String,
     },
 
     computed: {

@@ -15,6 +15,7 @@ import FormRadiosField from './fields/RadiosField.vue';
 import FormCheckboxField from './fields/CheckboxField.vue';
 import FormCheckboxesField from './fields/CheckboxesField.vue';
 import FormTextareaField from './fields/TextareaField.vue';
+import FormRepeaterField from './fields/RepeaterField.vue';
 
 export {
   Field,
@@ -34,4 +35,5 @@ export {
   FormCheckboxField,
   FormCheckboxesField,
   FormTextareaField,
+  FormRepeaterField,
 }

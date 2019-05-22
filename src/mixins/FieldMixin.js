@@ -6,7 +6,6 @@ import HandlesValidationErrors from './HandlesValidationErrors';
 import Field from '../utils/Field';
 import { getProp, setProp } from "../utils/props";
 import config from "../config";
-import Errors from '../utils/Errors'
 
 export default {
   mixins: [HandlesValidationErrors],
@@ -36,7 +35,14 @@ export default {
         this.fill(value);
       },
     },
-    layoutComponent: function () {
+    layoutProps() {
+      return {
+        field: this.field,
+        errors: this.errors,
+        layoutClass: this.layoutClass,
+      }
+    },
+    layoutComponent() {
       return (this.layout || config.defaultLayout) + '-layout';
     },
     $form() {

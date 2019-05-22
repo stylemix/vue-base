@@ -12,6 +12,11 @@ export default {
   },
 
   computed: {
+
+    layoutClassResolved() {
+      return this.field.layoutClass || this.layoutClass
+    },
+
     errors() {
       return this.field.errors
     },

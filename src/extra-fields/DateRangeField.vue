@@ -1,5 +1,7 @@
 <template>
-  <component :is="layoutComponent" :field="field" :errors="errors">
+  <component
+    :is="layoutComponent"
+    v-bind="layoutProps">
     <template slot="field">
       <date-time-picker v-model="fieldValue" :range="true" v-bind="config">
         <input
