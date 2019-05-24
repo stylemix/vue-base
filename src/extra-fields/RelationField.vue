@@ -160,7 +160,7 @@
     height: auto;
     min-height: calc(2.25rem + 2px);
 
-    .dropdown-toggle {
+    .dropdown-toggle, .vs__dropdown-toggle {
       border: none;
       padding: 0;
 
@@ -175,7 +175,7 @@
       }
     }
 
-    .selected-tag {
+    .selected-tag, .vs__selected {
       margin-top: 3px;
       margin-bottom: 5px;
     }
