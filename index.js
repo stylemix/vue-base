@@ -7,6 +7,7 @@ export * from './src/mixins';
 export * from './src/components';
 export * from './src/extra-fields/index';
 export * from './src/utils/props';
+export * from './src/utils/google-maps';
 
 export {
   BasePlugin,

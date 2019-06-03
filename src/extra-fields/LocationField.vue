@@ -30,7 +30,7 @@
   import VueGoogleAutocomplete from 'vue-google-autocomplete';
   import FieldMixin from '../mixins/FieldMixin';
   import defaults from 'lodash-es/defaults';
-  import config from './config';
+  import { loadGoogleMaps } from '../utils/google-maps';
 
   export default {
     name: 'FormLocationField',
@@ -77,26 +77,13 @@
     },
 
     mounted() {
-      if (window.google === undefined) {
-        this.loadGoogleMaps().then(() => {
-          this.googleLoaded = true;
-          this.$nextTick(this.initAutocomplete);
-        });
-      } else {
+      loadGoogleMaps(['places']).then(() => {
         this.googleLoaded = true;
         this.$nextTick(this.initAutocomplete);
-      }
+      });
     },
 
     methods: {
-      loadGoogleMaps() {
-        return new Promise((resolve) => {
-          let mapsScript = document.createElement('script');
-          mapsScript.onload = resolve;
-          mapsScript.setAttribute('src', `https://maps.googleapis.com/maps/api/js?key=${config.googleKey}&libraries=places`);
-          document.head.appendChild(mapsScript);
-        });
-      },
       initAutocomplete() {
         if (this.fieldValue && this.fieldValue.address) {
           this.updateAddress();
