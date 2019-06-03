@@ -58,6 +58,10 @@
       if (!this.field.initialValue) {
         this.field.initialValue = {
           address: null,
+          country: null,
+          region: null,
+          city: null,
+          zip: null,
           latlng: null,
           zoom: null,
         };
@@ -158,6 +162,27 @@
       setAddressData: function (addressData, placeResultData, id) {
         this.$set(this.fieldValue, 'latlng', addressData.latitude + ',' + addressData.longitude);
         this.$set(this.fieldValue, 'address', placeResultData.formatted_address);
+        this.$set(this.fieldValue, 'country', null);
+        this.$set(this.fieldValue, 'region', null);
+        this.$set(this.fieldValue, 'city', null);
+        this.$set(this.fieldValue, 'zip', null);
+
+        if (placeResultData.address_components) {
+          placeResultData.address_components.forEach(component => {
+            if (component.types.indexOf('country') !== -1) {
+              this.$set(this.fieldValue, 'country', component.short_name)
+            }
+            if (component.types.indexOf('administrative_area_level_1') !== -1) {
+              this.$set(this.fieldValue, 'region', component.short_name)
+            }
+            if (component.types.indexOf('locality') !== -1) {
+              this.$set(this.fieldValue, 'city', component.short_name)
+            }
+            if (component.types.indexOf('postal_code') !== -1) {
+              this.$set(this.fieldValue, 'zip', component.short_name)
+            }
+          })
+        }
       },
       updateMarker() {
         if (!this.marker || !this.fieldValue.latlng) {
