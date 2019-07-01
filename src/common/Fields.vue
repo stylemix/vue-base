@@ -12,8 +12,10 @@
 </template>
 
 <script>
+  import FieldList from '../utils/FieldList'
+
   export default {
-    name: "Fields",
+    name: 'Fields',
 
     props: {
       fields: {},
@@ -43,7 +45,19 @@
         return fieldList.all()
       },
       formResolved() {
-        return this.form || this.$parent;
+        if (this.form) {
+          return this.form
+        }
+
+        let $vm = this
+        while ($vm.$parent) {
+          if ($vm.$parent.fields instanceof FieldList) {
+            return $vm.$parent
+          }
+          $vm = $vm.$parent
+        }
+
+        return this.$parent
       },
       modelResolved() {
         return this.model || this.formResolved.model

@@ -1,7 +1,7 @@
 <template>
   <component
-    :is="'form-' + field.component"
-    :field="field"
+    :is="'form-' + fieldResolved.component"
+    :field="fieldResolved"
     :model="modelResolved"
     :form="formResolved"
     :layout="layout"
@@ -11,30 +11,48 @@
 </template>
 
 <script>
-  import Field from '../utils/Field';
+  import Field from '../utils/Field'
+  import FieldList from '../utils/FieldList'
 
   export default {
-    name: "Field",
+    name: 'Field',
 
     props: {
-      field: {
-        type: Field,
-        default: function () {
-          return new Field({
-            component: 'undefined'
-          })
-        }
-      },
+      name: String,
+      field: Object,
       model: Object,
       errors: {},
-      form: {type: Object},
+      form: Object,
       layout: String,
       layoutClass: String,
     },
 
     computed: {
+      fieldResolved() {
+        if (this.name && this.formResolved.fields) {
+          return this.formResolved.fields.get(this.name)
+        } else if (this.field) {
+          return this.field instanceof Field ? this.field : new Field(this.field)
+        } else {
+          return new Field({
+            component: 'undefined'
+          })
+        }
+      },
       formResolved() {
-        return this.form || this.$parent;
+        if (this.form) {
+          return this.form
+        }
+
+        let $vm = this
+        while ($vm.$parent) {
+          if ($vm.$parent.fields instanceof FieldList) {
+            return $vm.$parent
+          }
+          $vm = $vm.$parent
+        }
+
+        return this.$parent
       },
       modelResolved() {
         return this.model || this.formResolved.model

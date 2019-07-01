@@ -6,6 +6,7 @@ import HandlesValidationErrors from './HandlesValidationErrors';
 import Field from '../utils/Field';
 import { getProp, setProp } from "../utils/props";
 import config from "../config";
+import FieldList from '../utils/FieldList'
 
 export default {
   mixins: [HandlesValidationErrors],
@@ -45,8 +46,20 @@ export default {
     layoutComponent() {
       return (this.layout || config.defaultLayout) + '-layout';
     },
-    $form() {
-      return this.form || this.$parent;
+    formResolved() {
+      if (this.form) {
+        return this.form
+      }
+
+      let $vm = this
+      while ($vm.$parent) {
+        if ($vm.$parent.fields instanceof FieldList) {
+          return $vm.$parent
+        }
+        $vm = $vm.$parent
+      }
+
+      return this.$parent
     },
     errors() {
       return this.field.errors
@@ -117,8 +130,8 @@ export default {
     },
 
     triggerChange() {
-      this.$form.$emit('field-change', this.value(), this.field.attribute);
-      this.$form.$emit('field-change-' + this.field.attribute, this.value());
+      this.formResolved.$emit('field-change', this.value(), this.field.attribute);
+      this.formResolved.$emit('field-change-' + this.field.attribute, this.value());
     },
 
     triggerDependentChange(attribute, value) {
@@ -133,14 +146,14 @@ export default {
     },
 
     listenEventBus(event, callback) {
-      this.$form.$on(event, callback);
+      this.formResolved.$on(event, callback);
       this.eventBusListeners.push({ event, callback });
     },
 
     unlistenEventBus() {
       this.eventBusListeners.forEach(({ event, callback}) => {
-        this.$form.$off(event, callback);
+        this.formResolved.$off(event, callback);
       });
-    }
+    },
   },
 }
