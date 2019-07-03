@@ -16,7 +16,7 @@
           :layout-class="subField.col ? `col-${subField.col}` : 'col'"
           layout="vertical"
         />
-        <div class="form-group flex-shrink-1">
+        <div v-if="!isDisabled" class="form-group flex-shrink-1">
           <label>&nbsp;</label>
           <div>
             <button
@@ -29,7 +29,7 @@
           </div>
         </div>
       </div>
-      <div>
+      <div v-if="!isDisabled">
         <button
           type="button"
           class="btn btn-link pl-0"
@@ -92,12 +92,18 @@
     methods: {
 
       addRow() {
+        if (this.isDisabled) {
+          return;
+        }
         let newValue = this.field.fields ? {} : null;
         this.fieldValue.push(newValue);
         this.rows.push(this.getRowFields(this.fieldValue.length - 1));
       },
 
       removeRow(i) {
+        if (this.isDisabled) {
+          return;
+        }
         this.fieldValue.splice(i, 1);
         this.rows.splice(i, 1);
       },
@@ -109,11 +115,15 @@
           rowFields = cloneDeep([this.field.field])
           for (let fieldConfig of rowFields) {
             fieldConfig.attribute = `${this.field.attribute}.${i}`;
+            fieldConfig.disabled = this.field.disabled;
+            fieldConfig.readonly = this.field.readonly;
           }
         } else {
           rowFields = cloneDeep(this.field.fields)
           for (let fieldConfig of rowFields) {
             fieldConfig.attribute = `${this.field.attribute}.${i}.${fieldConfig.attribute}`;
+            fieldConfig.disabled = this.field.disabled;
+            fieldConfig.readonly = this.field.readonly;
           }
         }
 

@@ -17,6 +17,8 @@ export default {
     form: {type: Object},
     layout: {type: String},
     layoutClass: {type: String},
+    disabled: {type: Boolean, default: false},
+    readonly: {type: Boolean, default: false},
   },
 
   data: () => ({
@@ -36,6 +38,21 @@ export default {
         this.fill(value);
       },
     },
+
+    /**
+     * Get the input disabled state.
+     */
+    isDisabled() {
+      return this.disabled || this.field.disabled
+    },
+
+    /**
+     * Get the input readonly state.
+     */
+    isReadonly() {
+      return this.readonly || this.field.readonly
+    },
+
     layoutProps() {
       return {
         field: this.field,

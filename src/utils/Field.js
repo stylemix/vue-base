@@ -19,6 +19,15 @@ export default class Field {
    * @param {Object} field
    */
   constructor(field) {
+    this.attribute = null;
+    this.component = null;
+    this.initialValue = null;
+    this.required = false;
+    this.multiple = false;
+    this.disabled = false;
+    this.readonly = false;
+    this.depends = [];
+    this.dependentFields = [];
     Object.assign(this, field);
   }
 

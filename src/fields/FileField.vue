@@ -8,10 +8,10 @@
           type="file"
           ref="inputElement"
           :id="field.attribute"
-          :dusk="field.attribute"
           :multiple="field.multiple || false"
           :class="errorClasses"
           :accept="field.mimeTypes"
+          :disabled="isDisabled"
           class="custom-file-input"
           @input="input($event)"
         />
@@ -54,7 +54,7 @@
         }
 
         return this.fieldValue.name
-      }
+      },
     },
 
     methods: {

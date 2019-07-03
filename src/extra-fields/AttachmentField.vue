@@ -7,9 +7,9 @@
         <input
           :id="field.attribute"
           :class="errorClasses"
-          :dusk="field.attribute"
           :multiple="field.multiple || false"
           :accept="field.mimeTypes"
+          :disabled="isDisabled"
           ref="input"
           type="file"
           class="custom-file-input"
@@ -32,6 +32,7 @@
               :attachment="attachment"
               :options="previewOptions" />
             <button
+              v-if="!isDisabled"
               type="button"
               @click.prevent="remove(attachment)"
               class="close rounded btn-remove bg-secondary">
@@ -41,7 +42,7 @@
         </draggable>
         <button
           type="button"
-          v-if="hasAttached && field.multiple"
+          v-if="hasAttached && field.multiple && !isDisabled"
           @click.stop.prevent="clear()"
           class="btn btn-sm btn-warning">Clear all</button>
       </div>
@@ -54,6 +55,7 @@
               :attachment="field.attached"
               :options="previewOptions"/>
             <button
+              v-if="!isDisabled"
               type="button"
               @click.stop.prevent="clear()"
               class="close rounded btn-remove bg-secondary">
@@ -67,13 +69,13 @@
 </template>
 
 <script>
-  import draggable from 'vuedraggable';
-  import assign from 'lodash-es/assign';
-  import FieldMixin from '../mixins/FieldMixin';
-  import AttachmentPreview from './AttachmentPreview.vue';
-  import pick from 'lodash-es/pick';
+import draggable from 'vuedraggable';
+import assign from 'lodash-es/assign';
+import FieldMixin from '../mixins/FieldMixin';
+import AttachmentPreview from './AttachmentPreview.vue';
+import pick from 'lodash-es/pick';
 
-  function fileToAttached(file) {
+function fileToAttached(file) {
   return {
     id: Math.random(),
     file,
@@ -90,11 +92,6 @@ export default {
   },
 
   mixins: [FieldMixin],
-
-  data() {
-    return {
-    };
-  },
 
   computed: {
     hasAttached() {

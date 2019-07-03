@@ -8,6 +8,7 @@
         :id="field.attribute + '-address'"
         :placeholder="field.placeholder"
         :types="geocodeTypes"
+        :disabled="isDisabled"
         ref="address"
         classname="form-control"
         @placechanged="setAddressData"

@@ -11,6 +11,7 @@
         <input
           :id="field.attribute + index"
           :value="option.value"
+          :disabled="isDisabled"
           v-model="fieldValue"
           type="checkbox"
           class="form-check-input"/>

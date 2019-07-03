@@ -5,7 +5,7 @@
     <template slot="field">
       <v-select
         ref="select"
-        :disabled="busy"
+        :disabled="busy || isDisabled"
         :id="field.attribute"
         :options="options"
         :filterable="filterable"

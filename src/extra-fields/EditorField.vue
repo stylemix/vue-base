@@ -6,6 +6,7 @@
       <editor
         v-model="fieldValue"
         :options="options"
+        :disabled="isDisabled"
         class="editor-field" />
     </template>
   </component>

@@ -1,110 +1,93 @@
 <template>
-	<component
-		:is="layoutComponent"
-		v-bind="layoutProps">
-		<template slot="field">
-			<input
-				:id="field.attribute"
-				:dusk="field.attribute"
-				:type="inputType"
-				:min="inputMin"
-				:max="inputMax"
-				:step="inputStep"
-				:pattern="inputPattern"
-				v-model="fieldValue"
-				class="form-control"
-				:class="errorClasses"
-				:placeholder="inputPlaceholder"
-				:readonly="inputReadonly"
-				:disabled="inputDisabled"/>
-		</template>
-	</component>
+  <component
+    :is="layoutComponent"
+    v-bind="layoutProps">
+    <template slot="field">
+      <input
+        :id="field.attribute"
+        :type="inputType"
+        :min="inputMin"
+        :max="inputMax"
+        :step="inputStep"
+        :pattern="inputPattern"
+        v-model="fieldValue"
+        class="form-control"
+        :class="errorClasses"
+        :placeholder="inputPlaceholder"
+        :readonly="isReadonly"
+        :disabled="isDisabled"/>
+    </template>
+  </component>
 </template>
 
 <script>
-	import { FieldMixin } from '../mixins';
+  import { FieldMixin } from '../mixins';
 
-	export default {
-		name: 'FormTextField',
+  export default {
+    name: 'FormTextField',
 
-		mixins: [ FieldMixin ],
+    mixins: [FieldMixin],
 
-		props: {
-			readonly: {},
-			disabled: {},
-			placeholder: {},
-			step: {},
-			min: {},
-			max: {},
-			pattern: {},
-		},
+    props: {
+      placeholder: {},
+      step: {},
+      min: {},
+      max: {},
+      pattern: {},
+    },
 
-		computed: {
-			/**
-			 * Get the input type.
-			 */
-			inputType() {
-				return this.field.type || 'text'
-			},
+    computed: {
+      /**
+       * Get the input type.
+       */
+      inputType() {
+        return this.field.type || 'text'
+      },
 
-			/**
-			 * Get the input placeholder.
-			 */
-			inputPlaceholder() {
-				return this.placeholder || this.field.placeholder
-			},
+      /**
+       * Get the input placeholder.
+       */
+      inputPlaceholder() {
+        return this.placeholder || this.field.placeholder
+      },
 
-			/**
-			 * Get the input readonly state.
-			 */
-			inputReadonly() {
-				return this.readonly || this.field.readonly
-			},
+      /**
+       * Get the input step amount.
+       */
+      inputStep() {
+        return this.step || this.field.step
+      },
 
-			/**
-			 * Get the input disabled state.
-			 */
-			inputDisabled() {
-				return this.disabled || this.field.disabled
-			},
+      /**
+       * Get the input minimum amount.
+       */
+      inputMin() {
+        return this.min || this.field.min
+      },
 
-			/**
-			 * Get the input step amount.
-			 */
-			inputStep() {
-				return this.step || this.field.step
-			},
+      /**
+       * Get the input maximum amount.
+       */
+      inputMax() {
+        return this.max || this.field.max
+      },
 
-			/**
-			 * Get the input minimum amount.
-			 */
-			inputMin() {
-				return this.min || this.field.min
-			},
+      /**
+       * Get the pattern that should be used for the field
+       */
+      inputPattern() {
+        return this.pattern || this.field.pattern
+      },
+    },
 
-			/**
-			 * Get the input maximum amount.
-			 */
-			inputMax() {
-				return this.max || this.field.max
-			},
+    methods: {
+      sanitizeValue(value) {
+        if (this.field.type === 'number') {
+          return Number(value);
+        }
 
-			/**
-			 * Get the pattern that should be used for the field
-			 */
-			inputPattern() {
-				return this.pattern || this.field.pattern
-			},
-		},
-
-		methods: {
-			sanitizeValue(value) {
-				if (this.field.type === 'number') {
-					return Number(value);
-				}
-
-				return value;
-			},
-		},
-	}
+        return value;
+      },
+    },
+  }
 </script>

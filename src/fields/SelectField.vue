@@ -1,46 +1,48 @@
 <template>
-	<component
-		:is="layoutComponent"
-        v-bind="layoutProps">
-		<template slot="field">
-			<select
-				:id="field.name"
-				v-model="fieldValue"
-				:multiple="field.multiple || false"
-				class="form-control"
-				:class="errorClasses"
-				:disabled="inputDisabled">
-				<option value="" selected disabled>
-					{{ field.placeholder || 'Choose an option' }}
-				</option>
-				<option
-					v-for="option in field.options"
-					:value="option.value"
-					:selected="option.value == fieldValue">
-					{{ option.label }}
-				</option>
-			</select>
-		</template>
-	</component>
+  <component
+    :is="layoutComponent"
+    v-bind="layoutProps">
+    <template slot="field">
+      <select
+        :id="field.name"
+        v-model="fieldValue"
+        :multiple="field.multiple || false"
+        class="form-control"
+        :class="errorClasses"
+        :disabled="isDisabled"
+        :readonly="isReadonly">
+        <option value="" selected disabled>
+          {{ field.placeholder || 'Choose an option' }}
+        </option>
+        <option
+          v-for="option in field.options"
+          :value="option.value"
+          :selected="option.value == fieldValue">
+          {{ option.label }}
+        </option>
+      </select>
+    </template>
+  </component>
 </template>
 
 <script>
-	import { FieldMixin } from '../mixins';
+  import { FieldMixin } from '../mixins';
 
-	export default {
-		mixins: [ FieldMixin ],
+  export default {
+    mixins: [FieldMixin],
 
-		props: {
-			disabled: {},
-		},
+    props: {
+      readonly: {},
+    },
 
-		computed: {
-			/**
-			 * Get the input disabled state.
-			 */
-			inputDisabled() {
-				return this.disabled || this.field.disabled
-			},
-		}
-	}
+    computed: {
+
+      /**
+       * Get the input readonly state.
+       */
+      isReadonly() {
+        return this.readonly || this.field.readonly
+      },
+    }
+  }
 </script>

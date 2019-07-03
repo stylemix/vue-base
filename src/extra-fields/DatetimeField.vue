@@ -6,6 +6,7 @@
       <date-time-picker v-model="fieldValue" v-bind="config">
         <input
           :placeholder="field.placeholder || 'Select date'"
+          :disabled="isDisabled"
           type="text"
           class="form-control"
         />

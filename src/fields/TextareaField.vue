@@ -1,85 +1,68 @@
 <template>
-	<component
-		:is="layoutComponent"
-        v-bind="layoutProps">
-		<template slot="field">
-			<textarea
-				:id="field.attribute"
-				:dusk="field.attribute"
-				:cols="inputCols"
-				:rows="inputRows"
-				:maxlength="inputMaxlength"
-				v-model="fieldValue"
-				class="form-control"
-				:class="errorClasses"
-				:placeholder="inputPlaceholder"
-				:readonly="inputReadonly"
-				:disabled="inputDisabled">
-			</textarea>
-		</template>
-	</component>
+  <component
+    :is="layoutComponent"
+    v-bind="layoutProps">
+    <template slot="field">
+      <textarea
+        :id="field.attribute"
+        :cols="inputCols"
+        :rows="inputRows"
+        :maxlength="inputMaxlength"
+        v-model="fieldValue"
+        class="form-control"
+        :class="errorClasses"
+        :placeholder="inputPlaceholder"
+        :readonly="isReadonly"
+        :disabled="isDisabled">
+      </textarea>
+    </template>
+  </component>
 </template>
 
 <script>
-	import { FieldMixin } from '../mixins';
+  import { FieldMixin } from '../mixins';
 
-	export default {
-		name: 'FormTextareaField',
+  export default {
+    name: 'FormTextareaField',
 
-		mixins: [ FieldMixin ],
+    mixins: [FieldMixin],
 
-		props: {
-			readonly: {},
-			disabled: {},
-			placeholder: {},
-			cols: {},
-			rows: {},
-			maxlength: {},
-		},
+    props: {
+      placeholder: {},
+      cols: {},
+      rows: {},
+      maxlength: {},
+    },
 
-		computed: {
+    computed: {
 
-			/**
-			 * Get the input readonly state.
-			 */
-			inputReadonly() {
-				return this.readonly || this.field.readonly
-			},
+      /**
+       * Get the input placeholder.
+       */
+      inputPlaceholder() {
+        return this.placeholder || this.field.placeholder
+      },
 
-			/**
-			 * Get the input disabled state.
-			 */
-			inputDisabled() {
-				return this.disabled || this.field.disabled
-			},
+      /**
+       * Get the textarea cols.
+       */
+      inputCols() {
+        return this.cols || this.field.cols
+      },
 
-			/**
-			 * Get the input placeholder.
-			 */
-			inputPlaceholder() {
-				return this.placeholder || this.field.placeholder
-			},
+      /**
+       * Get the textarea rows.
+       */
+      inputRows() {
+        return this.rows || this.field.rows
+      },
 
-			/**
-			 * Get the textarea cols.
-			 */
-			inputCols() {
-				return this.cols || this.field.cols
-			},
-
-			/**
-			 * Get the textarea rows.
-			 */
-			inputRows() {
-				return this.rows || this.field.rows
-			},
-
-			/**
-			 * Get the textarea maxlength.
-			 */
-			inputMaxlength() {
-				return this.maxlength || this.field.maxlength
-			},
-		},
-	}
+      /**
+       * Get the textarea maxlength.
+       */
+      inputMaxlength() {
+        return this.maxlength || this.field.maxlength
+      },
+    },
+  }
 </script>

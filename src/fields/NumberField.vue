@@ -6,7 +6,6 @@
       <input
         :type="inputType"
         :id="field.attribute"
-        :dusk="field.attribute"
         :min="inputMin"
         :max="inputMax"
         :step="inputStep"
@@ -14,8 +13,8 @@
         class="form-control"
         :class="errorClasses"
         :placeholder="inputPlaceholder"
-        :readonly="inputReadonly"
-        :disabled="inputDisabled"/>
+        :readonly="isReadonly"
+        :disabled="isDisabled"/>
     </template>
   </component>
 </template>
@@ -29,8 +28,6 @@
     mixins: [FieldMixin],
 
     props: {
-      readonly: {},
-      disabled: {},
       placeholder: {},
       step: {},
       min: {},
@@ -51,20 +48,6 @@
        */
       inputPlaceholder() {
         return this.placeholder || this.field.placeholder
-      },
-
-      /**
-       * Get the input readonly state.
-       */
-      inputReadonly() {
-        return this.readonly || this.field.readonly
-      },
-
-      /**
-       * Get the input disabled state.
-       */
-      inputDisabled() {
-        return this.disabled || this.field.disabled
       },
 
       /**
