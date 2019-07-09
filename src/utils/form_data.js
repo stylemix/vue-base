@@ -42,7 +42,7 @@ export function formDataName(field) {
   if (field.attribute.indexOf('.') !== -1) {
     name = field
       .attribute.replace(/\./, '[')
-      .replace('.', '][') + ']'
+      .replace(/\./g, '][') + ']'
   }
 
   return name;
