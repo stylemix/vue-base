@@ -9,7 +9,7 @@
         :min="inputMin"
         :max="inputMax"
         :step="inputStep"
-        v-model="fieldValue"
+        v-model.number="fieldValue"
         class="form-control"
         :class="errorClasses"
         :placeholder="inputPlaceholder"
