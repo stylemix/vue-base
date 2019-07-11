@@ -30,6 +30,7 @@
             {{ option.extra }}
           </div>
         </template>
+        <slot name="no-options">{{ strings.relation.no_options }}</slot>
       </v-select>
     </template>
   </component>

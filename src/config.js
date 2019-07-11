@@ -2,9 +2,8 @@ let config = {
   defaultLayout: 'vertical',
   errorMessages: 'first',
   errorMessagesGlue: '<br />',
-  repeaterAddLabel: 'Add new',
+  locale: 'en',
   repeaterAddIcon: null,
-  repeaterRemoveLabel: 'Remove',
   repeaterRemoveIcon: null,
 };
 

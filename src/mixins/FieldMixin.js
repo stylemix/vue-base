@@ -6,6 +6,7 @@ import HandlesValidationErrors from './HandlesValidationErrors';
 import Field from '../utils/Field';
 import { getProp, setProp } from "../utils/props";
 import config from "../config";
+import strings from '../strings'
 import FieldList from '../utils/FieldList'
 
 export default {
@@ -80,6 +81,9 @@ export default {
     },
     errors() {
       return this.field.errors
+    },
+    strings() {
+      return strings
     },
   },
 

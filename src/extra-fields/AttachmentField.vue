@@ -16,7 +16,7 @@
           @input="input($event)">
         <label
           :for="field.attribute"
-          class="custom-file-label">{{ field.placeholder || 'Click to select files' }}</label>
+          class="custom-file-label">{{ field.placeholder || strings.file.placeholder }}</label>
       </div>
       <div
         v-if="hasAttached && field.multiple">
@@ -44,7 +44,7 @@
           type="button"
           v-if="hasAttached && field.multiple && !isDisabled"
           @click.stop.prevent="clear()"
-          class="btn btn-sm btn-warning">Clear all</button>
+          class="btn btn-sm btn-warning">{{ strings.attachment.clear }}</button>
       </div>
       <div
         v-if="hasAttached && !field.multiple">

@@ -47,6 +47,7 @@
   import { FieldMixin } from '../mixins'
   import FieldList from '../utils/FieldList'
   import config from "../config"
+  import strings from '../strings'
 
   export default {
     name: 'RepeaterField',
@@ -65,7 +66,7 @@
       },
       labelAddNew() {
         let label = this.field.labelAddNew
-        return label === false ? '' : (label || config.repeaterAddLabel);
+        return label === false ? '' : (label || strings.repeater.add_label);
       },
       iconAddNew() {
         let icon = this.field.iconAddNew
@@ -73,11 +74,14 @@
       },
       labelRemoveRow() {
         let label = this.field.labelRemoveRow
-        return label === false ? '' : (label || config.repeaterRemoveLabel);
+        return label === false ? '' : (label || strings.repeater.remove_label);
       },
       iconRemoveRow() {
         let icon = this.field.iconRemoveRow
         return icon === false ? '' : (icon || config.repeaterRemoveIcon);
+      },
+      strings() {
+        return strings
       },
     },
 

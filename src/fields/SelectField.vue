@@ -11,13 +11,13 @@
         :class="errorClasses"
         :disabled="isDisabled"
         :readonly="isReadonly">
-        <option value="" selected disabled>
-          {{ field.placeholder || 'Choose an option' }}
+        <option value="" selected :disabled="field.required">
+          {{ field.placeholder || strings.select.choose }}
         </option>
         <option
           v-for="option in field.options"
           :value="option.value"
-          :selected="option.value == fieldValue">
+          :selected="option.value === fieldValue">
           {{ option.label }}
         </option>
       </select>
