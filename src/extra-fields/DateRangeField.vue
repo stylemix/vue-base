@@ -1,45 +1,26 @@
-<template>
-  <component
-    :is="layoutComponent"
-    v-bind="layoutProps">
-    <template slot="field">
-      <date-time-picker v-model="fieldValue" :range="true" v-bind="config">
-        <input
-          :placeholder="field.placeholder || 'Select date period'"
-          :disabled="isDisabled"
-          type="text"
-          class="form-control"
-        />
-      </date-time-picker>
-    </template>
-  </component>
-</template>
-
 <script>
-import VueCtkDateTimePicker from 'vue-ctk-date-time-picker'
-import 'vue-ctk-date-time-picker/dist/vue-ctk-date-time-picker.css'
-import FieldMixin from '../mixins/FieldMixin'
+import DatetimeField from './DatetimeField'
+import baseConfig from '../config'
+import config from './config'
 
 export default {
   name: 'DateRangeField',
 
-  components: {
-    DateTimePicker: VueCtkDateTimePicker,
-  },
-
-  mixins: [FieldMixin],
+  extends: DatetimeField,
 
   computed: {
     config() {
       return Object.assign(
+        this.initialOptions,
         {
-          formatted: 'll',
-          format: 'YYYY-MM-DD hh:mm:ss',
+          range: true,
+          formatted: config.dateDisplayFormat,
+          format: config.dateTimeModelFormat,
+          locale: baseConfig.locale,
         },
         this.field.options || {},
       )
     },
-
     fieldValue: {
       get() {
         let value = this.value()
@@ -66,12 +47,24 @@ export default {
         this.fill(setValue)
       },
     },
+    placeholder() {
+      return this.strings.date_time.select_period
+    },
   },
+
+  methods: {
+    tryUpdateValue() {
+      // todo: update range value
+    },
+  }
 }
 </script>
 
 <style scoped>
 .form-control {
   min-width: 240px;
+}
+.form-control.is-range {
+  background-color: white;
 }
 </style>

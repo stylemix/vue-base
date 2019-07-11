@@ -15,6 +15,15 @@
         :multiple="field.multiple || false"
         class="form-control"
         @search="onSearch">
+        <template slot="search" slot-scope="search">
+          <input
+            ref="input"
+            class="vs__search"
+            v-bind="search.attributes"
+            v-on="search.events"
+            @focus="onFocus"
+            @keypress="onKeypress"/>
+        </template>
         <template
           slot="option"
           slot-scope="option">
@@ -30,7 +39,7 @@
             {{ option.extra }}
           </div>
         </template>
-        <slot name="no-options">{{ strings.relation.no_options }}</slot>
+        <span slot="no-options">{{ isSearching ? strings.relation.no_options : strings.relation.type_to_search }}</span>
       </v-select>
     </template>
   </component>
@@ -60,6 +69,7 @@
         options: [],
         params: {},
         busy: false,
+        mounted: false,
       };
     },
 
@@ -93,7 +103,14 @@
       },
       filterable() {
         return !this.field.ajax;
-      }
+      },
+      isSearching() {
+        if (!this.mounted) {
+          return false;
+        }
+
+        return !!this.$refs.select.search
+      },
     },
 
     created() {
@@ -125,9 +142,7 @@
     },
 
     mounted() {
-      if (this.field.preload) {
-        this.fetch();
-      }
+      this.mounted = true;
     },
 
     methods: {
@@ -150,7 +165,17 @@
       setOptions(options) {
         let preserveOptions = castArray(this.selected);
         this.options = uniqBy(options.concat(preserveOptions), 'value');
-      }
+      },
+      onFocus(event) {
+        if (this.field.preload && !this.options.length) {
+          this.fetch();
+        }
+      },
+      onKeypress(event) {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+        }
+      },
     },
   };
 </script>

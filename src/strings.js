@@ -28,6 +28,7 @@ const strings = {
   },
   relation: {
     no_options: 'Sorry, no matching options.',
+    type_to_search: 'Please, type to search options.',
   },
 }
 

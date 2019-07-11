@@ -5,6 +5,10 @@ let config = {
   previewMinHeight: null,
   previewCrop: false,
   googleKey: null,
+  dateDisplayFormat: 'll',
+  dateTimeDisplayFormat: 'llll',
+  dateTimeModelFormat: 'YYYY-MM-DDTHH:mm:ssZZ',
+  timeTwelveFormat: true,
 };
 
 export default config;
