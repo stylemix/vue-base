@@ -105,10 +105,8 @@
         this.inputManual = false
       }
 
-      if (!event || !event.relatedTarget ||
-        (event.relatedTarget.className.indexOf('time-picker') === -1 &&
-          event.relatedTarget.className.indexOf('datepicker') === -1)
-      ) {
+      const isOurTarget = this.$refs.picker.$refs.agenda.$el.contains(event.relatedTarget)
+      if (!isOurTarget) {
         this.$refs.picker.toggleDatePicker(false)
       }
     },
