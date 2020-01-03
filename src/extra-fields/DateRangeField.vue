@@ -50,6 +50,9 @@ export default {
     placeholder() {
       return this.strings.date_time.select_period
     },
+    isEmpty() {
+      return this.fieldValue === null || (!this.fieldValue.start && !this.fieldValue.end)
+    },
   },
 
   methods: {

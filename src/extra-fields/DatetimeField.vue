@@ -11,7 +11,7 @@
         :disabled="isDisabled"
         :button-now-translation="strings.now"
         no-value-to-custom-elem>
-        <div class="input-group" @click.stop>
+        <div class="datetime-group" @click.stop>
           <input
             ref="input"
             :id="field.attribute"
@@ -27,19 +27,34 @@
             @focus="onFocus"
             @blur="onBlur"
           />
-          <div class="input-group-append">
-            <button
-              class="btn btn-light btn-outline-secondary"
-              type="button"
-              @click="clear">
-              {{ strings.date_time.clear }}
-            </button>
-          </div>
+          <button
+            v-if="!isEmpty"
+            class="btn text-primary font-weight-bold datetime-clear"
+            type="button"
+            @click.stop="clear">
+            &cross;
+          </button>
         </div>
       </date-time-picker>
     </template>
   </component>
 </template>
+
+<style>
+  .datetime-group {
+    position: relative;
+  }
+
+  .datetime-group .form-control {
+    padding-right: 38px;
+  }
+
+  .datetime-clear {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+</style>
 
 <script>
   import moment from 'moment'
@@ -89,6 +104,9 @@
     placeholder() {
       return this.config.onlyDate ? this.strings.date_time.select_date
         : (this.config.onlyTime ? this.strings.date_time.select_time : this.strings.date_time.select_datetime)
+    },
+    isEmpty() {
+      return this.fieldValue === null
     },
   },
 
