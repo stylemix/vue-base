@@ -1,3 +1,4 @@
+import Base from './src/base';
 import BasePlugin from './src/plugin';
 import ExtraPlugin from './src/extra-fields/ExtraPlugin';
 import Field from './src/utils/Field';
@@ -8,6 +9,8 @@ export * from './src/components';
 export * from './src/extra-fields/index';
 export * from './src/utils/props';
 export * from './src/utils/google-maps';
+
+export default Base
 
 export {
   BasePlugin,
