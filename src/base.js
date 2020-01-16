@@ -2,13 +2,19 @@ import Vue from 'vue'
 import axios from 'axios'
 
 const Base = {
+
+  /**
+   * Defined endpoints
+   */
+  endpoints: {},
+
   /**
    * Create new API endpoint
    *
    * @param {PropertyKey} name
    * @param {Object} config
    */
-  apiEndpoint(name, config) {
+  httpEndpoint(name, config) {
     let _config = {
       // guard against mix of standards
       baseURL: config.baseUrl || config.baseURL,
@@ -28,7 +34,7 @@ const Base = {
     const instance = axios.create(_config)
 
     // Add global reference
-    Vue[name] = instance
+    Base.endpoints[name] = Vue[name] = instance
 
     // Add instance reference
     Object.defineProperty(Vue.prototype, name, {
