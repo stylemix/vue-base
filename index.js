@@ -9,6 +9,8 @@ export * from './src/components';
 export * from './src/extra-fields/index';
 export * from './src/utils/props';
 export * from './src/utils/google-maps';
+export { default as ApiBase } from './src/utils/ApiBase'
+export { default as ApiResource } from './src/utils/ApiResource'
 
 export default Base
 
