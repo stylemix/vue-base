@@ -9,9 +9,19 @@ export default class ApiBase {
    * @param {String} httpEndpoint The HTTP endpoint reference name.
    */
   constructor(basePath = '', httpEndpoint = '$http') {
-    this.endpoint = basePath
+    this.basePath = basePath
     this.httpEndpoint = httpEndpoint
     this.parameters = {}
+  }
+
+  /**
+   * Build URL path with base path
+   *
+   * @param {string} path
+   * @return {string}
+   */
+  withBasePath(path = '') {
+    return `${this.basePath}/${path.replace(/^\//, '')}`
   }
 
   /**

@@ -8,7 +8,7 @@ class ApiResource extends ApiBase {
    * @returns {Promise} The result in a promise.
    */
   get(config = {}) {
-    return this.request('get', `/${this.endpoint}`, null, config)
+    return this.request('get', this.basePath, null, config)
   }
 
   $get(config = {}) {
@@ -76,7 +76,7 @@ class ApiResource extends ApiBase {
    * @returns {Promise} The result in a promise.
    */
   find(id, config = {}) {
-    return this.request('get', `/${this.endpoint}/${id}`, null, config)
+    return this.request('get', this.withBasePath(`${id}`), null, config)
   }
 
   $find(id, config = {}) {
@@ -99,7 +99,7 @@ class ApiResource extends ApiBase {
    * @returns {Promise} The result in a promise.
    */
   create(config = {}) {
-    return this.request('get', `/${this.endpoint}/create`, null, config)
+    return this.request('get', this.withBasePath('create'), null, config)
   }
 
   $create(config = {}) {
@@ -125,7 +125,7 @@ class ApiResource extends ApiBase {
    * @returns {Promise} The result in a promise.
    */
   store(item, config = {}) {
-    return this.request('post', `/${this.endpoint}`, item, config)
+    return this.request('post', this.basePath, item, config)
   }
 
   $store(item, config = {}) {
@@ -151,7 +151,7 @@ class ApiResource extends ApiBase {
    * @returns {Promise} The result in a promise.
    */
   edit(id, config = {}) {
-    return this.request('get', `/${this.endpoint}/${id}/edit`, null, config)
+    return this.request('get', this.withBasePath(`${id}/edit`), null, config)
   }
 
   $edit(id, config = {}) {
@@ -178,7 +178,7 @@ class ApiResource extends ApiBase {
    * @returns {Promise} The result in a promise.
    */
   update(id, item, config = {}) {
-    return this.request('put', `/${this.endpoint}/${id}`, item, config)
+    return this.request('put', this.withBasePath(`${id}`), item, config)
   }
 
   $update(id, item, config = {}) {
@@ -204,7 +204,7 @@ class ApiResource extends ApiBase {
    * @returns {Promise} The result in a promise.
    */
   destroy(id, config = {}) {
-    return this.request('delete', `/${this.endpoint}/${id}`, null, config)
+    return this.request('delete', this.withBasePath(`${id}`), null, config)
   }
 
   $destroy(id, config = {}) {
