@@ -13,6 +13,7 @@
         v-model="selected"
         :class="errorClasses"
         :multiple="field.multiple || false"
+        v-bind="field.attrs"
         class="form-control"
         @search="onSearch">
         <template slot="search" slot-scope="search">

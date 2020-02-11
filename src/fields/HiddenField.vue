@@ -1,5 +1,5 @@
 <template>
-  <input type="hidden" :value="fieldValue">
+  <input type="hidden" :value="fieldValue" v-bind="field.attrs">
 </template>
 
 <script>

@@ -13,6 +13,7 @@
           :accept="field.mimeTypes"
           :disabled="isDisabled"
           class="custom-file-input"
+          v-bind="field.attrs"
           @input="input($event)"
         />
         <label

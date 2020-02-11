@@ -10,7 +10,8 @@
         class="form-control"
         :class="errorClasses"
         :disabled="isDisabled"
-        :readonly="isReadonly">
+        :readonly="isReadonly"
+        v-bind="field.attrs">
         <option :value="nullValue" selected :disabled="field.required">
           {{ field.placeholder || strings.select.choose }}
         </option>
