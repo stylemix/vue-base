@@ -71,7 +71,24 @@
         params: {},
         busy: false,
         mounted: false,
+        defaultParams: {
+          per_page: 9,
+        }
       };
+    },
+
+    watch: {
+      field: {
+        handler(val, old) {
+          this.params = defaults(this.field.source ? this.field.source.params : {}, this.defaultParams);
+          this.setOptions(this.field.options || [])
+          if (!this.field.ajax) {
+            return
+          }
+          this.fetch()
+        },
+        deep: true,
+      },
     },
 
     computed: {
@@ -118,9 +135,7 @@
       // Take initial options from field config
       // It could contain initially selected option
       this.options = this.field.options || [];
-      this.params = defaults(this.field.source ? this.field.source.params : {}, {
-        per_page: 9,
-      });
+      this.params = defaults(this.field.source ? this.field.source.params : {}, this.defaultParams);
 
       this.fetch = debounce(() => {
         this.loading(true);
