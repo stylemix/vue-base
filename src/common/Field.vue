@@ -7,7 +7,11 @@
     :layout="layout"
     :layout-class="layoutClass"
     @input="input"
-  />
+  >
+    <template v-slot:[`field(${fieldResolved.attribute})`]="fieldScope">
+      <slot :name="`field(${fieldResolved.attribute})`" v-bind="fieldScope" />
+    </template>
+  </component>
 </template>
 
 <script>

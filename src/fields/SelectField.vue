@@ -3,25 +3,27 @@
     :is="layoutComponent"
     v-bind="layoutProps">
     <template slot="field">
-      <select
-        :id="field.name"
-        v-model="fieldValue"
-        :multiple="field.multiple || false"
-        class="form-control"
-        :class="errorClasses"
-        :disabled="isDisabled"
-        :readonly="isReadonly"
-        v-bind="field.attrs">
-        <option :value="nullValue" selected :disabled="field.required">
-          {{ field.placeholder || strings.select.choose }}
-        </option>
-        <option
-          v-for="option in field.options"
-          :value="option.value"
-          :selected="option.value === fieldValue">
-          {{ option.label }}
-        </option>
-      </select>
+      <slot :name="`field(${field.attribute})`" v-bind="{ field }">
+        <select
+          :id="field.name"
+          v-model="fieldValue"
+          :multiple="field.multiple || false"
+          class="form-control"
+          :class="errorClasses"
+          :disabled="isDisabled"
+          :readonly="isReadonly"
+          v-bind="field.attrs">
+          <option :value="nullValue" selected :disabled="field.required">
+            {{ field.placeholder || strings.select.choose }}
+          </option>
+          <option
+            v-for="option in field.options"
+            :value="option.value"
+            :selected="option.value === fieldValue">
+            {{ option.label }}
+          </option>
+        </select>
+      </slot>
     </template>
   </component>
 </template>

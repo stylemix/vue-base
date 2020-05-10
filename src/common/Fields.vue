@@ -7,7 +7,11 @@
       :form="formResolved"
       :model="modelResolved"
       :layout="layout"
-    />
+    >
+      <template v-slot:[`field(${field.attribute})`]="fieldScope">
+        <slot :name="`field(${field.attribute})`" v-bind="fieldScope" />
+      </template>
+    </field>
   </div>
 </template>
 

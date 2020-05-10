@@ -3,41 +3,43 @@
     :is="layoutComponent"
     v-bind="layoutProps">
     <template slot="field">
-      <div
-        v-for="(fields, i) in rows"
-        :class="{ 'single-field' : isSingleField }"
-        class="form-row">
-        <field
-          v-for="subField in fields.all()"
-          :key="subField.attribute"
-          :field="subField"
-          :form="form"
-          :model="model"
-          :layout-class="subField.col ? `col-${subField.col}` : 'col'"
-          layout="vertical"
-        />
-        <div v-if="!isDisabled" class="form-group flex-shrink-1">
-          <label>&nbsp;</label>
-          <div>
-            <button
-              type="button"
-              class="btn btn-light"
-              @click.prevent="removeRow(i)">
-              <i v-if="iconRemoveRow" :class="iconRemoveRow"></i>
-              {{ labelRemoveRow }}
-            </button>
+      <slot :name="`field(${field.attribute})`" v-bind="{ field }">
+        <div
+          v-for="(fields, i) in rows"
+          :class="{ 'single-field' : isSingleField }"
+          class="form-row">
+          <field
+            v-for="subField in fields.all()"
+            :key="subField.attribute"
+            :field="subField"
+            :form="form"
+            :model="model"
+            :layout-class="subField.col ? `col-${subField.col}` : 'col'"
+            layout="vertical"
+          />
+          <div v-if="!isDisabled" class="form-group flex-shrink-1">
+            <label>&nbsp;</label>
+            <div>
+              <button
+                type="button"
+                class="btn btn-light"
+                @click.prevent="removeRow(i)">
+                <i v-if="iconRemoveRow" :class="iconRemoveRow"></i>
+                {{ labelRemoveRow }}
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-      <div v-if="!isDisabled">
-        <button
-          type="button"
-          class="btn btn-link pl-0"
-          @click.prevent="addRow()">
-          <i v-if="iconAddNew" :class="iconAddNew"></i>
-          {{ labelAddNew }}
-        </button>
-      </div>
+        <div v-if="!isDisabled">
+          <button
+            type="button"
+            class="btn btn-link pl-0"
+            @click.prevent="addRow()">
+            <i v-if="iconAddNew" :class="iconAddNew"></i>
+            {{ labelAddNew }}
+          </button>
+        </div>
+      </slot>
     </template>
   </component>
 </template>

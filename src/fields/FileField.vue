@@ -3,26 +3,28 @@
     :is="layoutComponent"
     v-bind="layoutProps">
     <template slot="field">
-      <div class="custom-file">
-        <input
-          type="file"
-          ref="inputElement"
-          :id="field.attribute"
-          :multiple="field.multiple || false"
-          :class="errorClasses"
-          :accept="field.mimeTypes"
-          :disabled="isDisabled"
-          class="custom-file-input"
-          v-bind="field.attrs"
-          @input="input($event)"
-        />
-        <label
-          :for="field.attribute"
-          :placeholder="field.browse_label"
-          class="custom-file-label text-truncate">
-          {{ inputPlaceholder }}
-        </label>
-      </div>
+      <slot :name="`field(${field.attribute})`" v-bind="{ field }">
+        <div class="custom-file">
+          <input
+            type="file"
+            ref="inputElement"
+            :id="field.attribute"
+            :multiple="field.multiple || false"
+            :class="errorClasses"
+            :accept="field.mimeTypes"
+            :disabled="isDisabled"
+            class="custom-file-input"
+            v-bind="field.attrs"
+            @input="input($event)"
+          />
+          <label
+            :for="field.attribute"
+            :placeholder="field.browse_label"
+            class="custom-file-label text-truncate">
+            {{ inputPlaceholder }}
+          </label>
+        </div>
+      </slot>
     </template>
   </component>
 </template>

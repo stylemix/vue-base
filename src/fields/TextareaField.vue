@@ -3,19 +3,21 @@
     :is="layoutComponent"
     v-bind="layoutProps">
     <template slot="field">
-      <textarea
-        :id="field.attribute"
-        :cols="inputCols"
-        :rows="inputRows"
-        :maxlength="inputMaxlength"
-        v-model="fieldValue"
-        class="form-control"
-        :class="errorClasses"
-        :placeholder="inputPlaceholder"
-        :readonly="isReadonly"
-        :disabled="isDisabled"
-        v-bind="field.attrs">
-      </textarea>
+      <slot :name="`field(${field.attribute})`" v-bind="{ field }">
+        <textarea
+          :id="field.attribute"
+          :cols="inputCols"
+          :rows="inputRows"
+          :maxlength="inputMaxlength"
+          v-model="fieldValue"
+          class="form-control"
+          :class="errorClasses"
+          :placeholder="inputPlaceholder"
+          :readonly="isReadonly"
+          :disabled="isDisabled"
+          v-bind="field.attrs">
+        </textarea>
+      </slot>
     </template>
   </component>
 </template>

@@ -3,20 +3,22 @@
     :is="layoutComponent"
     v-bind="layoutProps">
     <template slot="field">
-      <input
-        :id="field.attribute"
-        :type="inputType"
-        :min="inputMin"
-        :max="inputMax"
-        :step="inputStep"
-        :pattern="inputPattern"
-        v-model="fieldValue"
-        class="form-control"
-        :class="errorClasses"
-        :placeholder="inputPlaceholder"
-        :readonly="isReadonly"
-        :disabled="isDisabled"
-        v-bind="field.attrs"/>
+      <slot :name="`field(${field.attribute})`" v-bind="{ field }">
+        <input
+          :id="field.attribute"
+          :type="inputType"
+          :min="inputMin"
+          :max="inputMax"
+          :step="inputStep"
+          :pattern="inputPattern"
+          v-model="fieldValue"
+          class="form-control"
+          :class="errorClasses"
+          :placeholder="inputPlaceholder"
+          :readonly="isReadonly"
+          :disabled="isDisabled"
+          v-bind="field.attrs"/>
+      </slot>
     </template>
   </component>
 </template>

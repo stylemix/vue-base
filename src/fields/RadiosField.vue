@@ -4,25 +4,27 @@
     v-bind="layoutProps"
     :show-label="false">
     <template slot="field">
-      <div
-        v-for="(option, index) in field.options"
-        :key="option.value"
-        :class="radiosLayoutClass"
-        class="form-check">
-        <input
-          :id="field.attribute + index"
-          :value="option.value"
-          :disabled="isDisabled"
-          v-model="fieldValue"
-          type="radio"
-          class="form-check-input"
-          v-bind="field.attrs"/>
-        <label
-          :for="field.attribute + index"
-          class="form-check-label">
-          {{ option.label }}
-        </label>
-      </div>
+      <slot :name="`field(${field.attribute})`" v-bind="{ field }">
+        <div
+          v-for="(option, index) in field.options"
+          :key="option.value"
+          :class="radiosLayoutClass"
+          class="form-check">
+          <input
+            :id="field.attribute + index"
+            :value="option.value"
+            :disabled="isDisabled"
+            v-model="fieldValue"
+            type="radio"
+            class="form-check-input"
+            v-bind="field.attrs"/>
+          <label
+            :for="field.attribute + index"
+            class="form-check-label">
+            {{ option.label }}
+          </label>
+        </div>
+      </slot>
     </template>
   </component>
 </template>
