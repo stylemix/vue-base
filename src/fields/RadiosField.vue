@@ -15,7 +15,8 @@
           :disabled="isDisabled"
           v-model="fieldValue"
           type="radio"
-          class="form-check-input"/>
+          class="form-check-input"
+          v-bind="field.attrs"/>
         <label
           :for="field.attribute + index"
           class="form-check-label">

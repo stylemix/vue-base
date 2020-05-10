@@ -11,7 +11,9 @@
           v-model="fieldValue"
           class="form-check-input"
           :class="errorClasses"
-          :disabled="isDisabled"/>
+          :disabled="isDisabled"
+          v-bind="field.attrs"
+        />
         <label :for="field.attribute">
           {{ field.label || fieldLabel }}
         </label>

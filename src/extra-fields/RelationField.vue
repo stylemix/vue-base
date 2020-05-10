@@ -7,12 +7,13 @@
         ref="select"
         :disabled="busy || isDisabled"
         :id="field.attribute"
-        :options="options"
+        :options="optionsComputed"
         :filterable="filterable"
         :placeholder="field.placeholder"
         v-model="selected"
         :class="errorClasses"
         :multiple="field.multiple || false"
+        v-bind="field.attrs"
         class="form-control"
         @search="onSearch">
         <template slot="search" slot-scope="search">
@@ -47,13 +48,13 @@
 
 <script>
   import map from 'lodash-es/map';
-  import defaults from 'lodash-es/defaults';
   import debounce from 'lodash-es/debounce';
   import castArray from 'lodash-es/castArray';
   import find from 'lodash-es/find';
   import head from 'lodash-es/head';
   import isEqual from 'lodash-es/isEqual';
   import uniqBy from 'lodash-es/uniqBy';
+  import get from 'lodash-es/get';
   import vSelect from 'vue-select';
   import FieldMixin from '../mixins/FieldMixin';
 
@@ -67,13 +68,36 @@
     data() {
       return {
         options: [],
-        params: {},
+        searchPhrase: null,
         busy: false,
         mounted: false,
       };
     },
 
+    watch: {
+      'field.source': {
+        handler(val, old) {
+          if (!this.field.ajax) {
+            return
+          }
+          this.setOptions(this.field.options || [])
+          this.fetch()
+        },
+        deep: true,
+      },
+    },
+
     computed: {
+      optionsComputed() {
+        if (this.field.ajax) {
+          return this.options
+        }
+
+        return this.field.options
+      },
+      params() {
+        return this.field.source ? this.field.source.params : {}
+      },
       selected: {
         get() {
           const selected = [];
@@ -117,21 +141,23 @@
       // Take initial options from field config
       // It could contain initially selected option
       this.options = this.field.options || [];
-      this.params = defaults(this.field.source ? this.field.source.params : {}, {
-        per_page: 9,
-      });
 
       this.fetch = debounce(() => {
-        this.loading(true);
+        if (!this.searchPhrase) {
+          return
+        }
 
+        this.loading(true)
+
+        let queryParam = this.field.queryParam || this.field.source.queryParam || 'query'
         const promise = this.$http({
           url: this.field.source.url,
-          params: this.params,
-        });
+          params: { ...this.params, [queryParam]: this.searchPhrase },
+        })
 
         promise
           .then((response) => {
-            this.setOptions(response.data.data);
+            this.setOptions(this.transformRemoteOptions(response.data))
           })
           .finally(() => {
             this.loading(false);
@@ -150,10 +176,10 @@
         this.$refs.select.toggleLoading(value);
       },
       onSearch(search) {
+        this.searchPhrase = search
         if (!this.field.ajax) {
           return;
         }
-        this.params[this.field.queryParam || 'query'] = search;
         this.fetch();
       },
       getMissedOption(value) {
@@ -161,6 +187,22 @@
           value,
           label: this.$refs.select && this.$refs.select.mutableLoading ? '...' : value,
         };
+      },
+      transformRemoteOptions(data) {
+        const resultKey = this.field.source.resultKey || 'data'
+        const valueKey = this.field.source.valueKey || 'value'
+        const labelKey = this.field.source.labelKey || 'label'
+        const options = get(data, resultKey)
+
+        if (!options instanceof Array) {
+          console.error('RelationField: returned options is not an Array. Please, check your configuration and ajax response.')
+          return []
+        }
+
+        return options.map(item => ({
+          value: get(item, valueKey),
+          label: get(item, labelKey),
+        }))
       },
       setOptions(options) {
         let preserveOptions = castArray(this.selected);

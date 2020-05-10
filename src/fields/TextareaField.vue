@@ -13,7 +13,8 @@
         :class="errorClasses"
         :placeholder="inputPlaceholder"
         :readonly="isReadonly"
-        :disabled="isDisabled">
+        :disabled="isDisabled"
+        v-bind="field.attrs">
       </textarea>
     </template>
   </component>

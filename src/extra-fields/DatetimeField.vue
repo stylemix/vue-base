@@ -22,6 +22,7 @@
             :class="{ 'is-range': config.range }"
             type="text"
             class="form-control"
+            v-bind="field.attrs"
             @click.stop
             @input="onInput"
             @focus="onFocus"

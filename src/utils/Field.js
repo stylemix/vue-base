@@ -28,6 +28,7 @@ export default class Field {
     this.readonly = false;
     this.depends = [];
     this.dependentFields = [];
+    this.attrs = {};
     Object.assign(this, field);
   }
 

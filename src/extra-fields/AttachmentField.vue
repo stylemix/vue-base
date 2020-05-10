@@ -13,6 +13,7 @@
           ref="input"
           type="file"
           class="custom-file-input"
+          v-bind="field.attrs"
           @input="input($event)">
         <label
           :for="field.attribute"
