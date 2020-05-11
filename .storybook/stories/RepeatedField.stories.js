@@ -7,6 +7,21 @@ export default {
   decorators: [withKnobs],
 }
 
+function singleField() {
+  return {
+    component: 'repeater-field',
+    attribute: 'pets',
+    label: this.label,
+    required: this.required,
+    disabled: this.disabled,
+    field: {
+      component: "text-field",
+    },
+    iconRemoveRow: this.iconRemoveRow,
+    labelRemoveRow: this.labelRemoveRow,
+  }
+}
+
 export const SingleField = () => ({
   extends: FieldTemplate,
   props: {
@@ -26,20 +41,7 @@ export const SingleField = () => ({
     }
   },
   computed: {
-    field() {
-      return {
-        component: 'repeater-field',
-        attribute: 'pets',
-        label: this.label,
-        required: this.required,
-        disabled: this.disabled,
-        field: {
-          component: "text-field",
-        },
-        iconRemoveRow: this.iconRemoveRow,
-        labelRemoveRow: this.labelRemoveRow,
-      }
-    },
+    field: singleField,
   },
 })
 
@@ -83,5 +85,21 @@ export const MultipleFields = () => ({
         disabled: this.disabled,
       }
     },
+  },
+})
+
+
+export const NoModelValue = () => ({
+  extends: FieldTemplate,
+  props: {
+    ...propsCommon('Your pets'),
+  },
+  data() {
+    return {
+      model: {},
+    }
+  },
+  computed: {
+    field: singleField,
   },
 })

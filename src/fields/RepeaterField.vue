@@ -44,6 +44,7 @@
 
 <script>
   import cloneDeep from 'lodash-es/cloneDeep'
+  import isArray from 'lodash-es/isArray'
   import { FieldMixin } from '../mixins'
   import FieldList from '../utils/FieldList'
   import config from "../config"
@@ -86,7 +87,7 @@
     },
 
     mounted() {
-      if (this.fieldValue.length) {
+      if (isArray(this.fieldValue) && this.fieldValue.length) {
         for (let i in this.fieldValue) {
           this.rows.push(this.getRowFields(i));
         }
@@ -99,6 +100,11 @@
         if (this.isDisabled) {
           return;
         }
+
+        if (!isArray(this.fieldValue)) {
+          this.fieldValue = []
+        }
+
         let newValue = this.field.fields ? {} : null;
         this.fieldValue.push(newValue);
         this.rows.push(this.getRowFields(this.fieldValue.length - 1));
