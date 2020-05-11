@@ -12,7 +12,6 @@ export default {
   },
 
   computed: {
-
     layoutClassResolved() {
       return [this.field.layoutClass || this.layoutClass, ...this.errorClasses]
     },
@@ -20,5 +19,28 @@ export default {
     errors() {
       return this.field.errors
     },
-  }
+
+    labelProps() {
+      return {
+        field: this.field,
+        fieldLabel: this.fieldLabel,
+        showLabel: this.showLabel,
+      }
+    },
+
+    errorsProps() {
+      return {
+        field: this.field,
+        hasErrors: this.hasErrors,
+        errorMessages: this.errorMessages,
+      }
+    },
+
+    helpTextProps() {
+      return {
+        field: this.field,
+        showHelpText: this.showHelpText,
+      }
+    },
+  },
 }

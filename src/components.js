@@ -1,7 +1,10 @@
 import Field from './common/Field.vue';
 import Fields from './common/Fields.vue';
 import EmptyLayout from './common/EmptyLayout.vue';
+import FormFieldLabel from './common/FieldLabel.vue'
 import FormAsterisk from './common/Asterisk.vue';
+import FormFieldErrors from './common/FieldErrors.vue'
+import FormFieldHelpText from './common/FieldHelpText.vue'
 import VerticalLayout from './layouts/VericalLayout.vue';
 import HorizontalLayout from './layouts/HorizontalLayout.vue';
 import InlineLayout from './layouts/InlineLayout.vue';
@@ -21,7 +24,10 @@ export {
   Field,
   Fields,
   EmptyLayout,
+  FormFieldLabel,
   FormAsterisk,
+  FormFieldErrors,
+  FormFieldHelpText,
   VerticalLayout,
   HorizontalLayout,
   InlineLayout,
