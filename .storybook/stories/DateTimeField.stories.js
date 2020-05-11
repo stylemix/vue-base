@@ -3,7 +3,7 @@ import { propsCommon } from '../helpers'
 import FieldTemplate from './FieldTemplate'
 
 export default {
-  title: 'Dateime',
+  title: 'Datetime',
   decorators: [withKnobs],
 }
 

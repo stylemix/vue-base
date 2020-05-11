@@ -23,7 +23,7 @@
       model: Object,
       errors: {},
       form: Object,
-      layout: String,
+      layout: [ Object, String ],
       layoutClass: String,
     },
 

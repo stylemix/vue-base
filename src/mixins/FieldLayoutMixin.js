@@ -14,7 +14,7 @@ export default {
   computed: {
 
     layoutClassResolved() {
-      return this.field.layoutClass || this.layoutClass
+      return [this.field.layoutClass || this.layoutClass, ...this.errorClasses]
     },
 
     errors() {

@@ -16,7 +16,7 @@ export default {
     field: {type: Field, required: true},
     model: {type: Object},
     form: {type: Object},
-    layout: {type: String},
+    layout: {type: [Object, String]},
     layoutClass: {type: String},
     disabled: {type: Boolean, default: false},
     readonly: {type: Boolean, default: false},
@@ -57,12 +57,17 @@ export default {
     layoutProps() {
       return {
         field: this.field,
-        errors: this.errors,
         layoutClass: this.layoutClass,
       }
     },
     layoutComponent() {
-      return (this.layout || config.defaultLayout) + '-layout';
+      const layout = this.field.layout || this.layout || config.defaultLayout
+
+      if (typeof layout === 'string') {
+        return layout + '-layout';
+      }
+
+      return layout
     },
     formResolved() {
       if (this.form) {

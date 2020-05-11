@@ -2,7 +2,7 @@
   <div
     class="form-group row"
     :attribute="field.attribute"
-    :class="[errorClasses, layoutClassResolved]">
+    :class="layoutClassResolved">
     <label
       v-if="showLabel"
       :for="field.attribute"

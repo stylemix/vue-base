@@ -7,6 +7,7 @@
       :form="formResolved"
       :model="modelResolved"
       :layout="layout"
+      :layout-class="layoutClass"
     />
   </div>
 </template>
@@ -23,7 +24,8 @@
       ungrouped: Boolean,
       model: Object,
       form: Object,
-      layout: String
+      layout: [ Object, String ],
+      layoutClass: String,
     },
 
     computed: {
