@@ -3,7 +3,7 @@
     :is="layoutComponent"
     v-bind="layoutProps">
     <template slot="field">
-      <v-select
+      <vue-select
         ref="select"
         :disabled="busy || isDisabled"
         :id="field.attribute"
@@ -41,7 +41,7 @@
           </div>
         </template>
         <span slot="no-options">{{ isSearching ? strings.relation.no_options : strings.relation.type_to_search }}</span>
-      </v-select>
+      </vue-select>
     </template>
   </component>
 </template>
@@ -55,13 +55,9 @@
   import isEqual from 'lodash-es/isEqual';
   import uniqBy from 'lodash-es/uniqBy';
   import get from 'lodash-es/get';
-  import vSelect from 'vue-select';
   import FieldMixin from '../mixins/FieldMixin';
 
   export default {
-    components: {
-      vSelect,
-    },
 
     mixins: [FieldMixin],
 

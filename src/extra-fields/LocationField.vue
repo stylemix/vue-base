@@ -28,7 +28,6 @@
 </template>
 
 <script>
-  import VueGoogleAutocomplete from 'vue-google-autocomplete';
   import FieldMixin from '../mixins/FieldMixin';
   import defaults from 'lodash-es/defaults';
   import { loadGoogleMaps } from '../utils/google-maps';
@@ -37,10 +36,6 @@
     name: 'FormLocationField',
 
     mixins: [FieldMixin],
-
-    components: {
-      VueGoogleAutocomplete,
-    },
 
     data: () => ({
       googleLoaded: false,

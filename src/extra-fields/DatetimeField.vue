@@ -3,7 +3,7 @@
     :is="layoutComponent"
     v-bind="layoutProps">
     <template slot="field">
-      <date-time-picker
+      <vue-ctk-date-time-picker
         ref="picker"
         v-model="fieldValue"
         v-bind="config"
@@ -36,7 +36,7 @@
             &cross;
           </button>
         </div>
-      </date-time-picker>
+      </vue-ctk-date-time-picker>
     </template>
   </component>
 </template>
@@ -59,18 +59,12 @@
 
 <script>
   import moment from 'moment'
-  import VueCtkDateTimePicker from 'vue-ctk-date-time-picker'
-  import 'vue-ctk-date-time-picker/dist/vue-ctk-date-time-picker.css'
   import FieldMixin from '../mixins/FieldMixin'
   import baseConfig from '../config'
   import config from './config'
 
   export default {
   name: 'DatetimeField',
-
-  components: {
-    DateTimePicker: VueCtkDateTimePicker,
-  },
 
   mixins: [FieldMixin],
 

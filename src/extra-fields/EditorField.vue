@@ -3,7 +3,7 @@
     :is="layoutComponent"
     v-bind="layoutProps">
     <template slot="field">
-      <editor
+      <quill-editor
         v-model="fieldValue"
         :options="options"
         :disabled="isDisabled"
@@ -13,16 +13,11 @@
 </template>
 
 <script>
-import { quillEditor } from 'vue-quill-editor';
 import assign from 'lodash-es/assign';
 import FieldMixin from '../mixins/FieldMixin';
 
 export default {
   name: 'FormEditorField',
-
-  components: {
-    Editor: quillEditor,
-  },
 
   mixins: [FieldMixin],
 
