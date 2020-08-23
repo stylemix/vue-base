@@ -6,20 +6,17 @@
     <template slot="field">
       <div class="form-check">
         <input
-          :id="field.attribute"
+          :id="attribute"
           type="checkbox"
           v-model="fieldValue"
           class="form-check-input"
           :class="errorClasses"
-          :disabled="isDisabled"
-          v-bind="field.attrs"
+          :disabled="disabled"
+          v-bind="attrs"
         />
-        <label :for="field.attribute">
-          {{ field.label || fieldLabel }}
+        <label :for="attribute">
+          {{ label }}
         </label>
-        <div v-if="hasError" class="invalid-feedback">
-          {{ errorMessages }}
-        </div>
       </div>
     </template>
   </component>
@@ -33,8 +30,10 @@
 
     mixins: [FieldMixin],
 
-    props: {
-      fieldLabel: {type: String},
+    data() {
+      return {
+        errorClass: 'is-invalid',
+      }
     },
   }
 </script>

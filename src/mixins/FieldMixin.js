@@ -1,11 +1,9 @@
-import keyBy from "lodash-es/keyBy";
-import mapValues from "lodash-es/mapValues";
-import isEqual from 'lodash-es/isEqual';
-import has from 'lodash-es/has';
-import HandlesValidationErrors from './HandlesValidationErrors';
-import Field from '../utils/Field';
-import { getProp, setProp } from "../utils/props";
-import config from "../config";
+import isEqual from 'lodash-es/isEqual'
+import has from 'lodash-es/has'
+import HandlesValidationErrors from './HandlesValidationErrors'
+import Field from '../utils/Field'
+import { getProp, setProp } from '../utils/props'
+import config from '../config'
 import strings from '../strings'
 import FieldList from '../utils/FieldList'
 
@@ -13,18 +11,22 @@ export default {
   mixins: [HandlesValidationErrors],
 
   props: {
-    field: {type: Field, required: true},
-    model: {type: Object},
-    form: {type: Object},
-    layout: {type: [Object, String]},
-    layoutClass: {type: String},
+    attribute: {type: String, required: true},
+    label: {type: String, default: null},
+    placeholder: {type: String, default: null},
+    required: {type: Boolean, default: false},
     disabled: {type: Boolean, default: false},
     readonly: {type: Boolean, default: false},
+    multiple: {type: Boolean, default: false},
+    attrs: {type: Object, default: () => {}},
+    layout: {type: [Object, String], default: null},
+    layoutClass: {type: String, default: null},
+    model: {type: Object, default: null},
+    form: {type: Object, default: null},
   },
 
   data: () => ({
-    errorClass: 'is-invalid',
-    eventBusListeners: [],
+    field: null,
   }),
 
   computed: {
@@ -33,42 +35,30 @@ export default {
      */
     fieldValue: {
       get() {
-        return this.value();
+        return this.value()
       },
       set(value) {
-        this.fill(value);
+        this.fill(value)
       },
-    },
-
-    /**
-     * Get the input disabled state.
-     */
-    isDisabled() {
-      return this.disabled || this.field.disabled
-    },
-
-    /**
-     * Get the input readonly state.
-     */
-    isReadonly() {
-      return this.readonly || this.field.readonly
     },
 
     layoutProps() {
       return {
-        field: this.field,
-        layoutClass: this.layoutClass,
+        field: this,
+        class: this.layoutClass,
       }
     },
+
     layoutComponent() {
-      const layout = this.field.layout || this.layout || config.defaultLayout
+      const layout = this.layout || this.field.layout || config.defaultLayout
 
       if (typeof layout === 'string') {
-        return layout + '-layout';
+        return layout + '-layout'
       }
 
       return layout
     },
+
     formResolved() {
       if (this.form) {
         return this.form
@@ -82,39 +72,45 @@ export default {
         $vm = $vm.$parent
       }
 
-      return this.$parent
+      return null
     },
+
+    modelResolved() {
+      return this.model || (this.formResolved && this.formResolved.model)
+    },
+
     errors() {
-      return this.field.errors
+      return this.formResolved && this.formResolved.errors
     },
+
     strings() {
       return strings
     },
   },
 
   created() {
-    if (this.model && !has(this.model, this.field.attribute)) {
-      this.field.applyInitialValue(this.model);
+    this.field = new Field({
+      attribute: this.attribute,
+      label: this.label,
+      layout: this.layout,
+      layoutClass: this.layoutClass,
+      disabled: this.disabled,
+      readonly: this.readonly,
+    })
+
+    if (this.formResolved) {
+      this.formResolved.registerField(this.field)
     }
 
-    // Register a global event for setting the field's value
-    this.listenEventBus('field-value-' + this.field.attribute, this.fill);
-  },
-
-  mounted() {
-    if (this.field.depends && this.field.depends.length) {
-      this.field.depends.forEach(attr => {
-        this.listenEventBus('field-change-' + attr, value => {
-          this.triggerDependentChange(attr, value);
-        });
-      });
-
-      this.triggerDependentChange();
+    if (this.modelResolved && !has(this.modelResolved, this.attribute)) {
+      this.field.applyInitialValue(this.modelResolved)
     }
   },
 
   destroyed() {
-    this.unlistenEventBus();
+    if (this.formResolved) {
+      this.formResolved.unregisterField(this.field)
+    }
   },
 
   methods: {
@@ -126,7 +122,7 @@ export default {
      * @returns {*}
      */
     sanitizeValue(value) {
-      return value;
+      return value
     },
 
     /**
@@ -134,17 +130,15 @@ export default {
      * @param value
      */
     fill(value) {
-      let valueSet = this.sanitizeValue(value);
+      let valueSet = this.sanitizeValue(value)
 
       if (isEqual(valueSet, this.value())) {
-        return;
+        return
       }
 
       if (this.model) {
-        setProp(this.model, this.field.attribute, valueSet);
+        setProp(this.model, this.attribute, valueSet)
       }
-
-      this.triggerChange();
     },
 
     /**
@@ -152,34 +146,7 @@ export default {
      * @returns {*}
      */
     value() {
-      return this.model ? getProp(this.model, this.field.attribute) : (this.field.multiple ? [] : null);
-    },
-
-    triggerChange() {
-      this.formResolved.$emit('field-change', this.value(), this.field.attribute);
-      this.formResolved.$emit('field-change-' + this.field.attribute, this.value());
-    },
-
-    triggerDependentChange(attribute, value) {
-      let values = mapValues(keyBy(this.field.dependentFields, 'attribute'), (field) => {
-        return getProp(this.model, field.attribute);
-      });
-      this.handleDependentChange(attribute, value, values);
-    },
-
-    handleDependentChange(attribute, value, values) {
-      // console.log(this.field.attribute + ':handleDependentChange', arguments)
-    },
-
-    listenEventBus(event, callback) {
-      this.formResolved.$on(event, callback);
-      this.eventBusListeners.push({ event, callback });
-    },
-
-    unlistenEventBus() {
-      this.eventBusListeners.forEach(({ event, callback}) => {
-        this.formResolved.$off(event, callback);
-      });
+      return this.model ? getProp(this.model, this.attribute) : (this.field.multiple ? [] : null)
     },
   },
 }

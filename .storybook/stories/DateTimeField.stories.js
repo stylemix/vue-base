@@ -1,6 +1,7 @@
-import { text, withKnobs } from '@storybook/addon-knobs/dist/index'
+import { withKnobs } from '@storybook/addon-knobs/dist/index'
 import { propsCommon } from '../helpers'
 import FieldTemplate from './FieldTemplate'
+import DatetimeField from '../../src/extra-fields/DatetimeField'
 
 export default {
   title: 'Datetime',
@@ -20,9 +21,9 @@ export const SimleDatetime = () => ({
     }
   },
   computed: {
+    component: () => DatetimeField,
     field() {
       return {
-        component: 'datetime-field',
         attribute: 'date',
         options: {
           outputFormat: 'YYYY-MM-DDTHH:mm:ss'

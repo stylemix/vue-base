@@ -1,6 +1,7 @@
 import {withKnobs, text} from '@storybook/addon-knobs/dist/index'
 import { propsCommon } from '../helpers'
 import FieldTemplate from './FieldTemplate'
+import RepeaterField from '../../src/fields/RepeaterField'
 
 export default {
   title: 'Repeater',
@@ -9,7 +10,6 @@ export default {
 
 function singleField() {
   return {
-    component: 'repeater-field',
     attribute: 'pets',
     label: this.label,
     required: this.required,
@@ -41,6 +41,7 @@ export const SingleField = () => ({
     }
   },
   computed: {
+    component: () => RepeaterField,
     field: singleField,
   },
 })
@@ -63,9 +64,9 @@ export const MultipleFields = () => ({
     }
   },
   computed: {
+    component: () => RepeaterField,
     field() {
       return {
-        component: 'repeater-field',
         attribute: 'education',
         label: this.label,
         fields: [
@@ -88,7 +89,6 @@ export const MultipleFields = () => ({
   },
 })
 
-
 export const NoModelValue = () => ({
   extends: FieldTemplate,
   props: {
@@ -100,6 +100,7 @@ export const NoModelValue = () => ({
     }
   },
   computed: {
+    component: () => RepeaterField,
     field: singleField,
   },
 })

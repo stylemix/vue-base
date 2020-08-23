@@ -4,21 +4,21 @@
     v-bind="layoutProps">
     <template slot="field">
       <div
-        v-for="(option, index) in field.options"
+        v-for="(option, index) in options"
         :key="option.value"
         :class="checkboxLayoutClass"
         class="form-check">
         <input
-          :id="field.attribute + index"
+          :id="attribute + index"
           :value="option.value"
-          :disabled="isDisabled"
+          :disabled="disabled"
           v-model="fieldValue"
           type="checkbox"
           class="form-check-input"
-          v-bind="field.attrs"
+          v-bind="attrs"
         />
         <label
-          :for="field.attribute + index"
+          :for="attribute + index"
           class="form-check-label">
           {{ option.label }}
         </label>
@@ -37,23 +37,29 @@
     mixins: [FieldMixin],
 
     props: {
-      checkboxLayout: {type: String}
+      options: {type: Array, required: true},
+      checkboxLayout: {type: String, default: 'vertical'},
+    },
+
+    data() {
+      return {
+        errorClass: 'is-invalid',
+      }
     },
 
     computed: {
       checkboxLayoutClass() {
-        let layout = this.checkboxLayout || this.field.checkboxLayout;
-        return `form-check-${layout}`;
+        return `form-check-${this.checkboxLayout}`;
       }
     },
 
     created() {
-      if (!isArray(this.field.initialValue)) {
-        this.field.initialValue = [];
+      if (!isArray(this.initialValue)) {
+        this.initialValue = [];
       }
 
-      if (!isArray(this.value())) {
-        this.fill([]);
+      if (!isArray(this.fieldValue)) {
+        this.fieldValue = [];
       }
     },
   }

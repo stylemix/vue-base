@@ -1,6 +1,7 @@
-import { withKnobs, text } from '@storybook/addon-knobs/dist/index'
+import { withKnobs } from '@storybook/addon-knobs/dist/index'
 import { propsCommon } from '../helpers'
 import FieldTemplate from './FieldTemplate'
+import SelectField from '../../src/fields/SelectField'
 
 export default {
   title: 'Select',
@@ -20,9 +21,9 @@ export const SimpleSelect = () => ({
     }
   },
   computed: {
+    component: () => SelectField,
     field() {
       return {
-        component: 'select-field',
         attribute: 'category',
         label: this.label,
         options: [

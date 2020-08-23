@@ -4,19 +4,19 @@
     v-bind="layoutProps">
     <template slot="field">
       <select
-        :id="field.name"
+        :id="attribute"
         v-model="fieldValue"
-        :multiple="field.multiple || false"
+        :multiple="multiple || false"
         class="form-control"
         :class="errorClasses"
-        :disabled="isDisabled"
-        :readonly="isReadonly"
-        v-bind="field.attrs">
-        <option :value="nullValue" selected :disabled="field.required">
-          {{ field.placeholder || strings.select.choose }}
+        :disabled="disabled"
+        :readonly="readonly"
+        v-bind="attrs">
+        <option :value="nullValue" selected :disabled="required">
+          {{ placeholder || strings.select.choose }}
         </option>
         <option
-          v-for="option in field.options"
+          v-for="option in options"
           :value="option.value"
           :selected="option.value === fieldValue">
           {{ option.label }}
@@ -33,21 +33,14 @@ export default {
   mixins: [FieldMixin],
 
   props: {
-    readonly: {},
+    options: {type: Array, required: true},
+    nullValue: {type: [String, Number], default: null},
   },
 
-  computed: {
-
-    /**
-     * Get the input readonly state.
-     */
-    isReadonly() {
-      return this.readonly || this.field.readonly
-    },
-
-    nullValue() {
-      return this.field.nullValue || null
-    },
+  data() {
+    return {
+      errorClass: 'is-invalid',
+    }
   },
 }
 </script>

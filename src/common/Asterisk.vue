@@ -10,7 +10,7 @@
 
 <style type="text/scss" scoped>
 	.label-asterisk {
-		top: -.1em;
-		font-size: 1em;
+		top: 0;
+		font-size: 1.2em;
 	}
 </style>

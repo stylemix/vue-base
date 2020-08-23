@@ -5,17 +5,17 @@
     <template slot="field">
       <input
         :type="inputType"
-        :id="field.attribute"
-        :min="inputMin"
-        :max="inputMax"
-        :step="inputStep"
+        :id="attribute"
+        :min="min"
+        :max="max"
+        :step="step"
         v-model.number="fieldValue"
         class="form-control"
         :class="errorClasses"
-        :placeholder="inputPlaceholder"
-        :readonly="isReadonly"
-        :disabled="isDisabled"
-        v-bind="field.attrs"/>
+        :placeholder="placeholder"
+        :readonly="readonly"
+        :disabled="disabled"
+        v-bind="attrs"/>
     </template>
   </component>
 </template>
@@ -29,47 +29,23 @@
     mixins: [FieldMixin],
 
     props: {
-      placeholder: {},
       step: {},
       min: {},
       max: {},
     },
 
-    computed: {
+    data() {
+      return {
+        errorClass: 'is-invalid',
+      }
+    },
 
+    computed: {
       /**
        * Get the input type
        */
       inputType() {
-        return this.field.range ? 'range' : 'number';
-      },
-
-      /**
-       * Get the input placeholder.
-       */
-      inputPlaceholder() {
-        return this.placeholder || this.field.placeholder
-      },
-
-      /**
-       * Get the input step amount.
-       */
-      inputStep() {
-        return this.step || this.field.step
-      },
-
-      /**
-       * Get the input minimum amount.
-       */
-      inputMin() {
-        return this.min || this.field.min
-      },
-
-      /**
-       * Get the input maximum amount.
-       */
-      inputMax() {
-        return this.max || this.field.max
+        return this.range ? 'range' : 'number';
       },
     },
   }

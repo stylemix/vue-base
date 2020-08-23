@@ -1,6 +1,7 @@
 import { withKnobs } from '@storybook/addon-knobs/dist/index'
 import { propsCommon } from '../helpers'
 import FieldTemplate from './FieldTemplate'
+import DateRangeField from '../../src/extra-fields/DateRangeField'
 
 export default {
   title: 'Date range',
@@ -20,9 +21,9 @@ export const SimpleDateRange = () => ({
     }
   },
   computed: {
+    component: () => DateRangeField,
     field() {
       return {
-        component: 'date-range-field',
         attribute: 'date',
         label: this.label,
         required: this.required,

@@ -5,20 +5,20 @@
     :show-label="false">
     <template slot="field">
       <div
-        v-for="(option, index) in field.options"
+        v-for="(option, index) in options"
         :key="option.value"
         :class="radiosLayoutClass"
         class="form-check">
         <input
-          :id="field.attribute + index"
+          :id="attribute + index"
           :value="option.value"
-          :disabled="isDisabled"
+          :disabled="disabled"
           v-model="fieldValue"
           type="radio"
           class="form-check-input"
-          v-bind="field.attrs"/>
+          v-bind="attrs"/>
         <label
-          :for="field.attribute + index"
+          :for="attribute + index"
           class="form-check-label">
           {{ option.label }}
         </label>
@@ -36,15 +36,19 @@
     mixins: [FieldMixin],
 
     props: {
-      radiosLayout: {type: String},
+      radiosLayout: {type: String, default: 'vertical'},
+    },
+
+    data() {
+      return {
+        errorClass: 'is-invalid',
+      }
     },
 
     computed: {
       radiosLayoutClass() {
-        let layout = this.radiosLayout || this.field.radiosLayout;
-        return `form-check-${layout}`;
+        return `form-check-${this.radiosLayout}`;
       },
     }
-
   }
 </script>

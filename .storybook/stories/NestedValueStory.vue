@@ -1,6 +1,7 @@
 <template>
   <div>
-    <fields />
+    <form-text-field attribute="config.label" label="Config > Label" />
+    <form-text-field attribute="config.options.title" label="Config > Options > Title" />
     <h6>Model:</h6>
     <pre>{{ model }}</pre>
   </div>
@@ -8,10 +9,14 @@
 
 <script>
 import FormMixin from '../../src/mixins/FormMixin'
+import FormTextField from '../../src/fields/TextField'
 
 export default {
-	name: 'NestedValue',
-	mixins: [ FormMixin ],
+	name: 'NestedValueStory',
+  components: {
+	  FormTextField,
+  },
+  mixins: [ FormMixin ],
 	data() {
 		return {
 			model: {
@@ -21,20 +26,6 @@ export default {
 				},
 			}
 		}
-	},
-	mounted() {
-		this.setFields([
-			{
-				attribute: 'config.label',
-				label: 'Config > Label',
-				component: 'text-field',
-			},
-			{
-				attribute: 'config.options.title',
-				label: 'Config > Options > Title',
-				component: 'text-field',
-			},
-		])
 	},
 }
 </script>

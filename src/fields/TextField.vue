@@ -4,19 +4,19 @@
     v-bind="layoutProps">
     <template slot="field">
       <input
-        :id="field.attribute"
+        :id="attribute"
         :type="inputType"
-        :min="inputMin"
-        :max="inputMax"
-        :step="inputStep"
-        :pattern="inputPattern"
+        :min="min"
+        :max="max"
+        :step="step"
+        :pattern="pattern"
         v-model="fieldValue"
         class="form-control"
         :class="errorClasses"
-        :placeholder="inputPlaceholder"
-        :readonly="isReadonly"
-        :disabled="isDisabled"
-        v-bind="field.attrs"/>
+        :placeholder="placeholder"
+        :readonly="readonly"
+        :disabled="disabled"
+        v-bind="attrs"/>
     </template>
   </component>
 </template>
@@ -29,8 +29,13 @@
 
     mixins: [FieldMixin],
 
+    data() {
+      return {
+        errorClass: 'is-invalid',
+      }
+    },
+
     props: {
-      placeholder: {},
       step: {},
       min: {},
       max: {},
@@ -42,48 +47,13 @@
        * Get the input type.
        */
       inputType() {
-        return this.field.type || 'text'
-      },
-
-      /**
-       * Get the input placeholder.
-       */
-      inputPlaceholder() {
-        return this.placeholder || this.field.placeholder
-      },
-
-      /**
-       * Get the input step amount.
-       */
-      inputStep() {
-        return this.step || this.field.step
-      },
-
-      /**
-       * Get the input minimum amount.
-       */
-      inputMin() {
-        return this.min || this.field.min
-      },
-
-      /**
-       * Get the input maximum amount.
-       */
-      inputMax() {
-        return this.max || this.field.max
-      },
-
-      /**
-       * Get the pattern that should be used for the field
-       */
-      inputPattern() {
-        return this.pattern || this.field.pattern
+        return this.type || 'text'
       },
     },
 
     methods: {
       sanitizeValue(value) {
-        if (this.field.type === 'number') {
+        if (this.type === 'number') {
           return Number(value);
         }
 

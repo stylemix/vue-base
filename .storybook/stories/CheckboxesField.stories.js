@@ -1,6 +1,7 @@
 import { withKnobs } from '@storybook/addon-knobs/dist/index'
 import { propsCommon } from '../helpers'
 import FieldTemplate from './FieldTemplate'
+import CheckboxesField from '../../src/fields/CheckboxesField'
 
 export default {
   title: 'Checkboxes',
@@ -8,7 +9,6 @@ export default {
 }
 
 const commonFieldConfig = {
-  component: 'checkboxes-field',
   attribute: 'checkboxes',
   options: [
     {
@@ -39,6 +39,7 @@ export const SimpleCheckboxes = () => ({
     }
   },
   computed: {
+    component: () => CheckboxesField,
     field() {
       return {
         ...commonFieldConfig,
@@ -63,6 +64,7 @@ export const InlineCheckboxes = () => ({
     }
   },
   computed: {
+    component: () => CheckboxesField,
     field() {
       return {
         ...commonFieldConfig,

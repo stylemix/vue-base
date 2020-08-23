@@ -4,12 +4,10 @@ import { appendFormData, formDataName } from './form_data';
 
 /**
  * @property {String} attribute
- * @property {String} component
+ * @property {Boolean} dynamic
+ * @property {Object|String} component
  * @property {Boolean} multiple
  * @property {*} initialValue
- * @property {Array} depends
- * @property {Array} dependentFields
- * @property {Errors} errors
  */
 export default class Field {
 
@@ -20,14 +18,13 @@ export default class Field {
    */
   constructor(field) {
     this.attribute = null;
+    this.dynamic = false;
     this.component = null;
     this.initialValue = null;
     this.required = false;
     this.multiple = false;
     this.disabled = false;
     this.readonly = false;
-    this.depends = [];
-    this.dependentFields = [];
     this.attrs = {};
     Object.assign(this, field);
   }

@@ -23,7 +23,7 @@ export default {
   },
   mounted() {
     this.setFields(fields)
-    this.setValidationErrors({
+    this.setErrors({
       'your-name': ['Is required', 'Minimum 3 letters'],
       'your-age': ['Is required'],
       description: ['Is required'],

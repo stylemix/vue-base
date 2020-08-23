@@ -5,15 +5,17 @@ export default {
 
   props: {
     field: {type: Object, required: true},
-    fieldLabel: {type: String},
-    layoutClass: {type: String},
     showLabel: {type: Boolean, default: true},
     showHelpText: {type: Boolean, default: true},
   },
 
   computed: {
+    attribute() {
+      return this.field.attribute
+    },
+
     layoutClassResolved() {
-      return [this.field.layoutClass || this.layoutClass, ...this.errorClasses]
+      return [...this.errorClasses]
     },
 
     errors() {
@@ -22,16 +24,16 @@ export default {
 
     labelProps() {
       return {
-        field: this.field,
-        fieldLabel: this.fieldLabel,
+        label: this.field.label,
+        labelHtml: this.field.labelHtml,
+        required: this.field.required,
         showLabel: this.showLabel,
       }
     },
 
     errorsProps() {
       return {
-        field: this.field,
-        hasErrors: this.hasErrors,
+        hasError: this.hasError,
         errorMessages: this.errorMessages,
       }
     },

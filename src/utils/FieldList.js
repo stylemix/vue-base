@@ -1,38 +1,53 @@
-import pick from "lodash-es/pick";
-import values from "lodash-es/values";
-import keyBy from "lodash-es/keyBy";
-import omit from "lodash-es/omit";
-import filter from "lodash-es/filter";
-import find from "lodash-es/find";
+import pick from 'lodash-es/pick';
+import values from 'lodash-es/values';
+import omit from 'lodash-es/omit';
+import filter from 'lodash-es/filter';
+import find from 'lodash-es/find';
 import Field from './Field';
+import indexOf from 'lodash-es/indexOf'
 
 /**
- * @property {Array} list
- * @property {Errors} errors
+ * @property {Field[]} list
+ * @property {Object<Field>} byAttribute
  */
 export default class FieldList {
 
-  constructor(fields, errors) {
+  constructor() {
     this.list = [];
     this.byAttribute = {};
-    this.errors = errors
+  }
 
-    // Collect Field instances
-    fields.forEach(fieldConfig => {
-      let field = new Field(fieldConfig);
-      field.errors = this.errors;
-      this.list.push(field);
-      this.byAttribute[field.attribute] = field;
-    });
+  /**
+   * Register field instance
+   *
+   * @param {Field} field
+   */
+  register(field) {
+    let attribute = field.attribute
 
-    // Collect dependencies and assign
-    this.list.forEach(field => {
-      if (!field.depends) {
-        return;
+    // remove existing duplicate by attribute
+    if (this.byAttribute[attribute]) {
+     this.unregister(field)
+    }
+
+    this.list.push(field)
+    this.byAttribute[attribute] = field
+  }
+
+  /**
+   * Unregister (remove) field instance
+   *
+   * @param {Field} field
+   */
+  unregister(field) {
+    let attribute = field.attribute
+    if (this.byAttribute[attribute]) {
+      let existent = this.byAttribute[attribute]
+      let index = indexOf(this.list, existent)
+      if (index >= 0) {
+        delete this.list[index]
       }
-
-      field.dependentFields = this.only(...field.depends);
-    });
+    }
   }
 
   /**

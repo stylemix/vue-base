@@ -1,24 +1,49 @@
 import Errors from '../utils/Errors';
 import FieldList from "../utils/FieldList";
+import Field from '../utils/Field'
 
 export default {
   data() {
+    let errors = new Errors()
+    let fields = new FieldList()
+
     return {
-      fields: new FieldList([]),
-      errors: new Errors()
+      model: {},
+      fields,
+      errors,
     }
   },
 
   methods: {
+    /**
+     * Field components register their field instance here
+     *
+     * @param {Field} field
+     */
+    registerField(field) {
+      this.fields.register(field)
+    },
 
     /**
-     * Set new field list.
-     * Implemented form components should use this function when setting up fields.
+     * Field components unregister their field instance when destroyed
+     *
+     * @param {Field} field
+     */
+    unregisterField(field) {
+      this.fields.unregister(field)
+    },
+
+    /**
+     * Append new dynamic field list.
+     * Form components which load field list dynamically (json/remote) should use this function.
      *
      * @param {Array} fields
      */
     setFields(fields) {
-      this.fields = new FieldList(fields, this.errors);
+      fields.forEach(fieldConfig => {
+        let field = new Field(fieldConfig)
+        this.fields.register(field)
+      })
     },
 
     /**
@@ -58,9 +83,16 @@ export default {
      *
      * @param errors
      */
-    setValidationErrors(errors) {
+    setErrors(errors) {
       this.errors.clear();
       this.errors.record(errors);
+    },
+
+    /**
+     * Clear validation errors.
+     */
+    clearErrors() {
+      this.errors.clear();
     },
 
     /**

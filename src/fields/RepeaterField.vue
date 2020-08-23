@@ -16,7 +16,7 @@
           :layout-class="subField.col ? `col-${subField.col}` : 'col'"
           layout="vertical"
         />
-        <div v-if="!isDisabled" class="form-group flex-shrink-1">
+        <div v-if="!disabled" class="form-group flex-shrink-1">
           <label>&nbsp;</label>
           <div>
             <button
@@ -29,7 +29,7 @@
           </div>
         </div>
       </div>
-      <div v-if="!isDisabled">
+      <div v-if="!disabled">
         <button
           type="button"
           class="btn btn-link pl-0"
@@ -57,28 +57,29 @@
 
     data() {
       return {
+        errorClass: 'is-invalid',
         rows: [],
       }
     },
 
     computed: {
       isSingleField() {
-        return this.field.field;
+        return this.field;
       },
       labelAddNew() {
-        let label = this.field.labelAddNew
+        let label = this.labelAddNew
         return label === false ? '' : (label || strings.repeater.add_label);
       },
       iconAddNew() {
-        let icon = this.field.iconAddNew
+        let icon = this.iconAddNew
         return icon === false ? '' : (icon || config.repeaterAddIcon);
       },
       labelRemoveRow() {
-        let label = this.field.labelRemoveRow
+        let label = this.labelRemoveRow
         return label === false ? '' : (label || strings.repeater.remove_label);
       },
       iconRemoveRow() {
-        let icon = this.field.iconRemoveRow
+        let icon = this.iconRemoveRow
         return icon === false ? '' : (icon || config.repeaterRemoveIcon);
       },
       strings() {
@@ -97,7 +98,7 @@
     methods: {
 
       addRow() {
-        if (this.isDisabled) {
+        if (this.disabled) {
           return;
         }
 
@@ -105,13 +106,13 @@
           this.fieldValue = []
         }
 
-        let newValue = this.field.fields ? {} : null;
+        let newValue = this.fields ? {} : null;
         this.fieldValue.push(newValue);
         this.rows.push(this.getRowFields(this.fieldValue.length - 1));
       },
 
       removeRow(i) {
-        if (this.isDisabled) {
+        if (this.disabled) {
           return;
         }
         this.fieldValue.splice(i, 1);
@@ -122,24 +123,23 @@
         let rowFields = [];
 
         if (this.isSingleField) {
-          rowFields = cloneDeep([this.field.field])
+          rowFields = cloneDeep([this.field])
           for (let fieldConfig of rowFields) {
-            fieldConfig.attribute = `${this.field.attribute}.${i}`;
-            fieldConfig.disabled = this.field.disabled;
-            fieldConfig.readonly = this.field.readonly;
+            fieldConfig.attribute = `${this.attribute}.${i}`;
+            fieldConfig.disabled = this.disabled;
+            fieldConfig.readonly = this.readonly;
           }
         } else {
-          rowFields = cloneDeep(this.field.fields)
+          rowFields = cloneDeep(this.fields)
           for (let fieldConfig of rowFields) {
-            fieldConfig.attribute = `${this.field.attribute}.${i}.${fieldConfig.attribute}`;
-            fieldConfig.disabled = this.field.disabled;
-            fieldConfig.readonly = this.field.readonly;
+            fieldConfig.attribute = `${this.attribute}.${i}.${fieldConfig.attribute}`;
+            fieldConfig.disabled = this.disabled;
+            fieldConfig.readonly = this.readonly;
           }
         }
 
         return new FieldList(rowFields, this.errors);
       },
-
     }
   }
 </script>

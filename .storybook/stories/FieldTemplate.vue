@@ -1,13 +1,13 @@
 <template>
   <div class="row">
     <div class="col">
-      <field :field="fieldResolved" :model="model" />
-      <h6>Model:</h6>
-      <pre>{{ model }}</pre>
+      <component :is="component" v-bind="field" />
     </div>
     <div class="col">
       <h6>Field config:</h6>
       <pre>{{ field }}</pre>
+      <h6>Model:</h6>
+      <pre>{{ model }}</pre>
     </div>
   </div>
 </template>
@@ -20,21 +20,14 @@ export default {
 
   mixins: [ FormMixin ],
 
-  computed: {
-    fieldResolved() {
-      return this.fields.list[0]
-    },
-  },
-
   watch: {
-    field: {
-      handler() {
-        this.setFields([
-          this.field
-        ])
-      },
-      immediate: true,
-      deep: true,
+    hasErrors(val) {
+      if (val) {
+        this.setErrors(this.errorsObject)
+      }
+      else {
+        this.clearErrors()
+      }
     },
   },
 }

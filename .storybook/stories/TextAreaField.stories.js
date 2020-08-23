@@ -1,6 +1,7 @@
 import {withKnobs} from '@storybook/addon-knobs/dist/index'
 import { propsCommon } from '../helpers'
 import FieldTemplate from './FieldTemplate'
+import TextareaField from '../../src/fields/TextareaField'
 
 export default {
   title: 'TextArea',
@@ -20,9 +21,9 @@ export const SimpleTextarea = () => ({
     }
   },
   computed: {
+    component: () => TextareaField,
     field() {
       return {
-        component: 'textarea-field',
         attribute: 'description',
         label: this.label,
         placeholder: this.placeholder,

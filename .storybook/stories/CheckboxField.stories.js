@@ -1,6 +1,7 @@
-import { withKnobs, text } from '@storybook/addon-knobs/dist/index'
+import { withKnobs } from '@storybook/addon-knobs/dist/index'
 import { propsCommon } from '../helpers'
 import FieldTemplate from './FieldTemplate'
+import CheckboxField from '../../src/fields/CheckboxField'
 
 export default {
   title: 'Checkbox',
@@ -20,9 +21,9 @@ export const SimpleCheckbox = () => ({
     }
   },
   computed: {
+    component: () => CheckboxField,
     field() {
       return {
-        component: 'checkbox-field',
         attribute: 'agree',
         label: this.label,
         required: this.required,

@@ -1,6 +1,7 @@
 import { withKnobs } from '@storybook/addon-knobs'
 import { propsCommon } from '../helpers'
 import FieldTemplate from './FieldTemplate'
+import LocationField from '../../src/extra-fields/LocationField'
 
 export default {
   title: 'Location',
@@ -20,9 +21,9 @@ export const SimpleLocation = () => ({
     }
   },
   computed: {
+    component: () => LocationField,
     field() {
       return {
-        component: 'location-field',
         attribute: 'location',
         label: this.label,
         required: this.required,

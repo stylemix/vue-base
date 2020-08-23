@@ -1,6 +1,7 @@
-import { withKnobs, text } from '@storybook/addon-knobs/dist/index'
+import { boolean, object, text, withKnobs } from '@storybook/addon-knobs'
 import { propsCommon } from '../helpers'
 import FieldTemplate from './FieldTemplate'
+import TextField from '../../src/fields/TextField'
 
 export default {
   title: 'Text',
@@ -14,6 +15,14 @@ export const SimpleText = () => ({
     pattern: {
       default: text('Pattern', ''),
     },
+    hasErrors: {
+      default: boolean('Has errors', false),
+    },
+    errorsObject: {
+      default: object('Errors', {
+        text: ['The field Text is required', 'Format is wrong'],
+      }),
+    },
   },
   data() {
     return {
@@ -22,10 +31,13 @@ export const SimpleText = () => ({
       },
     }
   },
+
   computed: {
+    component() {
+      return TextField
+    },
     field() {
       return {
-        component: 'text-field',
         attribute: 'text',
         label: this.label,
         placeholder: this.placeholder,

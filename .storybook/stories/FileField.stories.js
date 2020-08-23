@@ -1,6 +1,7 @@
 import {withKnobs, text} from '@storybook/addon-knobs/dist/index'
 import { propsCommon } from '../helpers'
 import FieldTemplate from './FieldTemplate'
+import FileField from '../../src/fields/FileField'
 
 export default {
   title: 'File',
@@ -23,9 +24,9 @@ export const SimpleFile = () => ({
     }
   },
   computed: {
+    component: () => FileField,
     field() {
       return {
-        component: 'file-field',
         attribute: 'attachment',
         label: this.label,
         required: this.required,

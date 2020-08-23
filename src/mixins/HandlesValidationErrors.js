@@ -18,14 +18,14 @@ export default {
     },
 
     hasError() {
-      return this.errors && this.errors.has(this.field.attribute)
+      return this.errors && this.errors.has(this.attribute)
     },
 
     errorMessages() {
       if (this.hasError && config.errorMessages) {
         return config.errorMessages === 'first'
-          ? this.errors.first(this.field.attribute)
-          : this.errors.get(this.field.attribute).join(config.errorMessagesGlue)
+          ? this.errors.first(this.attribute)
+          : this.errors.get(this.attribute).join(config.errorMessagesGlue)
       }
     },
   },

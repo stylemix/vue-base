@@ -7,18 +7,18 @@
         <input
           type="file"
           ref="inputElement"
-          :id="field.attribute"
-          :multiple="field.multiple || false"
+          :id="attribute"
+          :multiple="multiple || false"
           :class="errorClasses"
-          :accept="field.mimeTypes"
-          :disabled="isDisabled"
+          :accept="mimeTypes"
+          :disabled="disabled"
           class="custom-file-input"
-          v-bind="field.attrs"
+          v-bind="attrs"
           @input="input($event)"
         />
         <label
-          :for="field.attribute"
-          :placeholder="field.browse_label"
+          :for="attribute"
+          :placeholder="browse_label"
           class="custom-file-label text-truncate">
           {{ inputPlaceholder }}
         </label>
@@ -36,7 +36,14 @@
     mixins: [FieldMixin],
 
     props: {
-      placeholder: {}
+      placeholder: {},
+      browseLabel: {type: String}
+    },
+
+    data() {
+      return {
+        errorClass: 'is-invalid',
+      }
     },
 
     computed: {
@@ -44,11 +51,11 @@
        * Get the input placeholder.
        */
       inputPlaceholder() {
-        if (!this.fieldValue || (this.field.multiple && this.fieldValue.length === 0)) {
-          return this.placeholder || this.field.placeholder
+        if (!this.fieldValue || (this.multiple && this.fieldValue.length === 0)) {
+          return this.placeholder || this.placeholder
         }
 
-        if (this.field.multiple) {
+        if (this.multiple) {
           return this.fieldValue.map(file => {
             return file.name
           }).join(', ')
@@ -65,7 +72,7 @@
           files.push($event.target.files[i]);
         }
 
-        this.fieldValue = this.field.multiple ? files : files[0];
+        this.fieldValue = this.multiple ? files : files[0];
       },
     },
   }

@@ -4,17 +4,17 @@
     v-bind="layoutProps">
     <template slot="field">
       <textarea
-        :id="field.attribute"
-        :cols="inputCols"
-        :rows="inputRows"
-        :maxlength="inputMaxlength"
+        :id="attribute"
+        :cols="cols"
+        :rows="rows"
+        :maxlength="maxlength"
         v-model="fieldValue"
         class="form-control"
         :class="errorClasses"
-        :placeholder="inputPlaceholder"
-        :readonly="isReadonly"
-        :disabled="isDisabled"
-        v-bind="field.attrs">
+        :placeholder="placeholder"
+        :readonly="readonly"
+        :disabled="disabled"
+        v-bind="attrs">
       </textarea>
     </template>
   </component>
@@ -29,41 +29,15 @@
     mixins: [FieldMixin],
 
     props: {
-      placeholder: {},
       cols: {},
       rows: {},
       maxlength: {},
     },
 
-    computed: {
-
-      /**
-       * Get the input placeholder.
-       */
-      inputPlaceholder() {
-        return this.placeholder || this.field.placeholder
-      },
-
-      /**
-       * Get the textarea cols.
-       */
-      inputCols() {
-        return this.cols || this.field.cols
-      },
-
-      /**
-       * Get the textarea rows.
-       */
-      inputRows() {
-        return this.rows || this.field.rows
-      },
-
-      /**
-       * Get the textarea maxlength.
-       */
-      inputMaxlength() {
-        return this.maxlength || this.field.maxlength
-      },
+    data() {
+      return {
+        errorClass: 'is-invalid',
+      }
     },
   }
 </script>

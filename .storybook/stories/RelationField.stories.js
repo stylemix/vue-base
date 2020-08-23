@@ -2,6 +2,7 @@ import { withKnobs, boolean } from '@storybook/addon-knobs/dist/index'
 import { propsCommon } from '../helpers'
 import 'vue-select/dist/vue-select.css'
 import FieldTemplate from './FieldTemplate'
+import RelationField from '../../src/extra-fields/RelationField'
 
 export default {
   title: 'Relation',
@@ -24,9 +25,9 @@ export const Ajax = () => ({
     }
   },
   computed: {
+    component: () => RelationField,
     field() {
       return {
-        component: 'relation-field',
         attribute: 'repository_id',
         label: this.label,
         required: this.required,
